@@ -83,7 +83,34 @@ function Track({step,t}){
   return(<div style={{display:"flex",gap:1}}>{STEPS.map((s,i)=>(<div key={i} title={s} style={{flex:1,height:2,borderRadius:1,background:i<step?`${t.primary}60`:i===step?t.primary:t.bd,transition:`background ${E}`}}/>))}</div>);
 }
 
-/* ─── Card ─── */
+/* ─── Glass Morphism Toggle ─── */
+function GlassToggle({on,onToggle,labelOn,labelOff,iconOn,iconOff,t,open}){
+  return(
+    <button onClick={onToggle} style={{width:"100%",display:"flex",alignItems:"center",gap:open?8:0,padding:open?"5px 8px":"5px 0",borderRadius:6,border:"none",cursor:"pointer",fontFamily:FN,background:"transparent",justifyContent:open?"flex-start":"center",transition:`all ${E}`}}>
+      <div style={{width:open?36:28,height:open?18:16,borderRadius:10,position:"relative",cursor:"pointer",flexShrink:0,background:on?`linear-gradient(135deg, ${t.primary}50, ${t.primary}25)`:`linear-gradient(135deg, ${t.bd}, ${t.bd2})`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid ${on?`${t.primary}30`:t.bd}`,boxShadow:on?`0 0 12px ${t.glow}, inset 0 1px 1px rgba(255,255,255,0.08)`:`inset 0 1px 1px rgba(255,255,255,0.04)`,transition:`all 0.3s cubic-bezier(0.4,0,0.2,1)`,overflow:"hidden"}}>
+        {/* Glass shimmer */}
+        <div style={{position:"absolute",top:0,left:0,right:0,height:"50%",background:"linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 100%)",borderRadius:"10px 10px 0 0",pointerEvents:"none"}}/>
+        {/* Knob */}
+        <div style={{position:"absolute",top:open?2:1.5,left:on?(open?18:13):(open?2:1.5),width:open?14:13,height:open?14:13,borderRadius:"50%",background:on?`linear-gradient(135deg, #fff, ${t.primary}30)`:"linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.6))",boxShadow:on?`0 1px 4px ${t.primary}40, 0 0 8px ${t.glow}`:"0 1px 3px rgba(0,0,0,0.15)",transition:"all 0.3s cubic-bezier(0.4,0,0.2,1)",display:"flex",alignItems:"center",justifyContent:"center"}}>
+          <span style={{fontSize:open?7:6,lineHeight:1,opacity:0.7}}>{on?iconOn:iconOff}</span>
+        </div>
+      </div>
+      {open&&<span style={{fontSize:9,fontWeight:on?500:400,color:on?t.tx:t.tx3,transition:`color ${E}`,whiteSpace:"nowrap"}}>{on?labelOn:labelOff}</span>}
+    </button>
+  );
+}
+
+/* ─── Glass Service Toggle (Admin) ─── */
+function GlassServiceToggle({active,onToggle,t}){
+  return(
+    <div onClick={onToggle} style={{width:32,height:16,borderRadius:8,position:"relative",cursor:"pointer",flexShrink:0,background:active?`linear-gradient(135deg, ${t.primary}60, ${t.primary}30)`:`linear-gradient(135deg, ${t.bd}, ${t.bd2})`,backdropFilter:"blur(10px)",WebkitBackdropFilter:"blur(10px)",border:`1px solid ${active?`${t.primary}25`:t.bd}`,boxShadow:active?`0 0 10px ${t.glow}`:"none",transition:`all 0.3s cubic-bezier(0.4,0,0.2,1)`,overflow:"hidden"}}>
+      <div style={{position:"absolute",top:0,left:0,right:0,height:"50%",background:"linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)",borderRadius:"8px 8px 0 0",pointerEvents:"none"}}/>
+      <div style={{position:"absolute",top:1.5,left:active?16:1.5,width:13,height:13,borderRadius:"50%",background:active?"linear-gradient(135deg, #fff, rgba(255,255,255,0.8))":"linear-gradient(135deg, rgba(255,255,255,0.7), rgba(255,255,255,0.4))",boxShadow:active?`0 1px 4px ${t.primary}30`:"0 1px 2px rgba(0,0,0,0.1)",transition:"all 0.3s cubic-bezier(0.4,0,0.2,1)"}}/>
+    </div>
+  );
+}
+
+
 function CCard({card,active,onClick,t,g}){
   const a=card.assignee?TEAM.find(m=>m.id===card.assignee):null;
   const isDue=card.due==="Feb 13"||card.due==="Today";
@@ -537,11 +564,27 @@ export default function CommandCenter(){
     <div style={{height:"100vh",display:"flex",fontFamily:FN,color:t.tx,overflow:"hidden",background:t.bg,transition:`background 0.5s`}}>
       <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;200;300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 
-      {/* BG — production: crossfade bg-night.png / bg-day.png */}
+      {/* BG — Day/Night atmospheric imagery */}
       <div style={{position:"fixed",inset:0,pointerEvents:"none",transition:"opacity 0.7s"}}>
-        <div style={{position:"absolute",inset:0,background:night?`linear-gradient(145deg, ${WN.c5} 0%, ${WN.c4}80 40%, ${WN.c5} 100%)`:`linear-gradient(145deg, #F0F1F8 0%, #fff 40%, #F0F1F8 100%)`}}/>
+        {/* Base gradient */}
+        <div style={{position:"absolute",inset:0,background:night?`linear-gradient(145deg, ${WN.c5} 0%, ${WN.c4}80 40%, ${WN.c5} 100%)`:`linear-gradient(145deg, #E8EAF6 0%, #F5F5FC 30%, #E3E6F0 60%, #F0F1F8 100%)`,transition:"all 0.7s"}}/>
+        {/* Night: stars */}
+        {night&&<div style={{position:"absolute",inset:0,backgroundImage:`radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.3) 0%, transparent 100%), radial-gradient(1px 1px at 25% 35%, rgba(255,255,255,0.2) 0%, transparent 100%), radial-gradient(1.5px 1.5px at 45% 8%, rgba(255,255,255,0.35) 0%, transparent 100%), radial-gradient(1px 1px at 65% 22%, rgba(255,255,255,0.15) 0%, transparent 100%), radial-gradient(1px 1px at 80% 42%, rgba(255,255,255,0.25) 0%, transparent 100%), radial-gradient(1.5px 1.5px at 90% 12%, rgba(255,255,255,0.2) 0%, transparent 100%), radial-gradient(1px 1px at 15% 55%, rgba(255,255,255,0.18) 0%, transparent 100%), radial-gradient(1px 1px at 55% 48%, rgba(255,255,255,0.12) 0%, transparent 100%), radial-gradient(1.5px 1.5px at 35% 62%, rgba(255,255,255,0.22) 0%, transparent 100%), radial-gradient(1px 1px at 72% 58%, rgba(255,255,255,0.16) 0%, transparent 100%)`,opacity:0.6,transition:"opacity 0.7s"}}/>}
+        {/* Day: soft cloud layers */}
+        {!night&&<>
+          <div style={{position:"absolute",top:"5%",right:"10%",width:"35%",height:"18%",background:"radial-gradient(ellipse, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.2) 40%, transparent 70%)",filter:"blur(30px)",opacity:0.7}}/>
+          <div style={{position:"absolute",top:"15%",left:"15%",width:"25%",height:"12%",background:"radial-gradient(ellipse, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.1) 50%, transparent 70%)",filter:"blur(25px)",opacity:0.5}}/>
+          <div style={{position:"absolute",top:"8%",left:"45%",width:"20%",height:"10%",background:"radial-gradient(ellipse, rgba(255,255,255,0.4) 0%, transparent 60%)",filter:"blur(20px)",opacity:0.4}}/>
+        </>}
+        {/* Night: moon glow */}
+        {night&&<div style={{position:"absolute",top:"6%",right:"12%",width:"80px",height:"80px",borderRadius:"50%",background:`radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 40%, transparent 70%)`,boxShadow:"0 0 60px rgba(255,255,255,0.04)",transition:"opacity 0.7s"}}/>}
+        {/* Day: sun glow */}
+        {!night&&<div style={{position:"absolute",top:"3%",right:"8%",width:"120px",height:"120px",borderRadius:"50%",background:`radial-gradient(circle, rgba(255,200,50,0.12) 0%, rgba(255,200,50,0.04) 40%, transparent 65%)`,boxShadow:"0 0 80px rgba(255,200,50,0.06)",transition:"opacity 0.7s"}}/>}
+        {/* Primary ambient glow */}
         <div style={{position:"absolute",bottom:"5%",left:"8%",width:"50%",height:"50%",opacity:night?0.1:0.05,background:`radial-gradient(ellipse, ${night?WN.c1:WD.c3}, transparent 70%)`,filter:"blur(100px)",transition:"all 0.7s"}}/>
         <div style={{position:"absolute",top:"8%",right:"5%",width:"45%",height:"45%",opacity:night?0.07:0.04,background:`radial-gradient(ellipse, ${night?WN.c3:WD.c4}, transparent 70%)`,filter:"blur(100px)",transition:"all 0.7s"}}/>
+        {/* Day: horizon warmth */}
+        {!night&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:"25%",background:"linear-gradient(180deg, transparent 0%, rgba(98,115,217,0.03) 60%, rgba(85,91,217,0.06) 100%)"}}/>}
       </div>
 
       {/* ─── LEFT RAIL ─── */}
@@ -605,14 +648,8 @@ export default function CommandCenter(){
 
           {/* Bottom */}
           <div style={{padding:"8px 6px",borderTop:`1px solid ${t.bd}`,flexShrink:0}}>
-            <button onClick={()=>setNight(!night)} style={{width:"100%",display:"flex",alignItems:"center",gap:6,padding:open?"6px 8px":"6px 0",borderRadius:5,border:"none",cursor:"pointer",fontFamily:FN,background:"transparent",color:t.tx2,justifyContent:open?"flex-start":"center"}}>
-              <span style={{fontSize:10,fontWeight:600,fontFamily:MN,width:18,textAlign:"center"}}>{night?"N":"D"}</span>
-              {open&&<span style={{fontSize:9}}>{night?"Night":"Day"}</span>}
-            </button>
-            {open&&<button onClick={()=>setPinned(!pinned)} style={{width:"100%",display:"flex",alignItems:"center",gap:6,padding:"6px 8px",borderRadius:5,border:"none",cursor:"pointer",fontFamily:FN,background:pinned?`${t.primary}08`:"transparent",color:pinned?t.primary:t.tx3}}>
-              <span style={{fontSize:9,fontWeight:600,fontFamily:MN}}>PIN</span>
-              <span style={{fontSize:9}}>{pinned?"Pinned":"Pin"}</span>
-            </button>}
+            <GlassToggle on={night} onToggle={()=>setNight(!night)} labelOn="Night" labelOff="Day" iconOn="☾" iconOff="☀" t={t} open={open}/>
+            {open&&<div style={{marginTop:4}}><GlassToggle on={pinned} onToggle={()=>setPinned(!pinned)} labelOn="Pinned" labelOff="Pin" iconOn="◉" iconOff="○" t={t} open={open}/></div>}
           </div>
         </div>
       </div>
@@ -709,9 +746,7 @@ export default function CommandCenter(){
                           <div style={{fontSize:11,fontWeight:500,fontFamily:FN,color:t.tx}}>{s.name}</div>
                           <div style={{fontSize:8,fontFamily:FN,color:t.tx3}}>{s.vol} · {s.auto?"Auto":"Manual"}</div>
                         </div>
-                        <div style={{width:28,height:14,borderRadius:7,background:s.active?t.primary:t.bd,position:"relative",cursor:"pointer"}}>
-                          <div style={{position:"absolute",top:1.5,left:s.active?14.5:1.5,width:11,height:11,borderRadius:"50%",background:"#fff",transition:"left 0.2s"}}/>
-                        </div>
+                        <GlassServiceToggle active={s.active} onToggle={()=>{}} t={t}/>
                       </div>
                     ))}
                   </div>
