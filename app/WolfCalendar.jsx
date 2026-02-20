@@ -11,7 +11,7 @@ import {
   LiquidGlassSvgDefs,
   LiquidGlassStyles,
   useLiquidGlass,
-} from './LiquidGlass';
+} from '../src/components/LiquidGlass-WOLFFLOW';
 
 // ─── Employee Color Registry ─────────────────────────────────────────────────
 const TEAM = [
