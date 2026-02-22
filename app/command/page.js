@@ -1,11 +1,11 @@
 /* ═══════════════════════════════════════════════════════════════════
-   WOLF FLOW SOLUTIONS — Welcome Page
+   WOLF FLOW SOLUTIONS — Command Center
    Created and Authored by Johnathon Moulds © 2026
 ═══════════════════════════════════════════════════════════════════ */
 "use client";
 import dynamic from "next/dynamic";
-const WolfWelcomeV1 = dynamic(() => import("./WolfWelcomeV1"), { ssr: false });
-export default function Home() {
-  return <WolfWelcomeV1 />;
+const CommandCenter = dynamic(() => import("../CommandCenter"), { ssr: false });
+export default function CommandPage() {
+  return <CommandCenter />;
 }
 // Created and Authored by Johnathon Moulds © 2026 — Wolf Flow Solutions | All Rights Reserved

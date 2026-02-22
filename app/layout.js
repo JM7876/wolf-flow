@@ -6,8 +6,8 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Wolf Flow Command Center",
-  description: "Visual Operating System — Wolf Flow Solutions",
+  title: "Wolf Flow Communications — Request Portal",
+  description: "Where departments come to create — Wolf Flow Solutions",
 };
 
 export default function RootLayout({ children }) {
