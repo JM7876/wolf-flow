@@ -1,10 +1,107 @@
 /* ═══════════════════════════════════════════════════════════════════
    WOLF FLOW SOLUTIONS — Global Styles
+   Universal Palette + Dual Theme + Glass Engine + Preset Material System
    Created and Authored by Johnathon Moulds © 2026
    ═══════════════════════════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;200;300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,500&display=swap');
 
+/* ═══ 1. UNIVERSAL COLOR SYSTEM ═══ */
+:root {
+  /* Background */
+  --bg-primary: #EFECFD;
+  --bg-secondary: #D5CDF9;
+  --bg-elevated: #C3C0F8;
+
+  /* Surfaces */
+  --surface-primary: #B1B6F5;
+  --surface-soft: #A0A1F0;
+
+  /* Text */
+  --text-primary: #2A2A40;
+  --text-secondary: #4A4A6A;
+
+  /* Accents */
+  --accent-primary: #9583E9;
+  --accent-violet: #BD95EE;
+  --accent-pink: #DDACEF;
+  --accent-soft: #F0CDF3;
+
+  /* Warm */
+  --accent-warm: #ECAAD0;
+  --accent-soft-warm: #FDD2D7;
+  --accent-coral: #FDC3BE;
+
+  --border-soft: rgba(149, 131, 233, 0.25);
+
+  /* Wolf Flow Brand Palette */
+  --wf-black: #000000;
+  --wf-white: #FFFFFF;
+  --wf-gray: #808080;
+  --wf-red: #FF0000;
+  --wf-green: #00FF00;
+  --wf-blue: #0000FF;
+  --wf-yellow: #FFFF00;
+  --wf-cyan: #00FFFF;
+  --wf-magenta: #FF00FF;
+
+  /* ═══ 3. GLASS ENGINE ═══ */
+  --glass-displacement: 0px;
+  --glass-blur: 18px;
+  --glass-opacity: 0.18;
+  --glass-brightness: 1.05;
+  --glass-saturation: 1.1;
+  --glass-bezel-depth: 18px;
+
+  /* Corner radius */
+  --radius: 1rem;
+}
+
+/* ═══ 2. DUAL THEME SYSTEM ═══ */
+
+/* Light Mode (Default) */
+:root[data-theme="light"] .app-root,
+:root:not([data-theme]) .app-root {
+  background:
+    radial-gradient(circle at 50% 30%,
+      rgba(149, 131, 233, 0.15) 0%,
+      rgba(221, 172, 239, 0.10) 40%,
+      transparent 70%
+    ),
+    linear-gradient(180deg,
+      var(--bg-primary),
+      var(--bg-secondary)
+    );
+}
+
+/* Dark Mode */
+:root[data-theme="dark"] {
+  --bg-primary: #1A1628;
+  --bg-secondary: #221C35;
+  --bg-elevated: #2B2444;
+
+  --surface-primary: #332C52;
+  --surface-soft: #3C3562;
+
+  --text-primary: #F0CDF3;
+  --text-secondary: #DDACEF;
+
+  --border-soft: rgba(221, 172, 239, 0.25);
+}
+
+:root[data-theme="dark"] .app-root {
+  background:
+    radial-gradient(circle at 50% 35%,
+      rgba(189, 149, 238, 0.15) 0%,
+      transparent 60%
+    ),
+    linear-gradient(180deg,
+      var(--bg-primary),
+      var(--bg-secondary)
+    );
+}
+
+/* ═══ GLOBAL RESET ═══ */
 * {
   margin: 0;
   padding: 0;
@@ -15,13 +112,64 @@ html, body {
   overflow: hidden;
   height: 100%;
   width: 100%;
-  background-color: #0a0e14;
-  color: rgba(255, 255, 255, 0.92);
-  font-family: 'Josefin Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Montserrat Alternates', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* ═══ GLASS CLASS ═══ */
+.glass {
+  background: rgba(255, 255, 255, var(--glass-opacity));
+  backdrop-filter:
+    blur(var(--glass-blur))
+    brightness(var(--glass-brightness))
+    saturate(var(--glass-saturation));
+  -webkit-backdrop-filter:
+    blur(var(--glass-blur))
+    brightness(var(--glass-brightness))
+    saturate(var(--glass-saturation));
+  transform: translateY(var(--glass-displacement));
+  border-radius: 20px;
+  border: 1px solid var(--border-soft);
+  box-shadow:
+    0 0 var(--glass-bezel-depth) rgba(149, 131, 233, 0.15),
+    inset 0 0 calc(var(--glass-bezel-depth) / 2) rgba(255, 255, 255, 0.4);
+}
+
+/* ═══ 7. SLIDER STYLING ═══ */
+input[type="range"] {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #9583E9, #DDACEF);
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: 0 0 8px #BD95EE;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: 0 0 8px #BD95EE;
+  cursor: pointer;
+  border: none;
+}
+
+/* ═══ SCROLLBAR ═══ */
 ::-webkit-scrollbar {
   width: 4px;
 }
@@ -31,12 +179,12 @@ html, body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--border-soft);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--accent-primary);
 }
 
 /* Created and Authored by Johnathon Moulds © 2026 */
