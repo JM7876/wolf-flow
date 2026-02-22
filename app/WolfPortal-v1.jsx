@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
 /* ═══════════════════════════════════════════════════════════
-   NHBP COMMUNICATIONS PORTAL — v1 (Fresh Build)
+   WOLF FLOW COMMUNICATIONS PORTAL — v1 (Fresh Build)
    ─────────────────────────────────────────────────────────
    Stage 1 — The Front Door
    20 departments submit requests through service-specific forms.
@@ -13,45 +13,51 @@ import { useState, useEffect, useRef } from "react";
    · Submission Confirmation Page (post-submit)
    · Check Your Stats — request ID tracker w/ status card
    
-   Design System v3 · Glass Morphism · Turquoise→Pink
-   Josefin Sans · Modern Traditional Minimal
+   Universal Palette · Glass Morphism · Violet→Coral
+   Montserrat Alternates · Modern Minimal
+   Created by Johnathon Moulds | Wolf Flow Solutions
    ═══════════════════════════════════════════════════════════ */
 
-/* ═══ DS v3 TOKENS ═══ */
-const NHBP = {
-  turquoise: "#14A9A2", turquoiseLight: "#1bc4bc", turquoiseDark: "#0e8a84",
-  turquoiseGlow: "rgba(20,169,162,0.25)", maroon: "#5F0C0E", maroonLight: "#8a1518",
-  green: "#094425", greenLight: "#0d6b3a", pink: "#FAC6C7",
-  red: "#BA0C2F", redGlow: "rgba(186,12,47,0.15)",
+/* ═══ UNIVERSAL PALETTE TOKENS ═══ */
+const WF = {
+  accent: "#9583E9", accentLight: "#BD95EE", accentDark: "#7a6bc7",
+  accentGlow: "rgba(149,131,233,0.25)", pink: "#DDACEF", pinkLight: "#F0CDF3",
+  warm: "#ECAAD0", warmLight: "#FDD2D7", coral: "#FDC3BE",
+  green: "#40916c", greenLight: "#52b788",
+  red: "#e63946", redGlow: "rgba(230,57,70,0.15)",
 };
 const FC = {
-  dark: "#0a0e14", darkCard: "#111820",
-  turquoise: "#40b5ad", turquoiseLight: "#5fcec6", turquoiseGlow: "rgba(64,181,173,0.3)",
-  maroon: "#6b2737", maroonLight: "#8a3a4d",
-  gold: "#c9a84c", goldLight: "#e0c76e",
-  green: "#2d6a4f", greenLight: "#40916c",
-  red: "#ba0c2f", redLight: "#e02040",
-  textPrimary: "rgba(255,255,255,0.92)", textSecondary: "rgba(255,255,255,0.55)",
-  textDim: "rgba(255,255,255,0.3)", border: "rgba(255,255,255,0.08)",
-  glass: "rgba(255,255,255,0.03)",
+  dark: "#1A1628", darkCard: "#221C35",
+  turquoise: "#9583E9", turquoiseLight: "#BD95EE", turquoiseGlow: "rgba(149,131,233,0.3)",
+  maroon: "#ECAAD0", maroonLight: "#FDD2D7",
+  gold: "#BD95EE", goldLight: "#DDACEF",
+  green: "#40916c", greenLight: "#52b788",
+  red: "#e63946", redLight: "#ff6b6b",
+  textPrimary: "#F0CDF3", textSecondary: "rgba(221,172,239,0.75)",
+  textDim: "rgba(221,172,239,0.4)", border: "rgba(149,131,233,0.15)",
+  glass: "rgba(255,255,255,0.06)",
 };
-const FONT = "'Montserrat Alternates', 'Josefin Sans', -apple-system, BlinkMacSystemFont, sans-serif";
-const MONO = "'JetBrains Mono', monospace";
+const FONT = "'Montserrat Alternates', -apple-system, BlinkMacSystemFont, sans-serif";
+const MONO = "'Montserrat Alternates', monospace";
+const WOLF_LOGO = "/images/wolf-logo.png";
 const CLICK = {
-  hover: { borderColor: "rgba(200,80,130,0.4)", boxShadow: "0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05), 0 0 25px rgba(200,80,130,0.18)" },
+  hover: { borderColor: "rgba(149,131,233,0.5)", boxShadow: "0 8px 32px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 25px rgba(149,131,233,0.2)" },
   duration: "0.3s ease",
 };
 const GLASS = {
   default: {
-    background: FC.glass, backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)",
+    background: "rgba(255,255,255,var(--glass-opacity,0.06))",
+    backdropFilter: "blur(var(--glass-blur,18px)) brightness(var(--glass-brightness,1.05)) saturate(var(--glass-saturation,1.1))",
+    WebkitBackdropFilter: "blur(var(--glass-blur,18px)) brightness(var(--glass-brightness,1.05)) saturate(var(--glass-saturation,1.1))",
+    transform: "translateY(var(--glass-displacement,0px))",
     border: `1px solid ${FC.border}`, borderRadius: 16,
-    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.04)",
+    boxShadow: "0 0 var(--glass-bezel-depth,18px) rgba(149,131,233,0.08), inset 0 1px 0 rgba(255,255,255,0.04)",
   },
 };
 const glassPill = {
   padding: "14px 40px", borderRadius: 28,
-  backdropFilter: "blur(20px) saturate(1.4) brightness(1.1)",
-  WebkitBackdropFilter: "blur(20px) saturate(1.4) brightness(1.1)",
+  backdropFilter: "blur(var(--glass-blur,18px)) saturate(var(--glass-saturation,1.1)) brightness(var(--glass-brightness,1.05))",
+  WebkitBackdropFilter: "blur(var(--glass-blur,18px)) saturate(var(--glass-saturation,1.1)) brightness(var(--glass-brightness,1.05))",
   background: "linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02))",
   fontSize: 14, fontWeight: 500, letterSpacing: "0.06em",
   boxShadow: "0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05)",
@@ -61,7 +67,7 @@ const glassPill = {
 const inputBase = {
   background: FC.glass, border: `1px solid ${FC.border}`, borderRadius: 10,
   padding: "12px 14px", fontSize: 14, fontFamily: FONT, color: FC.textPrimary,
-  outline: "none", caretColor: NHBP.turquoise, width: "100%", boxSizing: "border-box",
+  outline: "none",   caretColor: WF.accent, width: "100%", boxSizing: "border-box",
   transition: `border-color ${CLICK.duration}`,
 };
 
@@ -115,7 +121,7 @@ const FIELD_LABELS = {
 
 /* ═══ MOCK TRACKING DATA ═══ */
 const MOCK_REQUESTS = {
-  "NHBP-2026-0412": {
+  "WF-2026-0412": {
     title: "New Hire — Maria Gonzalez", dept: "Human Resources", requester: "Donna P.",
     service: "Business Cards", priority: "Standard", mediaType: "Print",
     step: 4, assignee: "Tracy", assigneeAvatar: "📋", assigneeRole: "Admin / Coordinator",
@@ -128,7 +134,7 @@ const MOCK_REQUESTS = {
       { time: "Feb 12, 2:15 PM", action: "Design in progress — standard template", icon: "🎨", by: "Tracy" },
     ],
   },
-  "NHBP-2026-0398": {
+  "WF-2026-0398": {
     title: "Tax Workshop Reminder", dept: "Finance", requester: "Linda R.",
     service: "Social Media Post", priority: "Rush", mediaType: "Digital",
     step: 5, assignee: "Audry", assigneeAvatar: "📣", assigneeRole: "Comm. Specialist",
@@ -142,7 +148,7 @@ const MOCK_REQUESTS = {
       { time: "Feb 12, 2:00 PM", action: "In review — awaiting Director approval", icon: "👁️", by: "Narciso" },
     ],
   },
-  "NHBP-2026-1847": {
+  "WF-2026-1847": {
     title: "Community Health Fair", dept: "Health Services", requester: "Sandra M.",
     service: "Event Coverage", priority: "Standard", mediaType: "Both",
     step: 4, assignee: "Multi-Team", assigneeAvatar: "👥", assigneeRole: "6 team members",
@@ -155,7 +161,7 @@ const MOCK_REQUESTS = {
       { time: "Feb 12, 11:45 AM", action: "Flyer design in progress", icon: "🎨", by: "Shawn" },
     ],
   },
-  "NHBP-2026-0388": {
+  "WF-2026-0388": {
     title: "Council Meeting Recap", dept: "Tribal Council", requester: "Chief Harris",
     service: "Writing / Article", priority: "Urgent", mediaType: "Digital",
     step: 5, assignee: "Cat", assigneeAvatar: "✍️", assigneeRole: "Writer",
@@ -169,7 +175,7 @@ const MOCK_REQUESTS = {
       { time: "Feb 13, 8:00 AM", action: "In Director review", icon: "👁️", by: "Narciso" },
     ],
   },
-  "NHBP-2026-0375": {
+  "WF-2026-0375": {
     title: "Website Banner — March", dept: "Communications", requester: "Narciso",
     service: "Website Update", priority: "Standard", mediaType: "Digital",
     step: 8, assignee: "Shawn", assigneeAvatar: "🎨", assigneeRole: "Graphic Designer",
@@ -213,8 +219,8 @@ function FormField({ label, type = "text", value, onChange, placeholder, require
         <label style={{ fontSize: 11, fontWeight: 500, fontFamily: FONT, color: FC.textSecondary, letterSpacing: "0.04em", display: "block", marginBottom: 6 }}>
           {label}{required && <span style={{ color: FC.redLight }}> *</span>}
         </label>
-        <select value={value} onChange={e => onChange(e.target.value)} style={{ ...inputBase, appearance: "none", cursor: "pointer", backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(255,255,255,0.3)' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 12px center" }}
-          onFocus={e => e.target.style.borderColor = `${NHBP.turquoise}60`}
+        <select value={value} onChange={e => onChange(e.target.value)} style={{ ...inputBase, appearance: "none", cursor: "pointer", backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(221,172,239,0.5)' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 12px center" }}
+          onFocus={e => e.target.style.borderColor = `${WF.accent}60`}
           onBlur={e => e.target.style.borderColor = FC.border}
         >
           <option value="" style={{ background: FC.dark }}>{placeholder || `Select ${label}`}</option>
@@ -231,20 +237,21 @@ function FormField({ label, type = "text", value, onChange, placeholder, require
         </label>
         <textarea value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} rows={4}
           style={{ ...inputBase, resize: "vertical", minHeight: 80 }}
-          onFocus={e => e.target.style.borderColor = `${NHBP.turquoise}60`}
+          onFocus={e => e.target.style.borderColor = `${WF.accent}60`}
           onBlur={e => e.target.style.borderColor = FC.border}
         />
       </div>
     );
   }
+  const isDateOrTime = type === "date" || type === "time";
   return (
     <div style={{ marginBottom: 14 }}>
       <label style={{ fontSize: 11, fontWeight: 500, fontFamily: FONT, color: FC.textSecondary, letterSpacing: "0.04em", display: "block", marginBottom: 6 }}>
         {label}{required && <span style={{ color: FC.redLight }}> *</span>}
       </label>
       <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
-        style={inputBase}
-        onFocus={e => e.target.style.borderColor = `${NHBP.turquoise}60`}
+        style={{ ...inputBase, ...(isDateOrTime ? { colorScheme: "dark", cursor: "pointer" } : {}) }}
+        onFocus={e => e.target.style.borderColor = `${WF.accent}60`}
         onBlur={e => e.target.style.borderColor = FC.border}
       />
     </div>
@@ -259,7 +266,7 @@ function TripleToggle({ label, options, value, onChange, colors }) {
       <div style={{ display: "flex", gap: 6 }}>
         {options.map((opt, i) => {
           const active = value === opt.value;
-          const c = colors?.[i] || NHBP.turquoise;
+          const c = colors?.[i] || WF.accent;
           return (
             <button key={opt.value} onClick={() => onChange(opt.value)} style={{
               flex: 1, padding: "10px 8px", borderRadius: 10, cursor: "pointer",
@@ -269,9 +276,12 @@ function TripleToggle({ label, options, value, onChange, colors }) {
               fontSize: 12, fontWeight: active ? 600 : 400, fontFamily: FONT,
               transition: `all ${CLICK.duration}`,
               boxShadow: active ? `0 0 20px ${c}15` : "none",
-              backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
+              backdropFilter: "blur(var(--glass-blur,18px))", WebkitBackdropFilter: "blur(var(--glass-blur,18px))",
               display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
-            }}>
+            }}
+              onMouseEnter={!active ? e => { e.currentTarget.style.borderColor = `${c}35`; e.currentTarget.style.color = FC.textSecondary; e.currentTarget.style.boxShadow = `0 0 10px ${c}10`; } : undefined}
+              onMouseLeave={!active ? e => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.color = FC.textDim; e.currentTarget.style.boxShadow = "none"; } : undefined}
+            >
               <span style={{ fontSize: 16 }}>{opt.icon}</span>
               <span>{opt.label}</span>
             </button>
@@ -291,11 +301,11 @@ function MiniTrack({ step, showLabels = false }) {
           <div key={i} title={`${s}: ${STEP_DESC[i]}`} style={{
             flex: 1, height: showLabels ? 6 : 3, borderRadius: 3,
             background: i < step
-              ? `linear-gradient(90deg, ${FC.green}, ${NHBP.pink}80)`
+              ? `linear-gradient(90deg, ${FC.green}, ${WF.pink}80)`
               : i === step
-                ? NHBP.turquoise
+                ? WF.turquoise
                 : "rgba(255,255,255,0.06)",
-            boxShadow: i === step ? `0 0 8px ${NHBP.turquoiseGlow}` : "none",
+            boxShadow: i === step ? `0 0 8px ${WF.turquoiseGlow}` : "none",
             transition: `all ${CLICK.duration}`,
             cursor: "default",
           }} />
@@ -307,7 +317,7 @@ function MiniTrack({ step, showLabels = false }) {
             <div key={i} style={{
               flex: 1, textAlign: "center", fontSize: 7, fontFamily: FONT, fontWeight: 600,
               letterSpacing: "0.04em",
-              color: i < step ? FC.greenLight : i === step ? NHBP.turquoise : FC.textDim,
+              color: i < step ? FC.greenLight : i === step ? WF.turquoise : FC.textDim,
             }}>{s}</div>
           ))}
         </div>
@@ -316,160 +326,69 @@ function MiniTrack({ step, showLabels = false }) {
   );
 }
 
-/* ═══ BOTTOM NAV ═══ */
-function BottomNav({ onBack, onHome, backLabel = "← Back" }) {
+/* ═══ PAGE NAV — Back | Home | Next (bottom center, below hero) ═══ */
+function PageNav({ onBack, onHome, onNext, backLabel = "Back", nextLabel = "Next" }) {
+  const navBtn = {
+    background: FC.glass, border: `1px solid ${FC.border}`, borderRadius: 10,
+    padding: "10px 22px", cursor: "pointer", fontSize: 12, fontWeight: 500, fontFamily: FONT,
+    color: FC.textSecondary, backdropFilter: "blur(var(--glass-blur,18px))", WebkitBackdropFilter: "blur(var(--glass-blur,18px))",
+    transition: `all ${CLICK.duration}`, minWidth: 80, textAlign: "center",
+  };
+  const hoverIn = (e) => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; e.currentTarget.style.color = FC.textPrimary; };
+  const hoverOut = (e) => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.color = FC.textSecondary; };
+
   return (
     <div style={{
-      position: "fixed", bottom: 0, left: 0, right: 0, padding: "12px 24px",
-      display: "flex", justifyContent: "space-between", alignItems: "center",
-      background: "linear-gradient(to top, rgba(10,14,20,0.95), transparent)",
-      zIndex: 100,
+      display: "flex", justifyContent: "center", alignItems: "center", gap: 12,
+      padding: "24px 24px 32px",
     }}>
       {onBack ? (
-        <button onClick={onBack} style={{ background: "none", border: "none", color: FC.textDim, fontSize: 12, fontFamily: FONT, cursor: "pointer", padding: "8px 12px" }}>{backLabel}</button>
-      ) : <div />}
-      <button onClick={onHome} style={{
-        background: "none", border: "none", fontSize: 24, cursor: "pointer", padding: "4px 8px",
-        filter: "drop-shadow(0 0 8px rgba(20,169,162,0.3))", transition: `filter ${CLICK.duration}`,
-      }}
-        onMouseEnter={e => e.currentTarget.style.filter = "drop-shadow(0 0 16px rgba(200,80,130,0.4))"}
-        onMouseLeave={e => e.currentTarget.style.filter = "drop-shadow(0 0 8px rgba(20,169,162,0.3))"}
-        title="Back to Services"
-      >🐢</button>
-      <div style={{ width: 48 }} />
+        <button onClick={onBack} style={navBtn} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>
+          {backLabel}
+        </button>
+      ) : <div style={{ minWidth: 80 }} />}
+
+      {onHome ? (
+        <button onClick={onHome} style={navBtn} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>
+          Home
+        </button>
+      ) : <div style={{ minWidth: 80 }} />}
+
+      {onNext ? (
+        <button onClick={onNext} style={navBtn} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>
+          {nextLabel}
+        </button>
+      ) : <div style={{ minWidth: 80 }} />}
     </div>
   );
 }
 
-/* ═══ PORTAL BACKGROUND — Mshiké ═══ */
+/* ═══ PORTAL BACKGROUND — Image ═══ */
 function PortalBackground({ nightMode }) {
-  const o = nightMode ? 0.55 : 0.8; // master opacity
-  const cx = 500, cy = 500; // SVG center
-  // Medicine wheel ring radii
-  const rings = [120, 200, 300, 420];
-  // 13 sacred directions (turtle shell sections)
-  const directions = Array.from({ length: 13 }, (_, i) => (360 / 13) * i);
-  // 8 compass lines (cardinal + intercardinal)
-  const compassAngles = [0, 45, 90, 135, 180, 225, 270, 315];
-  // Accent dot positions on rings
-  const dots = [
-    // Outer ring cardinal — turquoise
-    { angle: 0, ring: 3, color: NHBP.turquoise, r: 6 },
-    { angle: 90, ring: 3, color: NHBP.turquoise, r: 6 },
-    { angle: 180, ring: 3, color: NHBP.turquoise, r: 6 },
-    { angle: 270, ring: 3, color: NHBP.turquoise, r: 6 },
-    // Mid ring intercardinal — dark filled
-    { angle: 45, ring: 2, color: "#0d1520", r: 8, stroke: `${NHBP.turquoise}40` },
-    { angle: 135, ring: 2, color: "#0d1520", r: 8, stroke: `${NHBP.turquoise}40` },
-    { angle: 225, ring: 2, color: "#0d1520", r: 8, stroke: `${NHBP.turquoise}40` },
-    { angle: 315, ring: 2, color: "#0d1520", r: 8, stroke: `${NHBP.turquoise}40` },
-    // Inner ring — pink accents
-    { angle: 135, ring: 1, color: NHBP.pink, r: 5 },
-    { angle: 315, ring: 1, color: NHBP.pink, r: 5 },
-    // Outer far — pink
-    { angle: 225, ring: 3, color: NHBP.pink, r: 5, offset: 60 },
-    { angle: 45, ring: 3, color: NHBP.pink, r: 5, offset: 60 },
-  ];
-  const ptOnCircle = (angle, radius, off = 0) => {
-    const rad = (angle - 90) * (Math.PI / 180);
-    return { x: cx + (radius + off) * Math.cos(rad), y: cy + (radius + off) * Math.sin(rad) };
-  };
-  // Chevron arrow at cardinal direction
-  const chevron = (angle) => {
-    const dist = rings[3] + 50;
-    const tip = ptOnCircle(angle, dist + 30);
-    const arm1 = ptOnCircle(angle - 12, dist);
-    const arm2 = ptOnCircle(angle + 12, dist);
-    return `M${arm1.x},${arm1.y} L${tip.x},${tip.y} L${arm2.x},${arm2.y}`;
-  };
-
   return (
     <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0 }}>
-      {/* Base gradient */}
-      <div style={{ position: "absolute", inset: 0, background: nightMode
-        ? `linear-gradient(135deg, #050810 0%, #080c14 40%, #060a10 100%)`
-        : `linear-gradient(135deg, ${FC.dark} 0%, ${FC.darkCard} 40%, ${FC.dark} 100%)`
+      {/* Background image */}
+      <div style={{
+        position: "absolute", inset: 0,
+        backgroundImage: "url('/images/wolf-flow-bg.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        filter: nightMode ? "brightness(0.45) saturate(0.85)" : "brightness(1.1) saturate(1.15)",
+        transition: "filter 0.6s ease",
       }} />
-      {/* Turquoise ambient glow — bottom left */}
-      <div style={{ position: "absolute", bottom: "5%", left: "8%", width: "50%", height: "50%", opacity: nightMode ? 0.06 : 0.12, background: `radial-gradient(ellipse, ${NHBP.turquoise}, transparent 70%)`, filter: "blur(90px)" }} />
-      {/* Maroon ambient — top right */}
-      <div style={{ position: "absolute", top: "8%", right: "5%", width: "40%", height: "40%", opacity: nightMode ? 0.03 : 0.06, background: `radial-gradient(ellipse, ${FC.maroon}, transparent 70%)`, filter: "blur(90px)" }} />
-
-      {/* ═══ COMPASS ROSE / MEDICINE WHEEL — SVG ═══ */}
-      <svg viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid meet" style={{
-        position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
-        width: "min(100vw, 100vh)", height: "min(100vw, 100vh)",
-        opacity: o, overflow: "visible",
-      }}>
-        <defs>
-          <radialGradient id="centerGlow">
-            <stop offset="0%" stopColor={NHBP.turquoise} stopOpacity="0.08" />
-            <stop offset="100%" stopColor={NHBP.turquoise} stopOpacity="0" />
-          </radialGradient>
-        </defs>
-
-        {/* Center glow */}
-        <circle cx={cx} cy={cy} r={180} fill="url(#centerGlow)" />
-
-        {/* Concentric medicine wheel rings */}
-        {rings.map((r, i) => (
-          <circle key={`ring-${i}`} cx={cx} cy={cy} r={r} fill="none"
-            stroke={NHBP.turquoise} strokeOpacity={i === 0 ? 0.12 : i === 1 ? 0.09 : i === 2 ? 0.07 : 0.05}
-            strokeWidth={i === 0 ? 1.5 : 1}
-          />
-        ))}
-
-        {/* 13 sacred radiating lines — turtle shell */}
-        {directions.map((deg, i) => {
-          const inner = ptOnCircle(deg, 30);
-          const outer = ptOnCircle(deg, rings[3] + 80);
-          return <line key={`dir-${i}`} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y}
-            stroke={NHBP.turquoise} strokeOpacity={0.06} strokeWidth={0.8} />;
-        })}
-
-        {/* 8 compass lines — brighter */}
-        {compassAngles.map((deg, i) => {
-          const inner = ptOnCircle(deg, 20);
-          const outer = ptOnCircle(deg, rings[3] + 120);
-          return <line key={`comp-${i}`} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y}
-            stroke={NHBP.turquoise} strokeOpacity={i % 2 === 0 ? 0.12 : 0.08} strokeWidth={i % 2 === 0 ? 1.2 : 0.8} />;
-        })}
-
-        {/* Horizontal full-width line */}
-        <line x1={-200} y1={cy} x2={1200} y2={cy} stroke={NHBP.turquoise} strokeOpacity={0.06} strokeWidth={0.8} />
-        {/* Vertical full-height line */}
-        <line x1={cx} y1={-200} x2={cx} y2={1200} stroke={NHBP.turquoise} strokeOpacity={0.06} strokeWidth={0.8} />
-
-        {/* Cardinal direction chevrons (N, E, S, W) */}
-        {[0, 90, 180, 270].map((angle, i) => (
-          <path key={`chev-${i}`} d={chevron(angle)} fill="none"
-            stroke={NHBP.turquoise} strokeOpacity={0.18} strokeWidth={2}
-            strokeLinecap="round" strokeLinejoin="round"
-          />
-        ))}
-
-        {/* Accent dots on rings */}
-        {dots.map((d, i) => {
-          const p = ptOnCircle(d.angle, rings[d.ring] + (d.offset || 0));
-          return (
-            <g key={`dot-${i}`}>
-              {d.color === NHBP.pink && (
-                <circle cx={p.x} cy={p.y} r={d.r + 4} fill={d.color} fillOpacity={0.08} />
-              )}
-              <circle cx={p.x} cy={p.y} r={d.r} fill={d.color} fillOpacity={d.stroke ? 1 : 0.7}
-                stroke={d.stroke || "none"} strokeWidth={d.stroke ? 1 : 0}
-              />
-              {d.color === NHBP.turquoise && (
-                <circle cx={p.x} cy={p.y} r={d.r + 3} fill="none" stroke={d.color} strokeOpacity={0.2} strokeWidth={0.5} />
-              )}
-            </g>
-          );
-        })}
-
-        {/* Center dot */}
-        <circle cx={cx} cy={cy} r={4} fill={NHBP.turquoise} fillOpacity={0.5} />
-        <circle cx={cx} cy={cy} r={8} fill="none" stroke={NHBP.turquoise} strokeOpacity={0.15} strokeWidth={1} />
-      </svg>
+      {/* Dark overlay for content legibility */}
+      <div style={{
+        position: "absolute", inset: 0,
+        background: nightMode
+          ? "linear-gradient(180deg, rgba(26,22,40,0.7) 0%, rgba(34,28,53,0.75) 100%)"
+          : "linear-gradient(180deg, rgba(26,22,40,0.35) 0%, rgba(34,28,53,0.45) 100%)",
+        transition: "background 0.6s ease",
+      }} />
+      {/* Accent glow -- bottom left */}
+      <div style={{ position: "absolute", bottom: "5%", left: "8%", width: "50%", height: "50%", opacity: nightMode ? 0.12 : 0.22, background: `radial-gradient(ellipse, ${WF.accent}, transparent 70%)`, filter: "blur(90px)" }} />
+      {/* Warm glow -- top right */}
+      <div style={{ position: "absolute", top: "8%", right: "5%", width: "40%", height: "40%", opacity: nightMode ? 0.06 : 0.14, background: `radial-gradient(ellipse, ${WF.warm}, transparent 70%)`, filter: "blur(90px)" }} />
     </div>
   );
 }
@@ -480,21 +399,23 @@ function PortalBackground({ nightMode }) {
    ═══════════════════════════════════════════════════════════ */
 function WelcomePage({ onEnter }) {
   return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 1 }}>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div style={{ textAlign: "center", maxWidth: 520, padding: "0 24px" }}>
-        {/* Turtle icon */}
+        {/* Wolf Flow logo */}
         <div style={{
-          width: 80, height: 80, borderRadius: 20, margin: "0 auto 24px",
-          background: `linear-gradient(135deg, ${NHBP.turquoise}, ${NHBP.turquoiseDark})`,
-          display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36,
-          boxShadow: `0 8px 40px ${NHBP.turquoiseGlow}`,
-        }}>🐢</div>
+          width: 150, height: 150, margin: "0 auto 24px",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          filter: `drop-shadow(0 4px 20px ${WF.accentGlow})`,
+        }}>
+          <img src={WOLF_LOGO} alt="Wolf Flow" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+        </div>
 
         <h1 style={{ fontFamily: FONT, fontWeight: 200, fontSize: 36, color: FC.textPrimary, marginBottom: 4, letterSpacing: "-0.01em" }}>
-          <span style={{ color: NHBP.turquoise }}>Communications</span> Portal
+          <span style={{ color: WF.accent }}>Communications</span> Portal
         </h1>
         <div style={{ fontSize: 9, color: FC.textDim, letterSpacing: "0.3em", fontWeight: 600, fontFamily: FONT, marginBottom: 8, textTransform: "uppercase" }}>
-          Nottawaseppi Huron Band of the Potawatomi
+          Wolf Flow Solutions
         </div>
         <p style={{ fontFamily: FONT, fontSize: 14, fontWeight: 300, color: FC.textSecondary, lineHeight: 1.6, marginBottom: 36 }}>
           Request services from the Communications Department. Design, photography, writing, web updates, and more — all in one place.
@@ -502,13 +423,14 @@ function WelcomePage({ onEnter }) {
 
         <button onClick={onEnter} style={{
           ...glassPill, padding: "16px 52px", fontSize: 15,
-          border: `1px solid rgba(20,169,162,0.2)`, color: `rgba(20,169,162,0.8)`,
+          border: `1px solid rgba(149,131,233,0.3)`, color: `rgba(189,149,238,0.9)`,
         }}
           onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(20,169,162,0.2)"; e.currentTarget.style.boxShadow = glassPill.boxShadow; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(149,131,233,0.3)"; e.currentTarget.style.boxShadow = glassPill.boxShadow; }}
         >
           Get Started
         </button>
+      </div>
       </div>
     </div>
   );
@@ -520,12 +442,15 @@ function WelcomePage({ onEnter }) {
    ═══════════════════════════════════════════════════════════ */
 function ServiceGrid({ onSelect, onTracker }) {
   return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 1 }}>
-      <div style={{ maxWidth: 560, width: "100%", padding: "40px 24px 80px" }}>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ maxWidth: 560, width: "100%", padding: "20px 24px 20px" }}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <div style={{ fontSize: 28, marginBottom: 8 }}>🐢</div>
+          <div style={{ width: 68, height: 68, margin: "0 auto 8px", filter: `drop-shadow(0 2px 12px ${WF.accentGlow})` }}>
+            <img src={WOLF_LOGO} alt="Wolf Flow" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+          </div>
           <h2 style={{ fontFamily: FONT, fontWeight: 200, fontSize: 26, color: FC.textPrimary, marginBottom: 4 }}>
-            What can we <span style={{ color: NHBP.turquoise }}>help you</span> create?
+            What can we <span style={{ color: WF.accent }}>help you</span> create?
           </h2>
           <p style={{ fontFamily: FONT, fontSize: 12, fontWeight: 400, color: FC.textDim }}>Select a service to get started</p>
         </div>
@@ -572,6 +497,8 @@ function ServiceGrid({ onSelect, onTracker }) {
           </div>
         </GlassCard>
       </div>
+      </div>
+      <PageNav onNext={onTracker} nextLabel="Stats" />
     </div>
   );
 }
@@ -593,7 +520,7 @@ function ServiceForm({ serviceId, onSubmit, onBack }) {
     setSubmitting(true);
     // Simulate submission delay
     setTimeout(() => {
-      const id = `NHBP-2026-${String(Math.floor(Math.random() * 9000) + 1000)}`;
+      const id = `WF-2026-${String(Math.floor(Math.random() * 9000) + 1000)}`;
       onSubmit({
         id, service: svc.name, serviceIcon: svc.icon, est: svc.est,
         priority, mediaType,
@@ -606,8 +533,9 @@ function ServiceForm({ serviceId, onSubmit, onBack }) {
   };
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "flex-start", justifyContent: "center", position: "relative", zIndex: 1 }}>
-      <div style={{ maxWidth: 480, width: "100%", padding: "40px 24px 100px" }}>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center" }}>
+      <div style={{ maxWidth: 480, width: "100%", padding: "20px 24px 20px" }}>
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 28 }}>
           <span style={{ fontSize: 36 }}>{svc.icon}</span>
@@ -623,7 +551,7 @@ function ServiceForm({ serviceId, onSubmit, onBack }) {
               { value: "standard", label: "Standard", icon: "📋" },
               { value: "low", label: "Low", icon: "📅" },
             ]}
-            colors={[FC.gold, NHBP.turquoise, FC.textDim]}
+            colors={[FC.gold, WF.accent, FC.turquoiseLight]}
           />
           <TripleToggle label="Media Type" value={mediaType} onChange={setMediaType}
             options={[
@@ -663,23 +591,24 @@ function ServiceForm({ serviceId, onSubmit, onBack }) {
           <div style={{ height: 1, background: FC.border, margin: "8px 0 18px" }} />
           <SectionLabel>Your Information</SectionLabel>
           <FormField label="Your Name" value={formData.requesterName || ""} onChange={v => set("requesterName", v)} placeholder="Full name" required />
-          <FormField label="Your Email" type="email" value={formData.requesterEmail || ""} onChange={v => set("requesterEmail", v)} placeholder="name@nhbp-nsn.gov" required />
+          <FormField label="Your Email" type="email" value={formData.requesterEmail || ""} onChange={v => set("requesterEmail", v)} placeholder="name@wolfflow.com" required />
           <FormField label="Your Phone" type="tel" value={formData.requesterPhone || ""} onChange={v => set("requesterPhone", v)} placeholder="(269) 555-0000" />
 
           {/* Submit */}
           <button onClick={handleSubmit} disabled={submitting} style={{
             ...glassPill, width: "100%", marginTop: 8, padding: "16px",
-            border: `1px solid rgba(138,58,77,0.3)`, color: submitting ? FC.textDim : "rgba(138,58,77,0.9)",
+            border: `1px solid rgba(149,131,233,0.3)`, color: submitting ? FC.textDim : "rgba(189,149,238,0.9)",
             opacity: submitting ? 0.6 : 1,
           }}
             onMouseEnter={!submitting ? e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; } : undefined}
-            onMouseLeave={!submitting ? e => { e.currentTarget.style.borderColor = "rgba(138,58,77,0.3)"; e.currentTarget.style.boxShadow = glassPill.boxShadow; } : undefined}
+            onMouseLeave={!submitting ? e => { e.currentTarget.style.borderColor = "rgba(149,131,233,0.3)"; e.currentTarget.style.boxShadow = glassPill.boxShadow; } : undefined}
           >
             {submitting ? "Submitting..." : "Submit Request"}
           </button>
         </GlassCard>
       </div>
-      <BottomNav onBack={onBack} onHome={onBack} />
+      </div>
+      <PageNav onBack={onBack} backLabel="Back" onHome={onBack} />
     </div>
   );
 }
@@ -701,8 +630,9 @@ function ConfirmationPage({ submission, onHome, onTracker }) {
   const isUrgent = submission.priority === "urgent";
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 1 }}>
-      <div style={{ maxWidth: 480, width: "100%", padding: "40px 24px 80px" }}>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 24 }}>
+      <div style={{ maxWidth: 480, width: "100%", padding: "20px 24px 20px" }}>
         {/* Success indicator */}
         <div style={{ textAlign: "center", marginBottom: 28 }}>
           <div style={{
@@ -726,19 +656,23 @@ function ConfirmationPage({ submission, onHome, onTracker }) {
           <div style={{
             display: "flex", alignItems: "center", justifyContent: "space-between",
             padding: "14px 16px", borderRadius: 12, marginBottom: 16,
-            background: `linear-gradient(135deg, ${NHBP.turquoise}12, ${NHBP.turquoise}04)`,
-            border: `1px solid ${NHBP.turquoise}30`,
+            background: `linear-gradient(135deg, ${WF.turquoise}12, ${WF.turquoise}04)`,
+            border: `1px solid ${WF.turquoise}30`,
           }}>
             <div>
               <div style={{ fontSize: 9, fontWeight: 600, fontFamily: FONT, color: FC.textDim, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 4 }}>Request ID</div>
-              <div style={{ fontSize: 18, fontWeight: 700, fontFamily: MONO, color: NHBP.turquoise, letterSpacing: "0.04em" }}>{submission.id}</div>
+              <div style={{ fontSize: 18, fontWeight: 700, fontFamily: MONO, color: WF.turquoise, letterSpacing: "0.04em" }}>{submission.id}</div>
             </div>
             <button onClick={copyId} style={{
               ...GLASS.default, padding: "8px 14px", cursor: "pointer", borderRadius: 10,
               color: copied ? FC.greenLight : FC.textSecondary, fontSize: 11, fontFamily: FONT, fontWeight: 500,
               border: `1px solid ${copied ? `${FC.greenLight}40` : FC.border}`,
-            }}>
-              {copied ? "✓ Copied" : "📋 Copy"}
+              transition: `all ${CLICK.duration}`,
+            }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = copied ? `${FC.greenLight}40` : FC.border; e.currentTarget.style.boxShadow = GLASS.default.boxShadow; }}
+            >
+              {copied ? "Copied" : "Copy"}
             </button>
           </div>
 
@@ -763,12 +697,12 @@ function ConfirmationPage({ submission, onHome, onTracker }) {
           <SectionLabel>Current Status</SectionLabel>
           <div style={{
             padding: "12px 14px", borderRadius: 10, marginBottom: 12,
-            background: `${NHBP.turquoise}08`, border: `1px solid ${NHBP.turquoise}20`,
+            background: `${WF.turquoise}08`, border: `1px solid ${WF.turquoise}20`,
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
               <span style={{ fontSize: 16 }}>📥</span>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 600, fontFamily: FONT, color: NHBP.turquoise }}>Request Received</div>
+                <div style={{ fontSize: 13, fontWeight: 600, fontFamily: FONT, color: WF.turquoise }}>Request Received</div>
                 <div style={{ fontSize: 10, fontFamily: FONT, color: FC.textDim }}>Step 1 of 10 — Your request is in the queue</div>
               </div>
             </div>
@@ -807,15 +741,17 @@ function ConfirmationPage({ submission, onHome, onTracker }) {
           </button>
           <button onClick={onHome} style={{
             ...glassPill, flex: 1, padding: "14px", fontSize: 12, textAlign: "center",
-            border: `1px solid rgba(20,169,162,0.2)`, color: `rgba(20,169,162,0.8)`,
+            border: `1px solid rgba(149,131,233,0.3)`, color: `rgba(189,149,238,0.9)`,
           }}
             onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(20,169,162,0.2)"; e.currentTarget.style.boxShadow = glassPill.boxShadow; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(149,131,233,0.3)"; e.currentTarget.style.boxShadow = glassPill.boxShadow; }}
           >
-            🐢 Submit Another
+            Submit Another
           </button>
         </div>
       </div>
+      </div>
+      <PageNav onBack={onHome} backLabel="Back" onHome={onHome} onNext={onTracker} nextLabel="Track" />
     </div>
   );
 }
@@ -864,8 +800,9 @@ function CheckYourStats({ onBack, prefillId }) {
   const pct = result ? Math.round((result.step / (WORKFLOW_STEPS.length - 1)) * 100) : 0;
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "flex-start", justifyContent: "center", position: "relative", zIndex: 1 }}>
-      <div style={{ maxWidth: 520, width: "100%", padding: "40px 24px 100px" }}>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center" }}>
+      <div style={{ maxWidth: 520, width: "100%", padding: "20px 24px 20px" }}>
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 28 }}>
           <div style={{
@@ -891,7 +828,7 @@ function CheckYourStats({ onBack, prefillId }) {
               value={inputId}
               onChange={e => setInputId(e.target.value.toUpperCase())}
               onKeyDown={e => e.key === "Enter" && handleSearch()}
-              placeholder="NHBP-2026-0000"
+              placeholder="WF-2026-0000"
               style={{ ...inputBase, flex: 1, fontFamily: MONO, fontSize: 15, letterSpacing: "0.06em", textAlign: "center" }}
               onFocus={e => e.target.style.borderColor = `${FC.gold}60`}
               onBlur={e => e.target.style.borderColor = FC.border}
@@ -909,7 +846,7 @@ function CheckYourStats({ onBack, prefillId }) {
             </button>
           </div>
           <div style={{ fontSize: 10, fontFamily: FONT, color: FC.textDim, textAlign: "center", marginTop: 8 }}>
-            Format: NHBP-0000-0000 · Found on your confirmation email
+            Format: WF-0000-0000 · Found on your confirmation email
           </div>
           {error && (
             <div style={{ marginTop: 10, padding: "10px 12px", borderRadius: 8, background: `${FC.red}10`, border: `1px solid ${FC.red}25`, fontSize: 12, fontFamily: FONT, color: FC.redLight, textAlign: "center" }}>
@@ -930,8 +867,8 @@ function CheckYourStats({ onBack, prefillId }) {
                     padding: "4px 10px", fontSize: 10, fontFamily: MONO, color: FC.textSecondary,
                     cursor: "pointer", transition: `all ${CLICK.duration}`,
                   }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = `${FC.gold}40`}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = FC.border}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = `${FC.gold}40`; e.currentTarget.style.boxShadow = `0 0 12px ${FC.gold}15`; e.currentTarget.style.color = FC.textPrimary; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.color = FC.textSecondary; }}
                 >{id}</button>
               ))}
             </div>
@@ -944,14 +881,14 @@ function CheckYourStats({ onBack, prefillId }) {
             {/* Status Card Header */}
             <GlassCard style={{
               padding: 0, marginBottom: 12,
-              border: `1px solid ${isComplete ? `${NHBP.pink}40` : isUrgent ? `${FC.red}40` : isRush ? `${FC.gold}35` : FC.border}`,
+              border: `1px solid ${isComplete ? `${WF.pink}40` : isUrgent ? `${FC.red}40` : isRush ? `${FC.gold}35` : FC.border}`,
             }}>
               {/* Top accent bar */}
               <div style={{
                 height: 4, borderRadius: "16px 16px 0 0",
                 background: isComplete
-                  ? `linear-gradient(90deg, ${FC.greenLight}, ${NHBP.pink})`
-                  : `linear-gradient(90deg, ${NHBP.turquoise}, ${NHBP.pink}80)`,
+                  ? `linear-gradient(90deg, ${FC.greenLight}, ${WF.pink})`
+                  : `linear-gradient(90deg, ${WF.turquoise}, ${WF.pink}80)`,
               }} />
 
               <div style={{ padding: "18px 18px 14px" }}>
@@ -967,9 +904,9 @@ function CheckYourStats({ onBack, prefillId }) {
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
                     <span style={{
                       fontSize: 9, fontWeight: 600, fontFamily: FONT, padding: "3px 10px", borderRadius: 10,
-                      background: isRush ? `${FC.gold}15` : isUrgent ? `${FC.red}15` : `${NHBP.turquoise}15`,
-                      color: isRush ? FC.gold : isUrgent ? FC.redLight : NHBP.turquoise,
-                      border: `1px solid ${isRush ? `${FC.gold}25` : isUrgent ? `${FC.red}25` : `${NHBP.turquoise}25`}`,
+                      background: isRush ? `${FC.gold}15` : isUrgent ? `${FC.red}15` : `${WF.turquoise}15`,
+                      color: isRush ? FC.gold : isUrgent ? FC.redLight : WF.turquoise,
+                      border: `1px solid ${isRush ? `${FC.gold}25` : isUrgent ? `${FC.red}25` : `${WF.turquoise}25`}`,
                     }}>
                       {isUrgent ? "🔥 URGENT" : isRush ? "⚡ RUSH" : "📋 STANDARD"}
                     </span>
@@ -981,14 +918,14 @@ function CheckYourStats({ onBack, prefillId }) {
                 <div style={{
                   display: "flex", alignItems: "center", gap: 10, padding: "12px 14px",
                   borderRadius: 12, marginBottom: 14,
-                  background: isComplete ? `${FC.greenLight}10` : `${NHBP.turquoise}08`,
-                  border: `1px solid ${isComplete ? `${FC.greenLight}25` : `${NHBP.turquoise}20`}`,
+                  background: isComplete ? `${FC.greenLight}10` : `${WF.turquoise}08`,
+                  border: `1px solid ${isComplete ? `${FC.greenLight}25` : `${WF.turquoise}20`}`,
                 }}>
                   <div style={{ position: "relative", width: 48, height: 48, flexShrink: 0 }}>
                     <svg width={48} height={48} viewBox="0 0 48 48">
                       <circle cx={24} cy={24} r={20} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={3} />
                       <circle cx={24} cy={24} r={20} fill="none"
-                        stroke={isComplete ? FC.greenLight : NHBP.turquoise}
+                        stroke={isComplete ? FC.greenLight : WF.turquoise}
                         strokeWidth={3} strokeLinecap="round"
                         strokeDasharray={`${2 * Math.PI * 20}`}
                         strokeDashoffset={`${2 * Math.PI * 20 * (1 - pct / 100)}`}
@@ -996,12 +933,12 @@ function CheckYourStats({ onBack, prefillId }) {
                         style={{ transition: "stroke-dashoffset 0.8s ease" }}
                       />
                     </svg>
-                    <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, fontFamily: FONT, color: isComplete ? FC.greenLight : NHBP.turquoise }}>{pct}%</div>
+                    <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, fontFamily: FONT, color: isComplete ? FC.greenLight : WF.turquoise }}>{pct}%</div>
                   </div>
                   <div>
                     <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
                       <span style={{ fontSize: 16 }}>{STEP_ICONS[result.step] || "📥"}</span>
-                      <span style={{ fontSize: 14, fontWeight: 600, fontFamily: FONT, color: isComplete ? FC.greenLight : NHBP.turquoise }}>
+                      <span style={{ fontSize: 14, fontWeight: 600, fontFamily: FONT, color: isComplete ? FC.greenLight : WF.turquoise }}>
                         {WORKFLOW_STEPS[result.step] || "REQUEST"}
                       </span>
                     </div>
@@ -1025,22 +962,28 @@ function CheckYourStats({ onBack, prefillId }) {
                 { id: "status", label: "Status", icon: "📋" },
                 { id: "activity", label: "Activity", icon: "📊", count: result.activity?.length },
                 { id: "details", label: "Details", icon: "🔖" },
-              ].map(t => (
+              ].map(t => {
+                const isActive = activeTab === t.id;
+                return (
                 <button key={t.id} onClick={() => setActiveTab(t.id)} style={{
-                  background: activeTab === t.id ? `${FC.gold}18` : FC.glass,
-                  border: `1px solid ${activeTab === t.id ? `${FC.gold}40` : "rgba(255,255,255,0.05)"}`,
-                  color: activeTab === t.id ? FC.gold : FC.textSecondary,
+                  background: isActive ? `${FC.gold}18` : FC.glass,
+                  border: `1px solid ${isActive ? `${FC.gold}40` : "rgba(255,255,255,0.05)"}`,
+                  color: isActive ? FC.gold : FC.textSecondary,
                   borderRadius: 10, padding: "8px 16px", cursor: "pointer",
                   fontSize: 12, fontWeight: 500, fontFamily: FONT,
                   display: "flex", alignItems: "center", gap: 6,
-                  backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
+                  backdropFilter: "blur(var(--glass-blur,18px))", WebkitBackdropFilter: "blur(var(--glass-blur,18px))",
                   transition: `all ${CLICK.duration}`,
-                  boxShadow: activeTab === t.id ? `0 0 20px ${FC.gold}15` : "none",
-                }}>
+                  boxShadow: isActive ? `0 0 20px ${FC.gold}15` : "none",
+                }}
+                  onMouseEnter={!isActive ? e => { e.currentTarget.style.borderColor = `${FC.gold}30`; e.currentTarget.style.boxShadow = `0 0 12px ${FC.gold}10`; e.currentTarget.style.color = FC.textPrimary; } : undefined}
+                  onMouseLeave={!isActive ? e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)"; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.color = FC.textSecondary; } : undefined}
+                >
                   <span style={{ fontSize: 11 }}>{t.icon}</span> {t.label}
-                  {t.count != null && <span style={{ background: activeTab === t.id ? `${FC.gold}25` : "rgba(255,255,255,0.06)", padding: "1px 6px", borderRadius: 5, fontSize: 9 }}>{t.count}</span>}
+                  {t.count != null && <span style={{ background: isActive ? `${FC.gold}25` : "rgba(255,255,255,0.06)", padding: "1px 6px", borderRadius: 5, fontSize: 9 }}>{t.count}</span>}
                 </button>
-              ))}
+                );
+              })}
             </div>
 
             {/* Tab content */}
@@ -1081,7 +1024,7 @@ function CheckYourStats({ onBack, prefillId }) {
                   {result.activity.map((a, i) => (
                     <div key={i} style={{ display: "flex", gap: 10, padding: "10px 0", borderBottom: i < result.activity.length - 1 ? `1px solid ${FC.border}` : "none" }}>
                       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 14 }}>
-                        <div style={{ width: 8, height: 8, borderRadius: "50%", background: NHBP.turquoise, boxShadow: `0 0 8px ${NHBP.turquoiseGlow}`, flexShrink: 0 }} />
+                        <div style={{ width: 8, height: 8, borderRadius: "50%", background: WF.turquoise, boxShadow: `0 0 8px ${WF.turquoiseGlow}`, flexShrink: 0 }} />
                         {i < result.activity.length - 1 && <div style={{ width: 1, flex: 1, background: FC.border, marginTop: 4 }} />}
                       </div>
                       <div style={{ flex: 1 }}>
@@ -1125,17 +1068,173 @@ function CheckYourStats({ onBack, prefillId }) {
           </div>
         )}
       </div>
-      <BottomNav onBack={onBack} onHome={onBack} />
+      </div>
+      <PageNav onBack={onBack} backLabel="Back" onHome={onBack} />
     </div>
   );
 }
 
 
 /* ═══════════════════════════════════════════════════════════
+   SETTINGS DROPDOWN — Gear icon > Day/Night + Glass sliders
+   ═══════════════════════════════════════════════════════════ */
+const GLASS_PRESETS = {
+  frost:  { label: "Soft Frost",  values: { displacement: 0, blur: 22, opacity: 0.22, brightness: 1.08, saturation: 1.05, bezel: 20 } },
+  dream:  { label: "Dream Glass", values: { displacement: 2, blur: 28, opacity: 0.28, brightness: 1.1,  saturation: 1.25, bezel: 26 } },
+  studio: { label: "Studio Glass",values: { displacement: 0, blur: 14, opacity: 0.14, brightness: 1,    saturation: 1,    bezel: 12 } },
+};
+const GLASS_SLIDERS = [
+  { key: "displacement", label: "Displacement", cssVar: "--glass-displacement", unit: "px", min: 0, max: 10, step: 0.5, def: 0 },
+  { key: "blur",         label: "Blur",         cssVar: "--glass-blur",         unit: "px", min: 0, max: 50, step: 1,   def: 18 },
+  { key: "opacity",      label: "Opacity",      cssVar: "--glass-opacity",      unit: "",   min: 0, max: 0.5, step: 0.01, def: 0.18 },
+  { key: "brightness",   label: "Brightness",   cssVar: "--glass-brightness",   unit: "",   min: 0.8, max: 1.4, step: 0.01, def: 1.05 },
+  { key: "saturation",   label: "Saturation",   cssVar: "--glass-saturation",   unit: "",   min: 0.5, max: 2,   step: 0.05, def: 1.1 },
+  { key: "bezel",        label: "Bezel Depth",  cssVar: "--glass-bezel-depth",  unit: "px", min: 0, max: 40, step: 1,   def: 18 },
+];
+
+function SettingsDropdown({ nightMode, onToggleNight }) {
+  const [open, setOpen] = useState(false);
+  const [glassVals, setGlassVals] = useState(() => {
+    const init = {};
+    GLASS_SLIDERS.forEach(s => { init[s.key] = s.def; });
+    return init;
+  });
+  const [activePreset, setActivePreset] = useState(null);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const close = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, [open]);
+
+  const setGlassVar = (cssVar, v, unit) => document.documentElement.style.setProperty(cssVar, v + unit);
+
+  const updateSlider = (key, val) => {
+    const s = GLASS_SLIDERS.find(x => x.key === key);
+    const num = parseFloat(val);
+    setGlassVals(prev => ({ ...prev, [key]: num }));
+    setActivePreset(null);
+    setGlassVar(s.cssVar, num, s.unit);
+  };
+
+  const applyPreset = (pk) => {
+    const p = GLASS_PRESETS[pk];
+    const nv = {};
+    GLASS_SLIDERS.forEach(s => { nv[s.key] = p.values[s.key]; setGlassVar(s.cssVar, p.values[s.key], s.unit); });
+    setGlassVals(nv);
+    setActivePreset(pk);
+  };
+
+  const gearBtnStyle = {
+    position: "fixed", top: 18, right: 18, zIndex: 300,
+    background: open ? "rgba(149,131,233,0.15)" : FC.glass,
+    border: `1px solid ${open ? "rgba(149,131,233,0.4)" : FC.border}`, borderRadius: 12,
+    padding: "8px 12px", cursor: "pointer", fontSize: 18, lineHeight: 1,
+    backdropFilter: "blur(var(--glass-blur,18px))", WebkitBackdropFilter: "blur(var(--glass-blur,18px))",
+    transition: `all ${CLICK.duration}`, transform: "scale(1)",
+  };
+
+  return (
+    <div ref={ref}>
+      <button onClick={() => setOpen(o => !o)} style={gearBtnStyle}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; e.currentTarget.style.transform = "scale(1.05)"; }}
+        onMouseLeave={e => { if (!open) { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.boxShadow = "none"; } e.currentTarget.style.transform = "scale(1)"; }}
+        title="Settings"
+        aria-label="Open settings"
+      >
+        {"⚙️"}
+      </button>
+
+      <div style={{
+        position: "fixed", top: 58, right: 16, zIndex: 300, width: 290, borderRadius: 20,
+        padding: open ? 20 : 0, maxHeight: open ? "min(520px, calc(100vh - 80px))" : 0, overflowY: open ? "auto" : "hidden", overflowX: "hidden",
+        background: "rgba(34,28,53,0.92)", backdropFilter: "blur(calc(var(--glass-blur,18px) + 6px)) brightness(var(--glass-brightness,1.05)) saturate(var(--glass-saturation,1.1))",
+        WebkitBackdropFilter: "blur(calc(var(--glass-blur,18px) + 6px)) brightness(var(--glass-brightness,1.05)) saturate(var(--glass-saturation,1.1))",
+        border: open ? "1px solid rgba(149,131,233,0.2)" : "1px solid transparent",
+        boxShadow: open ? "0 8px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06)" : "none",
+        opacity: open ? 1 : 0, transform: open ? "translateY(0)" : "translateY(-8px)",
+        pointerEvents: open ? "auto" : "none",
+        transition: "opacity 0.25s ease, transform 0.25s ease, max-height 0.3s ease, padding 0.25s ease",
+        fontFamily: FONT,
+      }}>
+        {/* Day / Night */}
+        <div style={{ marginBottom: 18 }}>
+          <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(240,205,243,0.5)", marginBottom: 10 }}>
+            Appearance
+          </div>
+          <button onClick={onToggleNight} style={{
+            width: "100%", padding: "10px 14px", borderRadius: 10, cursor: "pointer",
+            background: FC.glass, border: `1px solid ${FC.border}`,
+            color: FC.textSecondary, fontSize: 12, fontWeight: 500, fontFamily: FONT,
+            display: "flex", alignItems: "center", gap: 10,
+            transition: `all ${CLICK.duration}`,
+          }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.color = FC.textPrimary; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.color = FC.textSecondary; }}
+          >
+            <span style={{ fontSize: 16 }}>{nightMode ? "☀️" : "🌙"}</span>
+            <span>{nightMode ? "Switch to Day Mode" : "Switch to Night Mode"}</span>
+          </button>
+        </div>
+
+        {/* Divider */}
+        <div style={{ height: 1, background: FC.border, marginBottom: 18 }} />
+
+        {/* Glass Engine */}
+        <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(240,205,243,0.5)", marginBottom: 10 }}>
+          Glass Engine
+        </div>
+
+        {/* Presets */}
+        <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
+          {Object.entries(GLASS_PRESETS).map(([key, preset]) => (
+            <button key={key} onClick={() => applyPreset(key)} style={{
+              flex: 1, padding: "7px 4px", fontSize: 9, fontWeight: 600, fontFamily: FONT,
+              letterSpacing: "0.04em",
+              border: `1px solid ${activePreset === key ? "rgba(149,131,233,0.5)" : "rgba(149,131,233,0.15)"}`,
+              borderRadius: 10,
+              background: activePreset === key ? "rgba(149,131,233,0.15)" : "rgba(255,255,255,0.04)",
+              color: activePreset === key ? "#BD95EE" : "rgba(240,205,243,0.5)",
+              cursor: "pointer", transition: "all 0.2s ease",
+            }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(149,131,233,0.4)"; e.currentTarget.style.color = "#BD95EE"; e.currentTarget.style.background = "rgba(149,131,233,0.1)"; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = activePreset === key ? "rgba(149,131,233,0.5)" : "rgba(149,131,233,0.15)"; e.currentTarget.style.color = activePreset === key ? "#BD95EE" : "rgba(240,205,243,0.5)"; e.currentTarget.style.background = activePreset === key ? "rgba(149,131,233,0.15)" : "rgba(255,255,255,0.04)"; }}
+            >
+              {preset.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Sliders */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {GLASS_SLIDERS.map(s => (
+            <div key={s.key}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                <span style={{ fontSize: 10, fontWeight: 500, color: "rgba(240,205,243,0.6)" }}>{s.label}</span>
+                <span style={{ fontSize: 10, fontFamily: FONT, color: "rgba(189,149,238,0.7)" }}>
+                  {s.unit === "px" ? `${glassVals[s.key]}px` : glassVals[s.key].toFixed(2)}
+                </span>
+              </div>
+              <input type="range" min={s.min} max={s.max} step={s.step} value={glassVals[s.key]}
+                onChange={e => updateSlider(s.key, e.target.value)}
+                style={{ width: "100%", cursor: "pointer" }}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+/* ═════════════════════���═════════════════════════════════════
    MAIN PORTAL COMPONENT
    ═══════════════════════════════════════════════════════════ */
-export default function NHBPPortal() {
-  const [page, setPage] = useState("welcome");       // welcome | services | form | confirm | tracker
+export default function WolfFlowPortal() {
+  const [page, setPage] = useState("welcome");
   const [selectedService, setSelectedService] = useState(null);
   const [submission, setSubmission] = useState(null);
   const [nightMode, setNightMode] = useState(false);
@@ -1151,26 +1250,13 @@ export default function NHBPPortal() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", fontFamily: FONT, color: FC.textPrimary, position: "relative", overflow: "hidden" }}>
-      {/* Google Fonts */}
-      <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Josefin+Sans:wght@100;200;300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <div style={{ minHeight: "100vh", fontFamily: FONT, color: FC.textPrimary, position: "relative", overflowX: "hidden" }}>
+      <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,500&display=swap" rel="stylesheet" />
 
       <PortalBackground nightMode={nightMode} />
 
-      {/* Day/Night toggle */}
-      <button onClick={() => setNightMode(!nightMode)} style={{
-        position: "fixed", top: 16, right: 16, zIndex: 200,
-        background: FC.glass, border: `1px solid ${FC.border}`, borderRadius: 10,
-        padding: "6px 12px", cursor: "pointer", fontSize: 14,
-        backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
-        transition: `all ${CLICK.duration}`,
-      }}
-        onMouseEnter={e => e.currentTarget.style.borderColor = CLICK.hover.borderColor}
-        onMouseLeave={e => e.currentTarget.style.borderColor = FC.border}
-        title={nightMode ? "Switch to Day" : "Switch to Night"}
-      >
-        {nightMode ? "☀️" : "🌙"}
-      </button>
+      {/* Settings gear — Day/Night + Glass Engine */}
+      <SettingsDropdown nightMode={nightMode} onToggleNight={() => setNightMode(n => !n)} />
 
       {/* Pages */}
       {page === "welcome" && <WelcomePage onEnter={goServices} />}

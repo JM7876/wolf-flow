@@ -6,13 +6,13 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "NHBP Communications Portal — Wolf Flow Solutions",
-  description: "Request services from the Communications Department — design, photography, writing, web updates, and more.",
+  title: "Wolf Flow Communications Portal",
+  description: "Request services from Wolf Flow Solutions — design, photography, writing, web updates, and more.",
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="dark">
       <body>{children}</body>
     </html>
   );

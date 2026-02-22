@@ -4,8 +4,8 @@
 ═══════════════════════════════════════════════════════════════════ */
 "use client";
 import dynamic from "next/dynamic";
-const NHBPPortal = dynamic(() => import("./WolfPortal-v1"), { ssr: false });
+const WolfFlowPortal = dynamic(() => import("./WolfPortal-v1"), { ssr: false });
 export default function Home() {
-  return <NHBPPortal />;
+  return <WolfFlowPortal />;
 }
 // Created and Authored by Johnathon Moulds © 2026 — Wolf Flow Solutions | All Rights Reserved
