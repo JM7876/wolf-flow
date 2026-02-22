@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import GlassControlPanel from "./GlassControlPanel";
 
 /* ═══════════════════════════════════════════════════════════
    WOLF FLOW COMMUNICATIONS PORTAL — v1 (Fresh Build)
@@ -39,6 +40,7 @@ const FC = {
 };
 const FONT = "'Montserrat Alternates', -apple-system, BlinkMacSystemFont, sans-serif";
 const MONO = "'Montserrat Alternates', monospace";
+const WOLF_LOGO = "/images/wolf-logo.gif";
 const CLICK = {
   hover: { borderColor: "rgba(149,131,233,0.5)", boxShadow: "0 8px 32px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 25px rgba(149,131,233,0.2)" },
   duration: "0.3s ease",
@@ -319,7 +321,7 @@ function MiniTrack({ step, showLabels = false }) {
 }
 
 /* ═══ BOTTOM NAV ═══ */
-function BottomNav({ onBack, onHome, backLabel = "← Back" }) {
+function BottomNav({ onBack, onHome, onGlassToggle, backLabel = "← Back" }) {
   return (
     <div style={{
       position: "fixed", bottom: 0, left: 0, right: 0, padding: "12px 24px",
@@ -330,14 +332,21 @@ function BottomNav({ onBack, onHome, backLabel = "← Back" }) {
       {onBack ? (
         <button onClick={onBack} style={{ background: "none", border: "none", color: FC.textDim, fontSize: 12, fontFamily: FONT, cursor: "pointer", padding: "8px 12px" }}>{backLabel}</button>
       ) : <div />}
-      <button onClick={onHome} style={{
-        background: "none", border: "none", fontSize: 24, cursor: "pointer", padding: "4px 8px",
-        filter: "drop-shadow(0 0 8px rgba(149,131,233,0.3))", transition: `filter ${CLICK.duration}`,
-      }}
+      {/* Wolf logo — single click = home, double click = glass toggle */}
+      <button
+        onClick={onHome}
+        onDoubleClick={(e) => { e.stopPropagation(); onGlassToggle && onGlassToggle(); }}
+        style={{
+          background: "none", border: "none", cursor: "pointer", padding: "2px 6px",
+          filter: "drop-shadow(0 0 8px rgba(149,131,233,0.3))", transition: `filter ${CLICK.duration}`,
+          width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center",
+        }}
         onMouseEnter={e => e.currentTarget.style.filter = "drop-shadow(0 0 16px rgba(189,149,238,0.4))"}
         onMouseLeave={e => e.currentTarget.style.filter = "drop-shadow(0 0 8px rgba(149,131,233,0.3))"}
-        title="Back to Services"
-      >W</button>
+        title="Back to Services (double-click for glass controls)"
+      >
+        <img src={WOLF_LOGO} alt="Wolf Flow" style={{ width: 32, height: 32, objectFit: "contain" }} />
+      </button>
       <div style={{ width: 48 }} />
     </div>
   );
@@ -381,13 +390,14 @@ function WelcomePage({ onEnter }) {
   return (
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 1 }}>
       <div style={{ textAlign: "center", maxWidth: 520, padding: "0 24px" }}>
-        {/* Wolf Flow icon */}
+        {/* Wolf Flow logo */}
         <div style={{
-          width: 80, height: 80, borderRadius: 20, margin: "0 auto 24px",
-          background: `linear-gradient(135deg, ${WF.accent}, ${WF.accentDark})`,
-          display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36,
-          boxShadow: `0 8px 40px ${WF.accentGlow}`,
-        }}>W</div>
+          width: 100, height: 100, margin: "0 auto 24px",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          filter: `drop-shadow(0 4px 20px ${WF.accentGlow})`,
+        }}>
+          <img src={WOLF_LOGO} alt="Wolf Flow" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+        </div>
 
         <h1 style={{ fontFamily: FONT, fontWeight: 200, fontSize: 36, color: FC.textPrimary, marginBottom: 4, letterSpacing: "-0.01em" }}>
           <span style={{ color: WF.accent }}>Communications</span> Portal
@@ -422,7 +432,9 @@ function ServiceGrid({ onSelect, onTracker }) {
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 1 }}>
       <div style={{ maxWidth: 560, width: "100%", padding: "40px 24px 80px" }}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <div style={{ fontSize: 28, marginBottom: 8 }}>W</div>
+          <div style={{ width: 48, height: 48, margin: "0 auto 8px", filter: `drop-shadow(0 2px 12px ${WF.accentGlow})` }}>
+            <img src={WOLF_LOGO} alt="Wolf Flow" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+          </div>
           <h2 style={{ fontFamily: FONT, fontWeight: 200, fontSize: 26, color: FC.textPrimary, marginBottom: 4 }}>
             What can we <span style={{ color: WF.accent }}>help you</span> create?
           </h2>
@@ -479,7 +491,7 @@ function ServiceGrid({ onSelect, onTracker }) {
 /* ═══════════════════════════════════════════════════════════
    PAGE: SERVICE FORM — Compact single-page per service
    ═══════════════════════════════════════════════════════════ */
-function ServiceForm({ serviceId, onSubmit, onBack }) {
+function ServiceForm({ serviceId, onSubmit, onBack, onGlassToggle }) {
   const svc = SERVICES.find(s => s.id === serviceId);
   const [formData, setFormData] = useState({});
   const [priority, setPriority] = useState("standard");
@@ -578,7 +590,7 @@ function ServiceForm({ serviceId, onSubmit, onBack }) {
           </button>
         </GlassCard>
       </div>
-      <BottomNav onBack={onBack} onHome={onBack} />
+      <BottomNav onBack={onBack} onHome={onBack} onGlassToggle={onGlassToggle} />
     </div>
   );
 }
@@ -711,7 +723,7 @@ function ConfirmationPage({ submission, onHome, onTracker }) {
             onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; }}
             onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(149,131,233,0.3)"; e.currentTarget.style.boxShadow = glassPill.boxShadow; }}
           >
-            W Submit Another
+            Submit Another
           </button>
         </div>
       </div>
@@ -723,7 +735,7 @@ function ConfirmationPage({ submission, onHome, onTracker }) {
 /* ═══════════════════════════════════════════════════════════
    PAGE: CHECK YOUR STATS — Request Tracker
    ═══════════════════════════════════════════════════════════ */
-function CheckYourStats({ onBack, prefillId }) {
+function CheckYourStats({ onBack, prefillId, onGlassToggle }) {
   const [inputId, setInputId] = useState(prefillId || "");
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
@@ -1024,7 +1036,7 @@ function CheckYourStats({ onBack, prefillId }) {
           </div>
         )}
       </div>
-      <BottomNav onBack={onBack} onHome={onBack} />
+      <BottomNav onBack={onBack} onHome={onBack} onGlassToggle={onGlassToggle} />
     </div>
   );
 }
@@ -1039,6 +1051,8 @@ export default function WolfFlowPortal() {
   const [submission, setSubmission] = useState(null);
   const [nightMode, setNightMode] = useState(false);
   const [trackerId, setTrackerId] = useState("");
+  const [glassOpen, setGlassOpen] = useState(false);
+  const toggleGlass = useCallback(() => setGlassOpen(prev => !prev), []);
 
   const goServices = () => { setPage("services"); setSelectedService(null); };
   const goForm = (id) => { setSelectedService(id); setPage("form"); };
@@ -1074,9 +1088,12 @@ export default function WolfFlowPortal() {
       {/* Pages */}
       {page === "welcome" && <WelcomePage onEnter={goServices} />}
       {page === "services" && <ServiceGrid onSelect={goForm} onTracker={() => goTracker()} />}
-      {page === "form" && <ServiceForm serviceId={selectedService} onSubmit={handleSubmit} onBack={goServices} />}
+      {page === "form" && <ServiceForm serviceId={selectedService} onSubmit={handleSubmit} onBack={goServices} onGlassToggle={toggleGlass} />}
       {page === "confirm" && <ConfirmationPage submission={submission} onHome={goServices} onTracker={() => goTracker(submission?.id)} />}
-      {page === "tracker" && <CheckYourStats onBack={goServices} prefillId={trackerId} />}
+      {page === "tracker" && <CheckYourStats onBack={goServices} prefillId={trackerId} onGlassToggle={toggleGlass} />}
+
+      {/* Glass Control Panel — toggled via double-click on wolf logo */}
+      <GlassControlPanel open={glassOpen} onClose={() => setGlassOpen(false)} />
     </div>
   );
 }
