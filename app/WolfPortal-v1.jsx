@@ -46,15 +46,18 @@ const CLICK = {
 };
 const GLASS = {
   default: {
-    background: FC.glass, backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)",
+    background: "rgba(255,255,255,var(--glass-opacity,0.06))",
+    backdropFilter: "blur(var(--glass-blur,18px)) brightness(var(--glass-brightness,1.05)) saturate(var(--glass-saturation,1.1))",
+    WebkitBackdropFilter: "blur(var(--glass-blur,18px)) brightness(var(--glass-brightness,1.05)) saturate(var(--glass-saturation,1.1))",
+    transform: "translateY(var(--glass-displacement,0px))",
     border: `1px solid ${FC.border}`, borderRadius: 16,
-    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.04)",
+    boxShadow: "0 0 var(--glass-bezel-depth,18px) rgba(149,131,233,0.08), inset 0 1px 0 rgba(255,255,255,0.04)",
   },
 };
 const glassPill = {
   padding: "14px 40px", borderRadius: 28,
-  backdropFilter: "blur(20px) saturate(1.4) brightness(1.1)",
-  WebkitBackdropFilter: "blur(20px) saturate(1.4) brightness(1.1)",
+  backdropFilter: "blur(var(--glass-blur,18px)) saturate(var(--glass-saturation,1.1)) brightness(var(--glass-brightness,1.05))",
+  WebkitBackdropFilter: "blur(var(--glass-blur,18px)) saturate(var(--glass-saturation,1.1)) brightness(var(--glass-brightness,1.05))",
   background: "linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02))",
   fontSize: 14, fontWeight: 500, letterSpacing: "0.06em",
   boxShadow: "0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05)",
@@ -273,7 +276,7 @@ function TripleToggle({ label, options, value, onChange, colors }) {
               fontSize: 12, fontWeight: active ? 600 : 400, fontFamily: FONT,
               transition: `all ${CLICK.duration}`,
               boxShadow: active ? `0 0 20px ${c}15` : "none",
-              backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
+              backdropFilter: "blur(var(--glass-blur,18px))", WebkitBackdropFilter: "blur(var(--glass-blur,18px))",
               display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
             }}
               onMouseEnter={!active ? e => { e.currentTarget.style.borderColor = `${c}35`; e.currentTarget.style.color = FC.textSecondary; e.currentTarget.style.boxShadow = `0 0 10px ${c}10`; } : undefined}
@@ -328,7 +331,7 @@ function PageNav({ onBack, onHome, onNext, backLabel = "Back", nextLabel = "Next
   const navBtn = {
     background: FC.glass, border: `1px solid ${FC.border}`, borderRadius: 10,
     padding: "10px 22px", cursor: "pointer", fontSize: 12, fontWeight: 500, fontFamily: FONT,
-    color: FC.textSecondary, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
+    color: FC.textSecondary, backdropFilter: "blur(var(--glass-blur,18px))", WebkitBackdropFilter: "blur(var(--glass-blur,18px))",
     transition: `all ${CLICK.duration}`, minWidth: 80, textAlign: "center",
   };
   const hoverIn = (e) => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; e.currentTarget.style.color = FC.textPrimary; };
@@ -437,7 +440,7 @@ function WelcomePage({ onEnter }) {
 /* ═══════════════════════════════════════════════════════════
    PAGE: SERVICE GRID — 8 services + Check Your Stats
    ═══════════════════════════════════════════════════════════ */
-function ServiceGrid({ onSelect, onTracker, onBack }) {
+function ServiceGrid({ onSelect, onTracker }) {
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -969,7 +972,7 @@ function CheckYourStats({ onBack, prefillId }) {
                   borderRadius: 10, padding: "8px 16px", cursor: "pointer",
                   fontSize: 12, fontWeight: 500, fontFamily: FONT,
                   display: "flex", alignItems: "center", gap: 6,
-                  backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
+                  backdropFilter: "blur(var(--glass-blur,18px))", WebkitBackdropFilter: "blur(var(--glass-blur,18px))",
                   transition: `all ${CLICK.duration}`,
                   boxShadow: isActive ? `0 0 20px ${FC.gold}15` : "none",
                 }}
@@ -1066,7 +1069,7 @@ function CheckYourStats({ onBack, prefillId }) {
         )}
       </div>
       </div>
-      <PageNav onBack={onBack} backLabel="Services" onHome={onBack} />
+      <PageNav onBack={onBack} backLabel="Back" onHome={onBack} />
     </div>
   );
 }
@@ -1129,7 +1132,7 @@ function SettingsDropdown({ nightMode, onToggleNight }) {
     background: open ? "rgba(149,131,233,0.15)" : FC.glass,
     border: `1px solid ${open ? "rgba(149,131,233,0.4)" : FC.border}`, borderRadius: 12,
     padding: "8px 12px", cursor: "pointer", fontSize: 18, lineHeight: 1,
-    backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
+    backdropFilter: "blur(var(--glass-blur,18px))", WebkitBackdropFilter: "blur(var(--glass-blur,18px))",
     transition: `all ${CLICK.duration}`, transform: "scale(1)",
   };
 
@@ -1147,8 +1150,8 @@ function SettingsDropdown({ nightMode, onToggleNight }) {
       <div style={{
         position: "fixed", top: 58, right: 16, zIndex: 300, width: 290, borderRadius: 20,
         padding: open ? 20 : 0, maxHeight: open ? "min(520px, calc(100vh - 80px))" : 0, overflowY: open ? "auto" : "hidden", overflowX: "hidden",
-        background: "rgba(34,28,53,0.92)", backdropFilter: "blur(24px) brightness(1.05) saturate(1.15)",
-        WebkitBackdropFilter: "blur(24px) brightness(1.05) saturate(1.15)",
+        background: "rgba(34,28,53,0.92)", backdropFilter: "blur(calc(var(--glass-blur,18px) + 6px)) brightness(var(--glass-brightness,1.05)) saturate(var(--glass-saturation,1.1))",
+        WebkitBackdropFilter: "blur(calc(var(--glass-blur,18px) + 6px)) brightness(var(--glass-brightness,1.05)) saturate(var(--glass-saturation,1.1))",
         border: open ? "1px solid rgba(149,131,233,0.2)" : "1px solid transparent",
         boxShadow: open ? "0 8px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06)" : "none",
         opacity: open ? 1 : 0, transform: open ? "translateY(0)" : "translateY(-8px)",
@@ -1257,7 +1260,7 @@ export default function WolfFlowPortal() {
 
       {/* Pages */}
       {page === "welcome" && <WelcomePage onEnter={goServices} />}
-      {page === "services" && <ServiceGrid onSelect={goForm} onTracker={() => goTracker()} onBack={() => setPage("welcome")} />}
+      {page === "services" && <ServiceGrid onSelect={goForm} onTracker={() => goTracker()} />}
       {page === "form" && <ServiceForm serviceId={selectedService} onSubmit={handleSubmit} onBack={goServices} />}
       {page === "confirm" && <ConfirmationPage submission={submission} onHome={goServices} onTracker={() => goTracker(submission?.id)} />}
       {page === "tracker" && <CheckYourStats onBack={goServices} prefillId={trackerId} />}
