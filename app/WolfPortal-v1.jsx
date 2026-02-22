@@ -274,7 +274,10 @@ function TripleToggle({ label, options, value, onChange, colors }) {
               boxShadow: active ? `0 0 20px ${c}15` : "none",
               backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
               display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
-            }}>
+            }}
+              onMouseEnter={!active ? e => { e.currentTarget.style.borderColor = `${c}35`; e.currentTarget.style.color = FC.textSecondary; e.currentTarget.style.boxShadow = `0 0 10px ${c}10`; } : undefined}
+              onMouseLeave={!active ? e => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.color = FC.textDim; e.currentTarget.style.boxShadow = "none"; } : undefined}
+            >
               <span style={{ fontSize: 16 }}>{opt.icon}</span>
               <span>{opt.label}</span>
             </button>
@@ -425,7 +428,6 @@ function WelcomePage({ onEnter }) {
         </button>
       </div>
       </div>
-      <PageNav onNext={onEnter} nextLabel="Start" />
     </div>
   );
 }
@@ -661,8 +663,12 @@ function ConfirmationPage({ submission, onHome, onTracker }) {
               ...GLASS.default, padding: "8px 14px", cursor: "pointer", borderRadius: 10,
               color: copied ? FC.greenLight : FC.textSecondary, fontSize: 11, fontFamily: FONT, fontWeight: 500,
               border: `1px solid ${copied ? `${FC.greenLight}40` : FC.border}`,
-            }}>
-              {copied ? "✓ Copied" : "📋 Copy"}
+              transition: `all ${CLICK.duration}`,
+            }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = copied ? `${FC.greenLight}40` : FC.border; e.currentTarget.style.boxShadow = GLASS.default.boxShadow; }}
+            >
+              {copied ? "Copied" : "Copy"}
             </button>
           </div>
 
@@ -857,8 +863,8 @@ function CheckYourStats({ onBack, prefillId }) {
                     padding: "4px 10px", fontSize: 10, fontFamily: MONO, color: FC.textSecondary,
                     cursor: "pointer", transition: `all ${CLICK.duration}`,
                   }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = `${FC.gold}40`}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = FC.border}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = `${FC.gold}40`; e.currentTarget.style.boxShadow = `0 0 12px ${FC.gold}15`; e.currentTarget.style.color = FC.textPrimary; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.color = FC.textSecondary; }}
                 >{id}</button>
               ))}
             </div>
@@ -952,22 +958,28 @@ function CheckYourStats({ onBack, prefillId }) {
                 { id: "status", label: "Status", icon: "📋" },
                 { id: "activity", label: "Activity", icon: "📊", count: result.activity?.length },
                 { id: "details", label: "Details", icon: "🔖" },
-              ].map(t => (
+              ].map(t => {
+                const isActive = activeTab === t.id;
+                return (
                 <button key={t.id} onClick={() => setActiveTab(t.id)} style={{
-                  background: activeTab === t.id ? `${FC.gold}18` : FC.glass,
-                  border: `1px solid ${activeTab === t.id ? `${FC.gold}40` : "rgba(255,255,255,0.05)"}`,
-                  color: activeTab === t.id ? FC.gold : FC.textSecondary,
+                  background: isActive ? `${FC.gold}18` : FC.glass,
+                  border: `1px solid ${isActive ? `${FC.gold}40` : "rgba(255,255,255,0.05)"}`,
+                  color: isActive ? FC.gold : FC.textSecondary,
                   borderRadius: 10, padding: "8px 16px", cursor: "pointer",
                   fontSize: 12, fontWeight: 500, fontFamily: FONT,
                   display: "flex", alignItems: "center", gap: 6,
                   backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
                   transition: `all ${CLICK.duration}`,
-                  boxShadow: activeTab === t.id ? `0 0 20px ${FC.gold}15` : "none",
-                }}>
+                  boxShadow: isActive ? `0 0 20px ${FC.gold}15` : "none",
+                }}
+                  onMouseEnter={!isActive ? e => { e.currentTarget.style.borderColor = `${FC.gold}30`; e.currentTarget.style.boxShadow = `0 0 12px ${FC.gold}10`; e.currentTarget.style.color = FC.textPrimary; } : undefined}
+                  onMouseLeave={!isActive ? e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)"; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.color = FC.textSecondary; } : undefined}
+                >
                   <span style={{ fontSize: 11 }}>{t.icon}</span> {t.label}
-                  {t.count != null && <span style={{ background: activeTab === t.id ? `${FC.gold}25` : "rgba(255,255,255,0.06)", padding: "1px 6px", borderRadius: 5, fontSize: 9 }}>{t.count}</span>}
+                  {t.count != null && <span style={{ background: isActive ? `${FC.gold}25` : "rgba(255,255,255,0.06)", padding: "1px 6px", borderRadius: 5, fontSize: 9 }}>{t.count}</span>}
                 </button>
-              ))}
+                );
+              })}
             </div>
 
             {/* Tab content */}
@@ -1117,14 +1129,14 @@ function SettingsDropdown({ nightMode, onToggleNight }) {
     border: `1px solid ${open ? "rgba(149,131,233,0.4)" : FC.border}`, borderRadius: 12,
     padding: "8px 12px", cursor: "pointer", fontSize: 18, lineHeight: 1,
     backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
-    transition: `all ${CLICK.duration}`,
+    transition: `all ${CLICK.duration}`, transform: "scale(1)",
   };
 
   return (
     <div ref={ref}>
       <button onClick={() => setOpen(o => !o)} style={gearBtnStyle}
-        onMouseEnter={e => e.currentTarget.style.borderColor = CLICK.hover.borderColor}
-        onMouseLeave={e => { if (!open) e.currentTarget.style.borderColor = FC.border; }}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; e.currentTarget.style.transform = "scale(1.05)"; }}
+        onMouseLeave={e => { if (!open) { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.boxShadow = "none"; } e.currentTarget.style.transform = "scale(1)"; }}
         title="Settings"
         aria-label="Open settings"
       >
@@ -1182,7 +1194,10 @@ function SettingsDropdown({ nightMode, onToggleNight }) {
               background: activePreset === key ? "rgba(149,131,233,0.15)" : "rgba(255,255,255,0.04)",
               color: activePreset === key ? "#BD95EE" : "rgba(240,205,243,0.5)",
               cursor: "pointer", transition: "all 0.2s ease",
-            }}>
+            }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(149,131,233,0.4)"; e.currentTarget.style.color = "#BD95EE"; e.currentTarget.style.background = "rgba(149,131,233,0.1)"; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = activePreset === key ? "rgba(149,131,233,0.5)" : "rgba(149,131,233,0.15)"; e.currentTarget.style.color = activePreset === key ? "#BD95EE" : "rgba(240,205,243,0.5)"; e.currentTarget.style.background = activePreset === key ? "rgba(149,131,233,0.15)" : "rgba(255,255,255,0.04)"; }}
+            >
               {preset.label}
             </button>
           ))}
