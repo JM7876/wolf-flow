@@ -24,9 +24,7 @@ export const SERVICES = [
     icon: "◎",
     description: "Business cards, name plates, personalized notepads",
     status: "live",
-    formType: "generic",
-    est: "5–7 business days",
-    fields: ["employeeName", "employeeTitle", "phone", "email", "dept", "qty"],
+    formType: "custom",
   },
   {
     id: "studio-hub",
