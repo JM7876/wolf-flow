@@ -84,7 +84,7 @@ export default function GlassControlPanel({ open, onClose }) {
       ref={panelRef}
       style={{
         position: "fixed",
-        bottom: 72,
+        top: 72,
         right: 16,
         zIndex: 9999,
         width: 280,

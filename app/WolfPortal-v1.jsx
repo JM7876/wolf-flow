@@ -320,34 +320,56 @@ function MiniTrack({ step, showLabels = false }) {
   );
 }
 
-/* ═══ BOTTOM NAV ═══ */
-function BottomNav({ onBack, onHome, onGlassToggle, backLabel = "← Back" }) {
+/* ═══ TOP NAV — Back | Wolf | Next ═══ */
+function TopNav({ onBack, onHome, onNext, onGlassToggle, backLabel = "Back", nextLabel = "Next" }) {
+  const navBtnStyle = {
+    background: FC.glass, border: `1px solid ${FC.border}`, borderRadius: 10,
+    padding: "8px 18px", cursor: "pointer", fontSize: 11, fontWeight: 500, fontFamily: FONT,
+    color: FC.textSecondary, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
+    transition: `all ${CLICK.duration}`, minWidth: 72, textAlign: "center",
+  };
+  const handleHoverIn = (e) => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; e.currentTarget.style.color = FC.textPrimary; };
+  const handleHoverOut = (e) => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.color = FC.textSecondary; };
+
   return (
     <div style={{
-      position: "fixed", bottom: 0, left: 0, right: 0, padding: "12px 24px",
-      display: "flex", justifyContent: "space-between", alignItems: "center",
-      background: "linear-gradient(to top, rgba(26,22,40,0.95), transparent)",
-      zIndex: 100,
+      display: "flex", justifyContent: "center", alignItems: "center", gap: 16,
+      padding: "16px 24px 8px", position: "relative", zIndex: 100,
     }}>
+      {/* Back button */}
       {onBack ? (
-        <button onClick={onBack} style={{ background: "none", border: "none", color: FC.textDim, fontSize: 12, fontFamily: FONT, cursor: "pointer", padding: "8px 12px" }}>{backLabel}</button>
-      ) : <div />}
-      {/* Wolf logo — single click = home, double click = glass toggle */}
+        <button onClick={onBack} style={navBtnStyle}
+          onMouseEnter={handleHoverIn} onMouseLeave={handleHoverOut}
+        >
+          {"<"} {backLabel}
+        </button>
+      ) : <div style={{ minWidth: 72 }} />}
+
+      {/* Wolf logo — tap = home, double-tap = glass toggle */}
       <button
         onClick={onHome}
         onDoubleClick={(e) => { e.stopPropagation(); onGlassToggle && onGlassToggle(); }}
         style={{
-          background: "none", border: "none", cursor: "pointer", padding: "2px 6px",
-          filter: "drop-shadow(0 0 8px rgba(149,131,233,0.3))", transition: `filter ${CLICK.duration}`,
-          width: 48, height: 48, display: "flex", alignItems: "center", justifyContent: "center",
+          background: "none", border: "none", cursor: "pointer", padding: 4,
+          filter: "drop-shadow(0 0 8px rgba(149,131,233,0.3))", transition: `filter ${CLICK.duration}, transform ${CLICK.duration}`,
+          width: 52, height: 52, display: "flex", alignItems: "center", justifyContent: "center",
+          borderRadius: "50%",
         }}
-        onMouseEnter={e => e.currentTarget.style.filter = "drop-shadow(0 0 16px rgba(189,149,238,0.4))"}
-        onMouseLeave={e => e.currentTarget.style.filter = "drop-shadow(0 0 8px rgba(149,131,233,0.3))"}
-        title="Back to Services (double-click for glass controls)"
+        onMouseEnter={e => { e.currentTarget.style.filter = "drop-shadow(0 0 16px rgba(189,149,238,0.5))"; e.currentTarget.style.transform = "scale(1.08)"; }}
+        onMouseLeave={e => { e.currentTarget.style.filter = "drop-shadow(0 0 8px rgba(149,131,233,0.3))"; e.currentTarget.style.transform = "scale(1)"; }}
+        title="Home (double-click for glass controls)"
       >
         <img src={WOLF_LOGO} alt="Wolf Flow" style={{ width: 44, height: 44, objectFit: "contain" }} />
       </button>
-      <div style={{ width: 48 }} />
+
+      {/* Next button */}
+      {onNext ? (
+        <button onClick={onNext} style={navBtnStyle}
+          onMouseEnter={handleHoverIn} onMouseLeave={handleHoverOut}
+        >
+          {nextLabel} {">"}
+        </button>
+      ) : <div style={{ minWidth: 72 }} />}
     </div>
   );
 }
@@ -386,9 +408,11 @@ function PortalBackground({ nightMode }) {
 /* ═══════════════════════════════════════════════════════════
    PAGE: WELCOME
    ═══════════════════════════════════════════════════════════ */
-function WelcomePage({ onEnter }) {
+function WelcomePage({ onEnter, onGlassToggle }) {
   return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 1 }}>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
+      <TopNav onHome={() => {}} onGlassToggle={onGlassToggle} onNext={onEnter} nextLabel="Start" />
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div style={{ textAlign: "center", maxWidth: 520, padding: "0 24px" }}>
         {/* Wolf Flow logo */}
         <div style={{
@@ -419,6 +443,7 @@ function WelcomePage({ onEnter }) {
           Get Started
         </button>
       </div>
+      </div>
     </div>
   );
 }
@@ -427,10 +452,12 @@ function WelcomePage({ onEnter }) {
 /* ═══════════════════════════════════════════════════════════
    PAGE: SERVICE GRID — 8 services + Check Your Stats
    ═══════════════════════════════════════════════════════════ */
-function ServiceGrid({ onSelect, onTracker }) {
+function ServiceGrid({ onSelect, onTracker, onBack, onGlassToggle }) {
   return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 1 }}>
-      <div style={{ maxWidth: 560, width: "100%", padding: "40px 24px 80px" }}>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
+      <TopNav onBack={onBack} backLabel="Home" onHome={onBack} onGlassToggle={onGlassToggle} onNext={onTracker} nextLabel="Stats" />
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ maxWidth: 560, width: "100%", padding: "20px 24px 40px" }}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <div style={{ width: 68, height: 68, margin: "0 auto 8px", filter: `drop-shadow(0 2px 12px ${WF.accentGlow})` }}>
             <img src={WOLF_LOGO} alt="Wolf Flow" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
@@ -483,6 +510,7 @@ function ServiceGrid({ onSelect, onTracker }) {
           </div>
         </GlassCard>
       </div>
+      </div>
     </div>
   );
 }
@@ -517,8 +545,10 @@ function ServiceForm({ serviceId, onSubmit, onBack, onGlassToggle }) {
   };
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "flex-start", justifyContent: "center", position: "relative", zIndex: 1 }}>
-      <div style={{ maxWidth: 480, width: "100%", padding: "40px 24px 100px" }}>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
+      <TopNav onBack={onBack} backLabel="Services" onHome={onBack} onGlassToggle={onGlassToggle} />
+      <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center" }}>
+      <div style={{ maxWidth: 480, width: "100%", padding: "20px 24px 60px" }}>
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 28 }}>
           <span style={{ fontSize: 36 }}>{svc.icon}</span>
@@ -590,7 +620,7 @@ function ServiceForm({ serviceId, onSubmit, onBack, onGlassToggle }) {
           </button>
         </GlassCard>
       </div>
-      <BottomNav onBack={onBack} onHome={onBack} onGlassToggle={onGlassToggle} />
+      </div>
     </div>
   );
 }
@@ -599,7 +629,7 @@ function ServiceForm({ serviceId, onSubmit, onBack, onGlassToggle }) {
 /* ═══════════════════════════════════════════════════════════
    PAGE: SUBMISSION CONFIRMATION
    ═══════════════════════════════════════════════════════════ */
-function ConfirmationPage({ submission, onHome, onTracker }) {
+function ConfirmationPage({ submission, onHome, onTracker, onGlassToggle }) {
   const [copied, setCopied] = useState(false);
 
   const copyId = () => {
@@ -612,8 +642,10 @@ function ConfirmationPage({ submission, onHome, onTracker }) {
   const isUrgent = submission.priority === "urgent";
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 1 }}>
-      <div style={{ maxWidth: 480, width: "100%", padding: "40px 24px 80px" }}>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
+      <TopNav onBack={onHome} backLabel="Services" onHome={onHome} onGlassToggle={onGlassToggle} onNext={onTracker} nextLabel="Track" />
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ maxWidth: 480, width: "100%", padding: "20px 24px 40px" }}>
         {/* Success indicator */}
         <div style={{ textAlign: "center", marginBottom: 28 }}>
           <div style={{
@@ -727,6 +759,7 @@ function ConfirmationPage({ submission, onHome, onTracker }) {
           </button>
         </div>
       </div>
+      </div>
     </div>
   );
 }
@@ -775,8 +808,10 @@ function CheckYourStats({ onBack, prefillId, onGlassToggle }) {
   const pct = result ? Math.round((result.step / (WORKFLOW_STEPS.length - 1)) * 100) : 0;
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "flex-start", justifyContent: "center", position: "relative", zIndex: 1 }}>
-      <div style={{ maxWidth: 520, width: "100%", padding: "40px 24px 100px" }}>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
+      <TopNav onBack={onBack} backLabel="Services" onHome={onBack} onGlassToggle={onGlassToggle} />
+      <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center" }}>
+      <div style={{ maxWidth: 520, width: "100%", padding: "20px 24px 40px" }}>
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 28 }}>
           <div style={{
@@ -1036,7 +1071,7 @@ function CheckYourStats({ onBack, prefillId, onGlassToggle }) {
           </div>
         )}
       </div>
-      <BottomNav onBack={onBack} onHome={onBack} onGlassToggle={onGlassToggle} />
+      </div>
     </div>
   );
 }
@@ -1072,7 +1107,7 @@ export default function WolfFlowPortal() {
 
       {/* Day/Night toggle */}
       <button onClick={() => setNightMode(!nightMode)} style={{
-        position: "fixed", top: 16, right: 16, zIndex: 200,
+        position: "fixed", top: 18, right: 18, zIndex: 200,
         background: FC.glass, border: `1px solid ${FC.border}`, borderRadius: 10,
         padding: "6px 12px", cursor: "pointer", fontSize: 14,
         backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
@@ -1086,10 +1121,10 @@ export default function WolfFlowPortal() {
       </button>
 
       {/* Pages */}
-      {page === "welcome" && <WelcomePage onEnter={goServices} />}
-      {page === "services" && <ServiceGrid onSelect={goForm} onTracker={() => goTracker()} />}
+      {page === "welcome" && <WelcomePage onEnter={goServices} onGlassToggle={toggleGlass} />}
+      {page === "services" && <ServiceGrid onSelect={goForm} onTracker={() => goTracker()} onBack={() => setPage("welcome")} onGlassToggle={toggleGlass} />}
       {page === "form" && <ServiceForm serviceId={selectedService} onSubmit={handleSubmit} onBack={goServices} onGlassToggle={toggleGlass} />}
-      {page === "confirm" && <ConfirmationPage submission={submission} onHome={goServices} onTracker={() => goTracker(submission?.id)} />}
+      {page === "confirm" && <ConfirmationPage submission={submission} onHome={goServices} onTracker={() => goTracker(submission?.id)} onGlassToggle={toggleGlass} />}
       {page === "tracker" && <CheckYourStats onBack={goServices} prefillId={trackerId} onGlassToggle={toggleGlass} />}
 
       {/* Glass Control Panel — toggled via double-click on wolf logo */}
