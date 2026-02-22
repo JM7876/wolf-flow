@@ -74,7 +74,7 @@ export function FormField({ label, type = "text", value, onChange, placeholder, 
           value={value} onChange={e => onChange(e.target.value)}
           style={{
             ...inputBase, appearance: "none", cursor: "pointer",
-            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(221,172,239,0.5)' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`,
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(255,255,255,0.6)' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`,
             backgroundRepeat: "no-repeat", backgroundPosition: "right 12px center",
           }}
           onFocus={focusIn} onBlur={focusOut}
@@ -231,6 +231,23 @@ export function PortalBackground({ nightMode }) {
         background: `radial-gradient(ellipse, ${WF.warm}, transparent 70%)`, filter: "blur(90px)",
       }} />
     </div>
+  );
+}
+
+/* ═══ FOOTER ═══ */
+export function Footer() {
+  return (
+    <footer style={{
+      width: "100%", textAlign: "center",
+      padding: "20px 24px 28px",
+      fontFamily: FONT, fontSize: 12, fontWeight: 400,
+      color: "rgba(255,255,255,0.28)",
+      letterSpacing: "0.02em",
+      lineHeight: 1.6,
+      flexShrink: 0,
+    }}>
+      {"Developed and Created by: Johnathon Moulds | Wolf Flow Solutions."}
+    </footer>
   );
 }
 

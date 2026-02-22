@@ -14,7 +14,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 import { WF, FC, FONT, MONO, CLICK, GLASS, glassPill, inputBase, WORKFLOW_STEPS, STEP_DESC, STEP_ICONS, WOLF_LOGO, DEPARTMENTS } from "./lib/tokens";
-import { GlassCard, SectionLabel, FormField, TripleToggle, MiniTrack, PageNav, PortalBackground } from "./lib/components";
+import { GlassCard, SectionLabel, FormField, TripleToggle, MiniTrack, PageNav, PortalBackground, Footer } from "./lib/components";
 import { SERVICES, FIELD_LABELS, MOCK_REQUESTS } from "./lib/services";
 
 
@@ -26,7 +26,7 @@ function WelcomePage({ onEnter }) {
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{ textAlign: "center", maxWidth: 520, padding: "0 24px" }}>
-          <div style={{ width: 150, height: 150, margin: "0 auto 24px", display: "flex", alignItems: "center", justifyContent: "center", filter: `drop-shadow(0 4px 20px ${WF.accentGlow})` }}>
+          <div style={{ width: 350, height: 350, margin: "0 auto 24px", display: "flex", alignItems: "center", justifyContent: "center", filter: `drop-shadow(0 4px 20px ${WF.accentGlow})` }}>
             <img src={WOLF_LOGO} alt="Wolf Flow" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
           </div>
           <h1 style={{ fontFamily: FONT, fontWeight: 200, fontSize: 36, color: FC.textPrimary, marginBottom: 4, letterSpacing: "-0.01em" }}>
@@ -46,20 +46,27 @@ function WelcomePage({ onEnter }) {
           </button>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
 
 
 /* ═══════════════════════════════════════════════════════════
-   PAGE: SERVICE GRID — 9 NHBP services + Check Your Stats
+   PAGE: SERVICE GRID — 3x3 responsive grid + Check Your Stats
    ═══════════════════════════════════════════════════════════ */
 function ServiceGrid({ onSelect, onTracker }) {
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
+      <style>{`
+        .wf-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        @media (max-width: 600px) { .wf-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 380px) { .wf-grid { grid-template-columns: 1fr; } }
+      `}</style>
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ maxWidth: 560, width: "100%", padding: "20px 24px 20px" }}>
-          <div style={{ textAlign: "center", marginBottom: 32 }}>
+        <div style={{ maxWidth: 640, width: "100%", padding: "20px 24px 20px" }}>
+          {/* Header with logo */}
+          <div style={{ textAlign: "center", marginBottom: 28 }}>
             <div style={{ width: 68, height: 68, margin: "0 auto 8px", filter: `drop-shadow(0 2px 12px ${WF.accentGlow})` }}>
               <img src={WOLF_LOGO} alt="Wolf Flow" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
             </div>
@@ -69,8 +76,8 @@ function ServiceGrid({ onSelect, onTracker }) {
             <p style={{ fontFamily: FONT, fontSize: 12, fontWeight: 400, color: FC.textDim }}>{"Pick the service that best fits your need"}</p>
           </div>
 
-          {/* Service tiles — 2 columns */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
+          {/* Service tiles -- 3x3 responsive grid */}
+          <div className="wf-grid" style={{ marginBottom: 16 }}>
             {SERVICES.map(svc => {
               const isSoon = svc.status === "soon";
               return (
@@ -82,13 +89,17 @@ function ServiceGrid({ onSelect, onTracker }) {
                     cursor: isSoon ? "default" : "pointer",
                     padding: "18px 16px",
                     opacity: isSoon ? 0.6 : 1,
+                    aspectRatio: "1 / 1",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
                   }}
                 >
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                     <span style={{ fontSize: 22, opacity: isSoon ? 0.5 : 1 }}>{svc.icon}</span>
                     <span style={{
-                      fontSize: 9, fontWeight: 700, fontFamily: FONT, letterSpacing: "0.08em",
-                      padding: "3px 10px", borderRadius: 10,
+                      fontSize: 8, fontWeight: 700, fontFamily: FONT, letterSpacing: "0.08em",
+                      padding: "2px 8px", borderRadius: 10,
                       background: isSoon ? "rgba(255,255,255,0.06)" : `${FC.turquoise}18`,
                       color: isSoon ? FC.textDim : FC.turquoise,
                       border: `1px solid ${isSoon ? FC.border : `${FC.turquoise}30`}`,
@@ -96,39 +107,49 @@ function ServiceGrid({ onSelect, onTracker }) {
                       {isSoon ? "SOON" : "LIVE"}
                     </span>
                   </div>
-                  <div style={{ fontSize: 13, fontWeight: 600, fontFamily: FONT, color: FC.textPrimary, marginBottom: 4 }}>{svc.name}</div>
-                  <div style={{ fontSize: 10, fontWeight: 400, fontFamily: FONT, color: FC.textDim, lineHeight: 1.4 }}>{svc.description}</div>
+                  <div>
+                    <div style={{ fontSize: 12, fontWeight: 600, fontFamily: FONT, color: FC.textPrimary, marginBottom: 3 }}>{svc.name}</div>
+                    <div style={{ fontSize: 9, fontWeight: 400, fontFamily: FONT, color: FC.textDim, lineHeight: 1.4 }}>{svc.description}</div>
+                  </div>
                 </GlassCard>
               );
             })}
-          </div>
 
-          {/* Divider */}
-          <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "20px 0" }}>
-            <div style={{ flex: 1, height: 1, background: FC.border }} />
-            <span style={{ fontSize: 9, fontWeight: 600, fontFamily: FONT, color: FC.textDim, letterSpacing: "0.15em" }}>{"OR"}</span>
-            <div style={{ flex: 1, height: 1, background: FC.border }} />
-          </div>
-
-          {/* Check Your Stats */}
-          <GlassCard hover onClick={onTracker} style={{ cursor: "pointer", padding: "20px 20px", border: `1px solid ${FC.gold}20` }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-              <div style={{
-                width: 44, height: 44, borderRadius: 12,
-                background: `linear-gradient(135deg, ${FC.gold}20, ${FC.gold}08)`,
-                display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22,
-                border: `1px solid ${FC.gold}30`,
-              }}>{"📊"}</div>
-              <div>
-                <div style={{ fontSize: 14, fontWeight: 600, fontFamily: FONT, color: FC.gold }}>{"Check Your Stats"}</div>
-                <div style={{ fontSize: 11, fontWeight: 400, fontFamily: FONT, color: FC.textSecondary }}>{"Track the progress of an existing request"}</div>
+            {/* 9th tile: Check Your Stats */}
+            <GlassCard
+              hover
+              onClick={onTracker}
+              style={{
+                cursor: "pointer",
+                padding: "18px 16px",
+                aspectRatio: "1 / 1",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                border: `1px solid ${FC.gold}25`,
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <span style={{ fontSize: 22 }}>{"📊"}</span>
+                <span style={{
+                  fontSize: 8, fontWeight: 700, fontFamily: FONT, letterSpacing: "0.08em",
+                  padding: "2px 8px", borderRadius: 10,
+                  background: `${FC.gold}18`,
+                  color: FC.gold,
+                  border: `1px solid ${FC.gold}30`,
+                }}>
+                  {"TRACK"}
+                </span>
               </div>
-              <div style={{ marginLeft: "auto", fontSize: 16, color: FC.textDim }}>{"\u2192"}</div>
-            </div>
-          </GlassCard>
+              <div>
+                <div style={{ fontSize: 12, fontWeight: 600, fontFamily: FONT, color: FC.gold, marginBottom: 3 }}>{"Check Your Stats"}</div>
+                <div style={{ fontSize: 9, fontWeight: 400, fontFamily: FONT, color: FC.textDim, lineHeight: 1.4 }}>{"Track the progress of an existing request"}</div>
+              </div>
+            </GlassCard>
+          </div>
         </div>
       </div>
-      <PageNav onNext={onTracker} nextLabel="Stats" />
+      <Footer />
     </div>
   );
 }
@@ -220,6 +241,7 @@ function GenericServiceForm({ service, onSubmit, onBack }) {
         </div>
       </div>
       <PageNav onBack={onBack} backLabel="Back" onHome={onBack} />
+      <Footer />
     </div>
   );
 }
@@ -227,7 +249,7 @@ function GenericServiceForm({ service, onSubmit, onBack }) {
 
 /* ═══════════════════════════════════════════════════════════
    PAGE: SUBMISSION CONFIRMATION
-   ═══════════════════════════════════════════════════════════ */
+   ═════════════════════════════════���═════════════════════════ */
 function ConfirmationPage({ submission, onHome, onTracker }) {
   const [copied, setCopied] = useState(false);
 
@@ -360,6 +382,7 @@ function ConfirmationPage({ submission, onHome, onTracker }) {
         </div>
       </div>
       <PageNav onBack={onHome} backLabel="Back" onHome={onHome} onNext={onTracker} nextLabel="Track" />
+      <Footer />
     </div>
   );
 }
@@ -657,6 +680,7 @@ function CheckYourStats({ onBack, prefillId }) {
         </div>
       </div>
       <PageNav onBack={onBack} backLabel="Back" onHome={onBack} />
+      <Footer />
     </div>
   );
 }
@@ -744,7 +768,7 @@ function SettingsDropdown({ nightMode, onToggleNight }) {
       }}>
         {/* Day / Night */}
         <div style={{ marginBottom: 18 }}>
-          <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(240,205,243,0.5)", marginBottom: 10 }}>{"Appearance"}</div>
+          <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(255,255,255,0.6)", marginBottom: 10 }}>{"Appearance"}</div>
           <button onClick={onToggleNight} style={{
             width: "100%", padding: "10px 14px", borderRadius: 10, cursor: "pointer",
             background: FC.glass, border: `1px solid ${FC.border}`,
@@ -762,7 +786,7 @@ function SettingsDropdown({ nightMode, onToggleNight }) {
         <div style={{ height: 1, background: FC.border, marginBottom: 18 }} />
 
         {/* Glass Engine */}
-        <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(240,205,243,0.5)", marginBottom: 10 }}>{"Glass Engine"}</div>
+        <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(255,255,255,0.6)", marginBottom: 10 }}>{"Glass Engine"}</div>
         <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
           {Object.entries(GLASS_PRESETS).map(([key, preset]) => (
             <button key={key} onClick={() => applyPreset(key)} style={{
@@ -771,11 +795,11 @@ function SettingsDropdown({ nightMode, onToggleNight }) {
               border: `1px solid ${activePreset === key ? "rgba(149,131,233,0.5)" : "rgba(149,131,233,0.15)"}`,
               borderRadius: 10,
               background: activePreset === key ? "rgba(149,131,233,0.15)" : "rgba(255,255,255,0.04)",
-              color: activePreset === key ? "#BD95EE" : "rgba(240,205,243,0.5)",
+              color: activePreset === key ? "#BD95EE" : "rgba(255,255,255,0.6)",
               cursor: "pointer", transition: "all 0.2s ease",
             }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(149,131,233,0.4)"; e.currentTarget.style.color = "#BD95EE"; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = activePreset === key ? "rgba(149,131,233,0.5)" : "rgba(149,131,233,0.15)"; e.currentTarget.style.color = activePreset === key ? "#BD95EE" : "rgba(240,205,243,0.5)"; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = activePreset === key ? "rgba(149,131,233,0.5)" : "rgba(149,131,233,0.15)"; e.currentTarget.style.color = activePreset === key ? "#BD95EE" : "rgba(255,255,255,0.6)"; }}
             >{preset.label}</button>
           ))}
         </div>
@@ -783,7 +807,7 @@ function SettingsDropdown({ nightMode, onToggleNight }) {
           {GLASS_SLIDERS.map(s => (
             <div key={s.key}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-                <span style={{ fontSize: 10, fontWeight: 500, color: "rgba(240,205,243,0.6)" }}>{s.label}</span>
+                <span style={{ fontSize: 10, fontWeight: 500, color: "rgba(255,255,255,0.7)" }}>{s.label}</span>
                 <span style={{ fontSize: 10, fontFamily: FONT, color: "rgba(189,149,238,0.7)" }}>
                   {s.unit === "px" ? `${glassVals[s.key]}px` : glassVals[s.key].toFixed(2)}
                 </span>
@@ -843,6 +867,7 @@ export default function WolfFlowPortal() {
       {page === "form" && selectedService && <GenericServiceForm service={selectedService} onSubmit={handleSubmit} onBack={goServices} />}
       {page === "confirm" && <ConfirmationPage submission={submission} onHome={goServices} onTracker={() => goTracker(submission?.id)} />}
       {page === "tracker" && <CheckYourStats onBack={goServices} prefillId={trackerId} />}
+      <Footer />
     </div>
   );
 }

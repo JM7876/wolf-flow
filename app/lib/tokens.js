@@ -22,8 +22,8 @@ export const FC = {
   gold: "#BD95EE", goldLight: "#DDACEF",
   green: "#40916c", greenLight: "#52b788",
   red: "#e63946", redLight: "#ff6b6b",
-  textPrimary: "#F0CDF3", textSecondary: "rgba(221,172,239,0.75)",
-  textDim: "rgba(221,172,239,0.4)", border: "rgba(149,131,233,0.15)",
+  textPrimary: "#FFFFFF", textSecondary: "rgba(255,255,255,0.82)",
+  textDim: "rgba(255,255,255,0.52)", border: "rgba(149,131,233,0.15)",
   glass: "rgba(255,255,255,0.06)",
 };
 

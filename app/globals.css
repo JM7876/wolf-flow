@@ -83,8 +83,8 @@
   --surface-primary: #332C52;
   --surface-soft: #3C3562;
 
-  --text-primary: #F0CDF3;
-  --text-secondary: #DDACEF;
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(255, 255, 255, 0.82);
 
   --border-soft: rgba(221, 172, 239, 0.25);
 }
