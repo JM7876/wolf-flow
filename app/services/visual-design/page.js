@@ -242,6 +242,7 @@ export default function VisualDesignPage() {
   const [submitted, setSubmitted] = useState(false);
   const [ticket, setTicket] = useState("");
   const [previewGradient, setPreviewGradient] = useState(null);
+  const [isNavigatingAway, setIsNavigatingAway] = useState(false);
   const inputRef = useRef(null);
   const totalSteps = 9;
 
@@ -352,15 +353,15 @@ export default function VisualDesignPage() {
       <div style={{
         position: "fixed", inset: 0, zIndex: 1, pointerEvents: "none",
         background: previewGradient || "transparent",
-        opacity: previewGradient ? 1 : 0,
-        transition: "opacity 0.8s cubic-bezier(0.4,0,0.2,1), background 0.8s cubic-bezier(0.4,0,0.2,1)",
+        opacity: (previewGradient && !isNavigatingAway) ? 1 : 0,
+        transition: isNavigatingAway ? "none" : "opacity 0.8s cubic-bezier(0.4,0,0.2,1), background 0.8s cubic-bezier(0.4,0,0.2,1)",
       }} />
       {/* Subtle scrim over the palette for text readability */}
       <div style={{
         position: "fixed", inset: 0, zIndex: 1, pointerEvents: "none",
         background: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.3) 100%)",
-        opacity: previewGradient ? 1 : 0,
-        transition: "opacity 0.8s cubic-bezier(0.4,0,0.2,1)",
+        opacity: (previewGradient && !isNavigatingAway) ? 1 : 0,
+        transition: isNavigatingAway ? "none" : "opacity 0.8s cubic-bezier(0.4,0,0.2,1)",
       }} />
       <div style={{
         position: "fixed", inset: 0, zIndex: 2, pointerEvents: "none",
@@ -477,7 +478,7 @@ export default function VisualDesignPage() {
           <p style={{ fontSize: 13, color: FC.textDim, marginTop: 20, lineHeight: 1.6, maxWidth: 360, fontFamily: FONT }}>
             {"The Communications team will review your request and follow up within 24 hours."}
           </p>
-          <button onClick={() => { setPreviewGradient(null); router.push("/"); }} style={{ marginTop: 20, background: FC.glass, border: `1px solid ${FC.border}`, borderRadius: 10, padding: "12px 28px", cursor: "pointer", fontSize: 13, fontFamily: FONT, fontWeight: 500, color: FC.textSecondary, transition: `all ${CLICK.duration}` }}
+          <button onClick={() => { setIsNavigatingAway(true); setPreviewGradient(null); router.push("/"); }} style={{ marginTop: 20, background: FC.glass, border: `1px solid ${FC.border}`, borderRadius: 10, padding: "12px 28px", cursor: "pointer", fontSize: 13, fontFamily: FONT, fontWeight: 500, color: FC.textSecondary, transition: `all ${CLICK.duration}` }}
             onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.color = FC.textPrimary; }}
             onMouseLeave={e => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.color = FC.textSecondary; }}
           >{"\u2190 Back to Services"}</button>
@@ -1183,7 +1184,7 @@ export default function VisualDesignPage() {
       </div>
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "18px 24px", zIndex: 10, position: "relative" }}>
-        <button onClick={() => { setPreviewGradient(null); router.push("/"); }} style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.06em", color: FC.textDim, background: "none", border: "none", cursor: "pointer", fontFamily: FONT, transition: `color ${CLICK.duration}` }}
+        <button onClick={() => { setIsNavigatingAway(true); setPreviewGradient(null); router.push("/"); }} style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.06em", color: FC.textDim, background: "none", border: "none", cursor: "pointer", fontFamily: FONT, transition: `color ${CLICK.duration}` }}
           onMouseEnter={e => { e.currentTarget.style.color = FC.textPrimary; }}
           onMouseLeave={e => { e.currentTarget.style.color = FC.textDim; }}
         >{"\u2190 Wolf Flow"}</button>
