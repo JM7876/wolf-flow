@@ -202,33 +202,35 @@ export function PageNav({ onBack, onHome, onNext, backLabel = "Back", nextLabel 
   );
 }
 
-/* ═══ PORTAL BACKGROUND ═══ */
+/* ═══ PORTAL BACKGROUND — day/night image swap ═══ */
 export function PortalBackground({ nightMode }) {
+  const dayImg = "/images/day-aligned-4k.png";
+  const nightImg = "/images/night-aligned-4k.jpg";
   return (
     <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0 }}>
+      {/* Night layer */}
       <div style={{
         position: "absolute", inset: 0,
-        backgroundImage: "url('/images/wolf-flow-bg.jpg')",
+        backgroundImage: `url('${nightImg}')`,
         backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat",
-        filter: nightMode ? "brightness(0.45) saturate(0.85)" : "brightness(1.1) saturate(1.15)",
-        transition: "filter 0.6s ease",
+        opacity: nightMode ? 1 : 0,
+        transition: "opacity 0.8s ease",
       }} />
+      {/* Day layer */}
+      <div style={{
+        position: "absolute", inset: 0,
+        backgroundImage: `url('${dayImg}')`,
+        backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat",
+        opacity: nightMode ? 0 : 1,
+        transition: "opacity 0.8s ease",
+      }} />
+      {/* Subtle scrim for content readability */}
       <div style={{
         position: "absolute", inset: 0,
         background: nightMode
-          ? "linear-gradient(180deg, rgba(26,22,40,0.7) 0%, rgba(34,28,53,0.75) 100%)"
-          : "linear-gradient(180deg, rgba(26,22,40,0.35) 0%, rgba(34,28,53,0.45) 100%)",
-        transition: "background 0.6s ease",
-      }} />
-      <div style={{
-        position: "absolute", bottom: "5%", left: "8%", width: "50%", height: "50%",
-        opacity: nightMode ? 0.12 : 0.22,
-        background: `radial-gradient(ellipse, ${WF.accent}, transparent 70%)`, filter: "blur(90px)",
-      }} />
-      <div style={{
-        position: "absolute", top: "8%", right: "5%", width: "40%", height: "40%",
-        opacity: nightMode ? 0.06 : 0.14,
-        background: `radial-gradient(ellipse, ${WF.warm}, transparent 70%)`, filter: "blur(90px)",
+          ? "linear-gradient(180deg, rgba(26,22,40,0.35) 0%, rgba(34,28,53,0.45) 100%)"
+          : "linear-gradient(180deg, rgba(26,22,40,0.15) 0%, rgba(34,28,53,0.25) 100%)",
+        transition: "background 0.8s ease",
       }} />
     </div>
   );
