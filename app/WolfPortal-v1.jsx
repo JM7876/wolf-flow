@@ -495,7 +495,7 @@ function ServiceGrid({ onSelect, onTracker, onBack }) {
         </GlassCard>
       </div>
       </div>
-      <PageNav onBack={onBack} backLabel="Home" onHome={onBack} onNext={onTracker} nextLabel="Stats" />
+      <PageNav onNext={onTracker} nextLabel="Stats" />
     </div>
   );
 }
@@ -605,7 +605,7 @@ function ServiceForm({ serviceId, onSubmit, onBack }) {
         </GlassCard>
       </div>
       </div>
-      <PageNav onBack={onBack} backLabel="Services" onHome={onBack} />
+      <PageNav onBack={onBack} backLabel="Back" onHome={onBack} />
     </div>
   );
 }
@@ -748,7 +748,7 @@ function ConfirmationPage({ submission, onHome, onTracker }) {
         </div>
       </div>
       </div>
-      <PageNav onBack={onHome} backLabel="Services" onHome={onHome} onNext={onTracker} nextLabel="Track" />
+      <PageNav onBack={onHome} backLabel="Back" onHome={onHome} onNext={onTracker} nextLabel="Track" />
     </div>
   );
 }
@@ -1227,7 +1227,7 @@ function SettingsDropdown({ nightMode, onToggleNight }) {
 }
 
 
-/* ═══════════════════════════════════════════════════════════
+/* ═════════════════════���═════════════════════════════════════
    MAIN PORTAL COMPONENT
    ═══════════════════════════════════════════════════════════ */
 export default function WolfFlowPortal() {
