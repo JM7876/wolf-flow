@@ -35,7 +35,7 @@ const FC = {
   textDim: "rgba(255,255,255,0.3)", border: "rgba(255,255,255,0.08)",
   glass: "rgba(255,255,255,0.03)",
 };
-const FONT = "'Montserrat Alternates', 'Josefin Sans', -apple-system, BlinkMacSystemFont, sans-serif";
+const FONT = "'Josefin Sans', -apple-system, BlinkMacSystemFont, sans-serif";
 const MONO = "'JetBrains Mono', monospace";
 const CLICK = {
   hover: { borderColor: "rgba(200,80,130,0.4)", boxShadow: "0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05), 0 0 25px rgba(200,80,130,0.18)" },
@@ -1153,7 +1153,7 @@ export default function NHBPPortal() {
   return (
     <div style={{ minHeight: "100vh", fontFamily: FONT, color: FC.textPrimary, position: "relative", overflow: "hidden" }}>
       {/* Google Fonts */}
-      <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Josefin+Sans:wght@100;200;300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+      <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;200;300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
       <PortalBackground nightMode={nightMode} />
 

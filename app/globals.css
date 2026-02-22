@@ -3,22 +3,7 @@
    Created and Authored by Johnathon Moulds © 2026
    ═══════════════════════════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Josefin+Sans:wght@100;200;300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
-
-/* ── Wolf Flow Brand Tokens ────────────────────────────────────── */
-:root {
-  --background: #010003;
-  --card: #333335;
-  --foreground: #FFFFFF;
-  --muted-foreground: #C7C7C7;
-  --primary-slate: #5F72BD;
-  --primary-pink: #FF2164;
-  --accent-magenta: #FB3DFF;
-  --accent-purple: #9B23EA;
-  --radius: 0.5rem;
-  --font-sans: 'Montserrat Alternates', 'Josefin Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-}
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;200;300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 * {
   margin: 0;
@@ -30,9 +15,9 @@ html, body {
   overflow: hidden;
   height: 100%;
   width: 100%;
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans);
+  background-color: #0a0e14;
+  color: rgba(255, 255, 255, 0.92);
+  font-family: 'Josefin Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
