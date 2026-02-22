@@ -63,13 +63,11 @@ export const SERVICES = [
   },
   {
     id: "form-builder",
-    name: "DIY Form Builder",
-    icon: "▦",
-    description: "Create surveys, feedback forms, sign-up sheets with QR codes",
+    name: "DIY Post Builder",
+    icon: "\u270F\uFE0F",
+    description: "Draft your own social post \u2014 caption, platform, hashtags",
     status: "live",
-    formType: "generic",
-    est: "Self-service",
-    fields: ["title", "dept", "description"],
+    formType: "custom",
   },
   {
     id: "other",
