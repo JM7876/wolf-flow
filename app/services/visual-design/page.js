@@ -168,33 +168,68 @@ const Glass = ({ children, active, onClick, style: s = {}, hoverGlow }) => {
   return (
     <div onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
       style={{
-        background: active ? `${gc}14` : "rgba(255,255,255,0.025)",
-        backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)",
-        border: `1px solid ${active ? gc + "55" : h && onClick ? gc + "25" : "rgba(255,255,255,0.06)"}`,
-        borderRadius: 14, transition: "all 0.3s cubic-bezier(0.4,0,0.2,1)",
+        background: active
+          ? `linear-gradient(168deg, ${gc}1A 0%, ${gc}0D 40%, ${gc}08 100%)`
+          : "linear-gradient(168deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 40%, rgba(255,255,255,0.015) 100%)",
+        backdropFilter: "blur(24px) saturate(1.4) brightness(1.12) contrast(1.05)",
+        WebkitBackdropFilter: "blur(24px) saturate(1.4) brightness(1.12) contrast(1.05)",
+        border: `1px solid ${active ? gc + "50" : h && onClick ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.1)"}`,
+        borderRadius: 16, transition: "all 0.3s cubic-bezier(0.4,0,0.2,1)",
         cursor: onClick ? "pointer" : "default",
-        boxShadow: active ? `0 0 28px ${gc}25, inset 0 1px 0 rgba(255,255,255,0.08)` : h && onClick ? `0 6px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05)` : `inset 0 1px 0 rgba(255,255,255,0.03)`,
-        transform: h && onClick ? "translateY(-1px)" : "none",
+        boxShadow: active
+          ? `0 8px 32px ${gc}20, 0 2px 8px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -1px 0 rgba(255,255,255,0.04)`
+          : h && onClick
+            ? `0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.16)`
+            : `0 2px 8px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.1), inset 0 -1px 0 rgba(255,255,255,0.03)`,
+        transform: h && onClick ? "translateY(-2px) scale(1.005)" : "none",
         position: "relative", overflow: "hidden", ...s,
       }}>
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: `linear-gradient(90deg, transparent, ${active ? gc + "35" : "rgba(255,255,255,0.06)"}, transparent)`, pointerEvents: "none" }} />
-      {children}
+      {/* Specular highlight */}
+      <div style={{ position: "absolute", left: "8%", right: "8%", top: 0, height: "35%", pointerEvents: "none",
+        background: `linear-gradient(180deg, ${active ? gc + "20" : "rgba(255,255,255,0.1)"} 0%, transparent 100%)`,
+        maskImage: "linear-gradient(180deg, black 0%, transparent 100%)", WebkitMaskImage: "linear-gradient(180deg, black 0%, transparent 100%)",
+      }} />
+      {/* Edge rim */}
+      <div style={{ position: "absolute", left: "5%", right: "5%", top: 0, height: 1, pointerEvents: "none",
+        background: `linear-gradient(90deg, transparent, ${active ? gc + "45" : "rgba(255,255,255,0.18)"}, transparent)`,
+      }} />
+      {/* Bottom catchlight */}
+      <div style={{ position: "absolute", left: "10%", right: "10%", bottom: 0, height: 1, pointerEvents: "none",
+        background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)",
+      }} />
+      <div style={{ position: "relative", zIndex: 2 }}>{children}</div>
     </div>
   );
 };
 
-// ═══ SECTION CARD (content step glow) ═══
+// ═══ SECTION CARD — Liquid Glass (content step glow) ═══
 const SectionCard = ({ icon, title, subtitle, children, isDone }) => {
   const gc = isDone ? WF.pink : WF.accent;
   const bc = isDone ? WF.pink : WF.accent;
   return (
     <div style={{
-      background: isDone ? `${WF.pink}0F` : `${WF.accent}0A`,
+      background: isDone
+        ? `linear-gradient(168deg, ${WF.pink}18 0%, ${WF.pink}0A 40%, ${WF.pink}06 100%)`
+        : `linear-gradient(168deg, ${WF.accent}12 0%, ${WF.accent}08 40%, ${WF.accent}04 100%)`,
+      backdropFilter: "blur(24px) saturate(1.4) brightness(1.12)",
+      WebkitBackdropFilter: "blur(24px) saturate(1.4) brightness(1.12)",
       border: `1px solid ${bc}${isDone ? "40" : "30"}`,
-      borderRadius: 16, padding: "20px 20px 22px",
-      boxShadow: `0 0 ${isDone ? "24px" : "18px"} ${gc}${isDone ? "18" : "10"}, inset 0 1px 0 rgba(255,255,255,0.04)`,
-      transition: "all 0.5s cubic-bezier(0.4,0,0.2,1)", position: "relative",
+      borderRadius: 18, padding: "20px 20px 22px",
+      boxShadow: isDone
+        ? `0 8px 32px ${gc}18, 0 2px 8px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.15), inset 0 -1px 0 rgba(255,255,255,0.04)`
+        : `0 4px 20px ${gc}0D, 0 2px 8px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(255,255,255,0.03)`,
+      transition: "all 0.5s cubic-bezier(0.4,0,0.2,1)", position: "relative", overflow: "hidden",
     }}>
+    {/* Specular top shine */}
+    <div style={{ position: "absolute", left: "8%", right: "8%", top: 0, height: "30%", pointerEvents: "none",
+      background: `linear-gradient(180deg, ${isDone ? WF.pink + "15" : "rgba(255,255,255,0.08)"} 0%, transparent 100%)`,
+      maskImage: "linear-gradient(180deg, black 0%, transparent 100%)", WebkitMaskImage: "linear-gradient(180deg, black 0%, transparent 100%)",
+    }} />
+    {/* Edge rim */}
+    <div style={{ position: "absolute", left: "5%", right: "5%", top: 0, height: 1, pointerEvents: "none",
+      background: `linear-gradient(90deg, transparent, ${isDone ? WF.pink + "35" : "rgba(255,255,255,0.15)"}, transparent)`,
+    }} />
+    <div style={{ position: "relative", zIndex: 2 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
         <span style={{ fontSize: 20, filter: isDone ? "none" : "grayscale(0.3)" }}>{icon}</span>
         <div style={{ flex: 1 }}>
@@ -216,6 +251,7 @@ const SectionCard = ({ icon, title, subtitle, children, isDone }) => {
         </div>
       </div>
       <div>{children}</div>
+    </div>
     </div>
   );
 };
