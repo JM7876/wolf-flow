@@ -241,6 +241,7 @@ export default function VisualDesignPage() {
   });
   const [submitted, setSubmitted] = useState(false);
   const [ticket, setTicket] = useState("");
+  const [previewGradient, setPreviewGradient] = useState(null);
   const inputRef = useRef(null);
   const totalSteps = 9;
 
@@ -311,10 +312,46 @@ export default function VisualDesignPage() {
     return mod?.colors || ["#666", "#888", "#aaa", "#ccc", "#eee"];
   };
 
+  // ═══ PREVIEW GRADIENT BUILDER ═══
+  const buildPreviewGradient = (palette) => {
+    if (!palette || palette.length === 0) return null;
+    const stops = palette.map((c, i) => `${c} ${Math.round((i / (palette.length - 1)) * 100)}%`).join(", ");
+    return `linear-gradient(135deg, ${stops})`;
+  };
+
+  // Update preview when style or palette modifier changes
+  useEffect(() => {
+    if (submitted) { setPreviewGradient(null); return; }
+    if (step === 4 && (form.styleDir || form.designerChoice)) {
+      if (form.designerChoice) { setPreviewGradient(null); return; }
+      const style = STYLES.find(s => s.id === form.styleDir);
+      if (!style) { setPreviewGradient(null); return; }
+      if (form.paletteModifier === "default" || form.paletteModifier === "custom") {
+        setPreviewGradient(buildPreviewGradient(style.palette));
+      } else {
+        const mod = PALETTE_MODIFIERS.find(m => m.id === form.paletteModifier);
+        setPreviewGradient(mod?.colors ? buildPreviewGradient(mod.colors) : buildPreviewGradient(style.palette));
+      }
+    } else if (step >= 5 && step <= 8 && form.styleDir && !form.designerChoice) {
+      // Keep the preview alive through all remaining steps until submit
+      const activePal = getActivePalette();
+      setPreviewGradient(buildPreviewGradient(activePal));
+    } else {
+      setPreviewGradient(null);
+    }
+  }, [step, form.styleDir, form.designerChoice, form.paletteModifier, submitted]);
+
   // ═══ WOLF FLOW BACKGROUND ═══
   const BG = () => (
     <>
       <PortalBackground nightMode={false} />
+      {/* Palette preview overlay — fades in when a style is selected */}
+      <div style={{
+        position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none",
+        background: previewGradient || "transparent",
+        opacity: previewGradient ? 0.18 : 0,
+        transition: "opacity 0.8s cubic-bezier(0.4,0,0.2,1), background 0.8s cubic-bezier(0.4,0,0.2,1)",
+      }} />
       <div style={{
         position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none",
         background: `radial-gradient(ellipse 700px 500px at ${mousePos.x}% ${mousePos.y}%, ${WF.accent}06, transparent)`,
