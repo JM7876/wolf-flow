@@ -345,22 +345,22 @@ export default function VisualDesignPage() {
   const BG = () => (
     <>
       <PortalBackground nightMode={false} />
-      {/* Stone white wash — covers the dark background when a palette is active */}
+      {/* Full palette background — completely replaces the image when a style is chosen */}
       <div style={{
-        position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none",
-        background: "#f0ece6",
-        opacity: previewGradient ? 0.92 : 0,
-        transition: "opacity 0.8s cubic-bezier(0.4,0,0.2,1)",
-      }} />
-      {/* Palette gradient overlay — tints the stone white with chosen colors */}
-      <div style={{
-        position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none",
+        position: "fixed", inset: 0, zIndex: 1, pointerEvents: "none",
         background: previewGradient || "transparent",
-        opacity: previewGradient ? 0.35 : 0,
+        opacity: previewGradient ? 1 : 0,
         transition: "opacity 0.8s cubic-bezier(0.4,0,0.2,1), background 0.8s cubic-bezier(0.4,0,0.2,1)",
       }} />
+      {/* Subtle scrim over the palette for text readability */}
       <div style={{
-        position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none",
+        position: "fixed", inset: 0, zIndex: 1, pointerEvents: "none",
+        background: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.3) 100%)",
+        opacity: previewGradient ? 1 : 0,
+        transition: "opacity 0.8s cubic-bezier(0.4,0,0.2,1)",
+      }} />
+      <div style={{
+        position: "fixed", inset: 0, zIndex: 2, pointerEvents: "none",
         background: `radial-gradient(ellipse 700px 500px at ${mousePos.x}% ${mousePos.y}%, ${WF.accent}06, transparent)`,
         transition: "background 0.8s ease",
       }} />
