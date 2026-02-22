@@ -57,20 +57,32 @@ function WelcomePage({ onEnter }) {
 function ServiceGrid({ onSelect, onTracker }) {
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
-      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ maxWidth: 560, width: "100%", padding: "20px 24px 20px" }}>
-          <div style={{ textAlign: "center", marginBottom: 32 }}>
-            <div style={{ width: 68, height: 68, margin: "0 auto 8px", filter: `drop-shadow(0 2px 12px ${WF.accentGlow})` }}>
-              <img src={WOLF_LOGO} alt="Wolf Flow" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
-            </div>
-            <h2 style={{ fontFamily: FONT, fontWeight: 200, fontSize: 26, color: FC.textPrimary, marginBottom: 4 }}>
-              {"What can we "}<span style={{ color: WF.accent }}>{"help you"}</span>{" create?"}
-            </h2>
-            <p style={{ fontFamily: FONT, fontSize: 12, fontWeight: 400, color: FC.textDim }}>{"Pick the service that best fits your need"}</p>
-          </div>
+      {/* Header — pinned above the horizontal scroll */}
+      <div style={{ textAlign: "center", paddingTop: 28, paddingBottom: 8, flexShrink: 0 }}>
+        <div style={{ width: 68, height: 68, margin: "0 auto 8px", filter: `drop-shadow(0 2px 12px ${WF.accentGlow})` }}>
+          <img src={WOLF_LOGO} alt="Wolf Flow" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+        </div>
+        <h2 style={{ fontFamily: FONT, fontWeight: 200, fontSize: 26, color: FC.textPrimary, marginBottom: 4 }}>
+          {"What can we "}<span style={{ color: WF.accent }}>{"help you"}</span>{" create?"}
+        </h2>
+        <p style={{ fontFamily: FONT, fontSize: 12, fontWeight: 400, color: FC.textDim }}>{"Pick the service that best fits your need"}</p>
+      </div>
 
-          {/* Service tiles — 2 columns */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
+      {/* Service tiles — horizontal scroll, left to right */}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", minHeight: 0 }}>
+        <div style={{
+          overflowX: "auto", overflowY: "hidden",
+          WebkitOverflowScrolling: "touch",
+          scrollbarWidth: "none",
+          padding: "12px 24px 16px",
+        }}>
+          <style>{`
+            .wf-service-scroll::-webkit-scrollbar { display: none; }
+          `}</style>
+          <div className="wf-service-scroll" style={{
+            display: "flex", flexDirection: "row", flexWrap: "nowrap",
+            gap: 12, width: "max-content",
+          }}>
             {SERVICES.map(svc => {
               const isSoon = svc.status === "soon";
               return (
@@ -82,6 +94,9 @@ function ServiceGrid({ onSelect, onTracker }) {
                     cursor: isSoon ? "default" : "pointer",
                     padding: "18px 16px",
                     opacity: isSoon ? 0.6 : 1,
+                    width: 200,
+                    minWidth: 200,
+                    flexShrink: 0,
                   }}
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
@@ -102,15 +117,24 @@ function ServiceGrid({ onSelect, onTracker }) {
               );
             })}
           </div>
+        </div>
 
-          {/* Divider */}
-          <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "20px 0" }}>
-            <div style={{ flex: 1, height: 1, background: FC.border }} />
-            <span style={{ fontSize: 9, fontWeight: 600, fontFamily: FONT, color: FC.textDim, letterSpacing: "0.15em" }}>{"OR"}</span>
-            <div style={{ flex: 1, height: 1, background: FC.border }} />
-          </div>
+        {/* Scroll hint indicator */}
+        <div style={{ display: "flex", justifyContent: "center", gap: 4, padding: "4px 0 8px" }}>
+          <div style={{ width: 24, height: 3, borderRadius: 2, background: `${WF.accent}40` }} />
+          <div style={{ width: 8, height: 3, borderRadius: 2, background: `${FC.border}` }} />
+          <div style={{ width: 8, height: 3, borderRadius: 2, background: `${FC.border}` }} />
+        </div>
 
-          {/* Check Your Stats */}
+        {/* Divider */}
+        <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "8px 24px 16px" }}>
+          <div style={{ flex: 1, height: 1, background: FC.border }} />
+          <span style={{ fontSize: 9, fontWeight: 600, fontFamily: FONT, color: FC.textDim, letterSpacing: "0.15em" }}>{"OR"}</span>
+          <div style={{ flex: 1, height: 1, background: FC.border }} />
+        </div>
+
+        {/* Check Your Stats */}
+        <div style={{ padding: "0 24px 20px" }}>
           <GlassCard hover onClick={onTracker} style={{ cursor: "pointer", padding: "20px 20px", border: `1px solid ${FC.gold}20` }}>
             <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
               <div style={{
