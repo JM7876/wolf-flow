@@ -52,37 +52,31 @@ function WelcomePage({ onEnter }) {
 
 
 /* ═══════════════════════════════════════════════════════════
-   PAGE: SERVICE GRID — 9 NHBP services + Check Your Stats
+   PAGE: SERVICE GRID — 3x3 responsive grid + Check Your Stats
    ═══════════════════════════════════════════════════════════ */
 function ServiceGrid({ onSelect, onTracker }) {
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
-      {/* Header — pinned above the horizontal scroll */}
-      <div style={{ textAlign: "center", paddingTop: 28, paddingBottom: 8, flexShrink: 0 }}>
-        <div style={{ width: 68, height: 68, margin: "0 auto 8px", filter: `drop-shadow(0 2px 12px ${WF.accentGlow})` }}>
-          <img src={WOLF_LOGO} alt="Wolf Flow" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
-        </div>
-        <h2 style={{ fontFamily: FONT, fontWeight: 200, fontSize: 26, color: FC.textPrimary, marginBottom: 4 }}>
-          {"What can we "}<span style={{ color: WF.accent }}>{"help you"}</span>{" create?"}
-        </h2>
-        <p style={{ fontFamily: FONT, fontSize: 12, fontWeight: 400, color: FC.textDim }}>{"Pick the service that best fits your need"}</p>
-      </div>
+      <style>{`
+        .wf-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        @media (max-width: 600px) { .wf-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 380px) { .wf-grid { grid-template-columns: 1fr; } }
+      `}</style>
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ maxWidth: 600, width: "100%", padding: "20px 24px 20px" }}>
+          {/* Header with logo */}
+          <div style={{ textAlign: "center", marginBottom: 28 }}>
+            <div style={{ width: 68, height: 68, margin: "0 auto 8px", filter: `drop-shadow(0 2px 12px ${WF.accentGlow})` }}>
+              <img src={WOLF_LOGO} alt="Wolf Flow" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+            </div>
+            <h2 style={{ fontFamily: FONT, fontWeight: 200, fontSize: 26, color: FC.textPrimary, marginBottom: 4 }}>
+              {"What can we "}<span style={{ color: WF.accent }}>{"help you"}</span>{" create?"}
+            </h2>
+            <p style={{ fontFamily: FONT, fontSize: 12, fontWeight: 400, color: FC.textDim }}>{"Pick the service that best fits your need"}</p>
+          </div>
 
-      {/* Service tiles — horizontal scroll, left to right */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", minHeight: 0 }}>
-        <div style={{
-          overflowX: "auto", overflowY: "hidden",
-          WebkitOverflowScrolling: "touch",
-          scrollbarWidth: "none",
-          padding: "12px 24px 16px",
-        }}>
-          <style>{`
-            .wf-service-scroll::-webkit-scrollbar { display: none; }
-          `}</style>
-          <div className="wf-service-scroll" style={{
-            display: "flex", flexDirection: "row", flexWrap: "nowrap",
-            gap: 12, width: "max-content",
-          }}>
+          {/* Service tiles -- 3x3 responsive grid */}
+          <div className="wf-grid" style={{ marginBottom: 16 }}>
             {SERVICES.map(svc => {
               const isSoon = svc.status === "soon";
               return (
@@ -94,16 +88,17 @@ function ServiceGrid({ onSelect, onTracker }) {
                     cursor: isSoon ? "default" : "pointer",
                     padding: "18px 16px",
                     opacity: isSoon ? 0.6 : 1,
-                    width: 200,
-                    minWidth: 200,
-                    flexShrink: 0,
+                    aspectRatio: "1 / 1",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
                   }}
                 >
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                     <span style={{ fontSize: 22, opacity: isSoon ? 0.5 : 1 }}>{svc.icon}</span>
                     <span style={{
-                      fontSize: 9, fontWeight: 700, fontFamily: FONT, letterSpacing: "0.08em",
-                      padding: "3px 10px", borderRadius: 10,
+                      fontSize: 8, fontWeight: 700, fontFamily: FONT, letterSpacing: "0.08em",
+                      padding: "2px 8px", borderRadius: 10,
                       background: isSoon ? "rgba(255,255,255,0.06)" : `${FC.turquoise}18`,
                       color: isSoon ? FC.textDim : FC.turquoise,
                       border: `1px solid ${isSoon ? FC.border : `${FC.turquoise}30`}`,
@@ -111,30 +106,23 @@ function ServiceGrid({ onSelect, onTracker }) {
                       {isSoon ? "SOON" : "LIVE"}
                     </span>
                   </div>
-                  <div style={{ fontSize: 13, fontWeight: 600, fontFamily: FONT, color: FC.textPrimary, marginBottom: 4 }}>{svc.name}</div>
-                  <div style={{ fontSize: 10, fontWeight: 400, fontFamily: FONT, color: FC.textDim, lineHeight: 1.4 }}>{svc.description}</div>
+                  <div>
+                    <div style={{ fontSize: 12, fontWeight: 600, fontFamily: FONT, color: FC.textPrimary, marginBottom: 3 }}>{svc.name}</div>
+                    <div style={{ fontSize: 9, fontWeight: 400, fontFamily: FONT, color: FC.textDim, lineHeight: 1.4 }}>{svc.description}</div>
+                  </div>
                 </GlassCard>
               );
             })}
           </div>
-        </div>
 
-        {/* Scroll hint indicator */}
-        <div style={{ display: "flex", justifyContent: "center", gap: 4, padding: "4px 0 8px" }}>
-          <div style={{ width: 24, height: 3, borderRadius: 2, background: `${WF.accent}40` }} />
-          <div style={{ width: 8, height: 3, borderRadius: 2, background: `${FC.border}` }} />
-          <div style={{ width: 8, height: 3, borderRadius: 2, background: `${FC.border}` }} />
-        </div>
+          {/* Divider */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "16px 0" }}>
+            <div style={{ flex: 1, height: 1, background: FC.border }} />
+            <span style={{ fontSize: 9, fontWeight: 600, fontFamily: FONT, color: FC.textDim, letterSpacing: "0.15em" }}>{"OR"}</span>
+            <div style={{ flex: 1, height: 1, background: FC.border }} />
+          </div>
 
-        {/* Divider */}
-        <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "8px 24px 16px" }}>
-          <div style={{ flex: 1, height: 1, background: FC.border }} />
-          <span style={{ fontSize: 9, fontWeight: 600, fontFamily: FONT, color: FC.textDim, letterSpacing: "0.15em" }}>{"OR"}</span>
-          <div style={{ flex: 1, height: 1, background: FC.border }} />
-        </div>
-
-        {/* Check Your Stats */}
-        <div style={{ padding: "0 24px 20px" }}>
+          {/* Check Your Stats */}
           <GlassCard hover onClick={onTracker} style={{ cursor: "pointer", padding: "20px 20px", border: `1px solid ${FC.gold}20` }}>
             <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
               <div style={{
