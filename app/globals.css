@@ -45,16 +45,24 @@
   --wf-cyan: #00FFFF;
   --wf-magenta: #FF00FF;
 
-  /* ═══ 3. GLASS ENGINE ═══ */
+  /* ═══ 3. LIQUID GLASS ENGINE (iOS 26 Inspired) ═══ */
   --glass-displacement: 0px;
-  --glass-blur: 18px;
-  --glass-opacity: 0.18;
-  --glass-brightness: 1.05;
-  --glass-saturation: 1.1;
-  --glass-bezel-depth: 18px;
+  --glass-blur: 24px;
+  --glass-opacity: 0.08;
+  --glass-brightness: 1.12;
+  --glass-saturation: 1.4;
+  --glass-contrast: 1.05;
+  --glass-bezel-depth: 24px;
+
+  /* Specular highlight */
+  --glass-specular-opacity: 0.18;
+  --glass-specular-width: 60%;
+
+  /* Liquid edge glow */
+  --glass-edge-opacity: 0.12;
 
   /* Corner radius */
-  --radius: 1rem;
+  --radius: 1.25rem;
 }
 
 /* ═══ 2. DUAL THEME SYSTEM ═══ */
@@ -128,23 +136,81 @@ body {
   overflow-x: hidden;
 }
 
-/* ═══ GLASS CLASS ═══ */
+/* ═══ LIQUID GLASS CLASS (iOS 26 Inspired) ═══ */
 .glass {
-  background: rgba(255, 255, 255, var(--glass-opacity));
+  position: relative;
+  background:
+    linear-gradient(
+      168deg,
+      rgba(255, 255, 255, calc(var(--glass-opacity) * 1.8)) 0%,
+      rgba(255, 255, 255, var(--glass-opacity)) 40%,
+      rgba(255, 255, 255, calc(var(--glass-opacity) * 0.5)) 100%
+    );
   backdrop-filter:
     blur(var(--glass-blur))
     brightness(var(--glass-brightness))
-    saturate(var(--glass-saturation));
+    saturate(var(--glass-saturation))
+    contrast(var(--glass-contrast));
   -webkit-backdrop-filter:
     blur(var(--glass-blur))
     brightness(var(--glass-brightness))
-    saturate(var(--glass-saturation));
+    saturate(var(--glass-saturation))
+    contrast(var(--glass-contrast));
   transform: translateY(var(--glass-displacement));
   border-radius: 20px;
-  border: 1px solid var(--border-soft);
+  border: 1px solid rgba(255, 255, 255, var(--glass-edge-opacity));
   box-shadow:
-    0 0 var(--glass-bezel-depth) rgba(149, 131, 233, 0.15),
-    inset 0 0 calc(var(--glass-bezel-depth) / 2) rgba(255, 255, 255, 0.4);
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    0 0 var(--glass-bezel-depth) rgba(149, 131, 233, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, var(--glass-specular-opacity)),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* Specular rim highlight — the "liquid" signature */
+.glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      175deg,
+      rgba(255, 255, 255, var(--glass-specular-opacity)) 0%,
+      rgba(255, 255, 255, 0.06) 25%,
+      transparent 50%
+    );
+  mask-image: linear-gradient(
+    180deg,
+    black 0%,
+    transparent 60%
+  );
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    black 0%,
+    transparent 60%
+  );
+  z-index: 1;
+}
+
+/* Bottom edge catchlight — subtle ground reflection */
+.glass::after {
+  content: '';
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: 0;
+  height: 1px;
+  border-radius: 0 0 20px 20px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.08),
+    transparent
+  );
+  z-index: 1;
 }
 
 /* ═══ DATE / TIME INPUT STYLING ═══ */

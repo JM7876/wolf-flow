@@ -8,18 +8,29 @@
 "use client";
 import { WF, FC, FONT, MONO, CLICK, GLASS, glassPill, inputBase, WORKFLOW_STEPS, STEP_DESC } from "./tokens";
 
-/* ═══ TOP SHINE — decorative highlight line ═══ */
-export function TopShine({ r = 16 }) {
+/* ═══ LIQUID SHINE — specular highlight + edge glow (iOS 26 inspired) ═══ */
+export function TopShine({ r = 18 }) {
   return (
-    <div style={{
-      position: "absolute", left: 0, right: 0, top: 0, height: 1,
-      borderRadius: `${r}px ${r}px 0 0`, pointerEvents: "none",
-      background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)",
-    }} />
+    <>
+      {/* Specular highlight — bright curved shine across the top */}
+      <div style={{
+        position: "absolute", left: "8%", right: "8%", top: 0, height: "40%",
+        borderRadius: `${r}px ${r}px 0 0`, pointerEvents: "none",
+        background: "linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 40%, transparent 100%)",
+        maskImage: "linear-gradient(180deg, black 0%, transparent 100%)",
+        WebkitMaskImage: "linear-gradient(180deg, black 0%, transparent 100%)",
+      }} />
+      {/* Edge rim light — thin bright line along the top */}
+      <div style={{
+        position: "absolute", left: "5%", right: "5%", top: 0, height: 1,
+        borderRadius: `${r}px ${r}px 0 0`, pointerEvents: "none",
+        background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), rgba(255,255,255,0.25), rgba(255,255,255,0.2), transparent)",
+      }} />
+    </>
   );
 }
 
-/* ═══ GLASS CARD ═══ */
+/* ═══ LIQUID GLASS CARD (iOS 26 Inspired) ═══ */
 export function GlassCard({ children, style: s = {}, hover = false, onClick }) {
   return (
     <div
@@ -27,17 +38,23 @@ export function GlassCard({ children, style: s = {}, hover = false, onClick }) {
       style={{ ...GLASS.default, position: "relative", overflow: "hidden", ...s, transition: `all ${CLICK.duration}` }}
       onMouseEnter={hover ? e => {
         e.currentTarget.style.borderColor = CLICK.hover.borderColor;
-        e.currentTarget.style.transform = "translateY(-1px)";
+        e.currentTarget.style.transform = "translateY(-2px) scale(1.005)";
         e.currentTarget.style.boxShadow = CLICK.hover.boxShadow;
       } : undefined}
       onMouseLeave={hover ? e => {
-        e.currentTarget.style.borderColor = FC.border;
+        e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)";
         e.currentTarget.style.transform = "none";
         e.currentTarget.style.boxShadow = GLASS.default.boxShadow;
       } : undefined}
     >
-      <TopShine />
-      <div style={{ position: "relative" }}>{children}</div>
+      <TopShine r={s.borderRadius || 18} />
+      {/* Bottom catchlight */}
+      <div style={{
+        position: "absolute", left: "10%", right: "10%", bottom: 0, height: 1,
+        pointerEvents: "none",
+        background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)",
+      }} />
+      <div style={{ position: "relative", zIndex: 2 }}>{children}</div>
     </div>
   );
 }
@@ -128,14 +145,14 @@ export function TripleToggle({ label, options, value, onChange, colors }) {
           const c = colors?.[i] || WF.accent;
           return (
             <button key={opt.value} onClick={() => onChange(opt.value)} style={{
-              flex: 1, padding: "10px 8px", borderRadius: 10, cursor: "pointer",
-              background: active ? `${c}18` : FC.glass,
-              border: `1px solid ${active ? `${c}50` : FC.border}`,
+              flex: 1, padding: "10px 8px", borderRadius: 14, cursor: "pointer",
+              background: active ? `linear-gradient(168deg, ${c}1A 0%, ${c}0D 100%)` : "linear-gradient(168deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)",
+              border: `1px solid ${active ? `${c}50` : "rgba(255,255,255,0.1)"}`,
               color: active ? c : FC.textDim,
               fontSize: 12, fontWeight: active ? 600 : 400, fontFamily: FONT,
               transition: `all ${CLICK.duration}`,
-              boxShadow: active ? `0 0 20px ${c}15` : "none",
-              backdropFilter: "blur(var(--glass-blur,18px))", WebkitBackdropFilter: "blur(var(--glass-blur,18px))",
+              boxShadow: active ? `0 4px 16px ${c}18, inset 0 1px 0 rgba(255,255,255,0.12)` : "inset 0 1px 0 rgba(255,255,255,0.06)",
+              backdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4))", WebkitBackdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4))",
               display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
             }}
               onMouseEnter={!active ? e => { e.currentTarget.style.borderColor = `${c}35`; e.currentTarget.style.color = FC.textSecondary; e.currentTarget.style.boxShadow = `0 0 10px ${c}10`; } : undefined}
@@ -185,13 +202,17 @@ export function MiniTrack({ step, showLabels = false }) {
 /* ═══ PAGE NAV — Back | Home | Next ═══ */
 export function PageNav({ onBack, onHome, onNext, backLabel = "Back", nextLabel = "Next" }) {
   const navBtn = {
-    background: FC.glass, border: `1px solid ${FC.border}`, borderRadius: 10,
+    background: "linear-gradient(168deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.04) 100%)",
+    border: "1px solid rgba(255,255,255,0.12)", borderRadius: 14,
     padding: "10px 22px", cursor: "pointer", fontSize: 12, fontWeight: 500, fontFamily: FONT,
-    color: FC.textSecondary, backdropFilter: "blur(var(--glass-blur,18px))", WebkitBackdropFilter: "blur(var(--glass-blur,18px))",
+    color: FC.textSecondary,
+    backdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4))",
+    WebkitBackdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4))",
+    boxShadow: "0 4px 16px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -1px 0 rgba(255,255,255,0.03)",
     transition: `all ${CLICK.duration}`, minWidth: 80, textAlign: "center",
   };
-  const hoverIn = (e) => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; e.currentTarget.style.color = FC.textPrimary; };
-  const hoverOut = (e) => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.color = FC.textSecondary; };
+  const hoverIn = (e) => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; e.currentTarget.style.color = FC.textPrimary; e.currentTarget.style.transform = "translateY(-1px)"; };
+  const hoverOut = (e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.boxShadow = navBtn.boxShadow; e.currentTarget.style.color = FC.textSecondary; e.currentTarget.style.transform = "none"; };
 
   return (
     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, padding: "24px 24px 32px" }}>
