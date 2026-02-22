@@ -240,13 +240,14 @@ function FormField({ label, type = "text", value, onChange, placeholder, require
       </div>
     );
   }
+  const isDateOrTime = type === "date" || type === "time";
   return (
     <div style={{ marginBottom: 14 }}>
       <label style={{ fontSize: 11, fontWeight: 500, fontFamily: FONT, color: FC.textSecondary, letterSpacing: "0.04em", display: "block", marginBottom: 6 }}>
         {label}{required && <span style={{ color: FC.redLight }}> *</span>}
       </label>
       <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
-        style={inputBase}
+        style={{ ...inputBase, ...(isDateOrTime ? { colorScheme: "dark", cursor: "pointer" } : {}) }}
         onFocus={e => e.target.style.borderColor = `${WF.accent}60`}
         onBlur={e => e.target.style.borderColor = FC.border}
       />
@@ -370,21 +371,21 @@ function PortalBackground({ nightMode }) {
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
-        filter: nightMode ? "brightness(0.3) saturate(0.8)" : "brightness(0.85) saturate(1.1)",
+        filter: nightMode ? "brightness(0.45) saturate(0.85)" : "brightness(1.1) saturate(1.15)",
         transition: "filter 0.6s ease",
       }} />
       {/* Dark overlay for content legibility */}
       <div style={{
         position: "absolute", inset: 0,
         background: nightMode
-          ? "linear-gradient(180deg, rgba(26,22,40,0.85) 0%, rgba(34,28,53,0.9) 100%)"
-          : "linear-gradient(180deg, rgba(26,22,40,0.6) 0%, rgba(34,28,53,0.7) 100%)",
+          ? "linear-gradient(180deg, rgba(26,22,40,0.7) 0%, rgba(34,28,53,0.75) 100%)"
+          : "linear-gradient(180deg, rgba(26,22,40,0.35) 0%, rgba(34,28,53,0.45) 100%)",
         transition: "background 0.6s ease",
       }} />
-      {/* Accent glow — bottom left */}
-      <div style={{ position: "absolute", bottom: "5%", left: "8%", width: "50%", height: "50%", opacity: nightMode ? 0.08 : 0.15, background: `radial-gradient(ellipse, ${WF.accent}, transparent 70%)`, filter: "blur(90px)" }} />
-      {/* Warm glow — top right */}
-      <div style={{ position: "absolute", top: "8%", right: "5%", width: "40%", height: "40%", opacity: nightMode ? 0.04 : 0.08, background: `radial-gradient(ellipse, ${WF.warm}, transparent 70%)`, filter: "blur(90px)" }} />
+      {/* Accent glow -- bottom left */}
+      <div style={{ position: "absolute", bottom: "5%", left: "8%", width: "50%", height: "50%", opacity: nightMode ? 0.12 : 0.22, background: `radial-gradient(ellipse, ${WF.accent}, transparent 70%)`, filter: "blur(90px)" }} />
+      {/* Warm glow -- top right */}
+      <div style={{ position: "absolute", top: "8%", right: "5%", width: "40%", height: "40%", opacity: nightMode ? 0.06 : 0.14, background: `radial-gradient(ellipse, ${WF.warm}, transparent 70%)`, filter: "blur(90px)" }} />
     </div>
   );
 }
@@ -547,7 +548,7 @@ function ServiceForm({ serviceId, onSubmit, onBack }) {
               { value: "standard", label: "Standard", icon: "📋" },
               { value: "low", label: "Low", icon: "📅" },
             ]}
-            colors={[FC.gold, WF.accent, FC.textDim]}
+            colors={[FC.gold, WF.accent, FC.turquoiseLight]}
           />
           <TripleToggle label="Media Type" value={mediaType} onChange={setMediaType}
             options={[
@@ -627,7 +628,7 @@ function ConfirmationPage({ submission, onHome, onTracker }) {
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
-      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 24 }}>
       <div style={{ maxWidth: 480, width: "100%", padding: "20px 24px 20px" }}>
         {/* Success indicator */}
         <div style={{ textAlign: "center", marginBottom: 28 }}>
@@ -1145,7 +1146,7 @@ function SettingsDropdown({ nightMode, onToggleNight }) {
 
       <div style={{
         position: "fixed", top: 58, right: 16, zIndex: 300, width: 290, borderRadius: 20,
-        padding: open ? 20 : 0, maxHeight: open ? 520 : 0, overflow: "hidden",
+        padding: open ? 20 : 0, maxHeight: open ? "min(520px, calc(100vh - 80px))" : 0, overflowY: open ? "auto" : "hidden", overflowX: "hidden",
         background: "rgba(34,28,53,0.92)", backdropFilter: "blur(24px) brightness(1.05) saturate(1.15)",
         WebkitBackdropFilter: "blur(24px) brightness(1.05) saturate(1.15)",
         border: open ? "1px solid rgba(149,131,233,0.2)" : "1px solid transparent",
@@ -1246,7 +1247,7 @@ export default function WolfFlowPortal() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", fontFamily: FONT, color: FC.textPrimary, position: "relative", overflow: "hidden" }}>
+    <div style={{ minHeight: "100vh", fontFamily: FONT, color: FC.textPrimary, position: "relative", overflowX: "hidden" }}>
       <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,500&display=swap" rel="stylesheet" />
 
       <PortalBackground nightMode={nightMode} />

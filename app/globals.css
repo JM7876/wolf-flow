@@ -109,7 +109,6 @@
 }
 
 html, body {
-  overflow: hidden;
   height: 100%;
   width: 100%;
   background-color: var(--bg-primary);
@@ -117,6 +116,16 @@ html, body {
   font-family: 'Montserrat Alternates', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+body {
+  overflow-x: hidden;
 }
 
 /* ═══ GLASS CLASS ═══ */
@@ -136,6 +145,25 @@ html, body {
   box-shadow:
     0 0 var(--glass-bezel-depth) rgba(149, 131, 233, 0.15),
     inset 0 0 calc(var(--glass-bezel-depth) / 2) rgba(255, 255, 255, 0.4);
+}
+
+/* ═══ DATE / TIME INPUT STYLING ═══ */
+input[type="date"],
+input[type="time"] {
+  color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8) brightness(1.2);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="time"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
 }
 
 /* ═══ 7. SLIDER STYLING ═══ */
