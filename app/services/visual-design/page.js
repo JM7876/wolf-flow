@@ -345,11 +345,18 @@ export default function VisualDesignPage() {
   const BG = () => (
     <>
       <PortalBackground nightMode={false} />
-      {/* Palette preview overlay — fades in when a style is selected */}
+      {/* Stone white wash — covers the dark background when a palette is active */}
+      <div style={{
+        position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none",
+        background: "#f0ece6",
+        opacity: previewGradient ? 0.92 : 0,
+        transition: "opacity 0.8s cubic-bezier(0.4,0,0.2,1)",
+      }} />
+      {/* Palette gradient overlay — tints the stone white with chosen colors */}
       <div style={{
         position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none",
         background: previewGradient || "transparent",
-        opacity: previewGradient ? 0.18 : 0,
+        opacity: previewGradient ? 0.35 : 0,
         transition: "opacity 0.8s cubic-bezier(0.4,0,0.2,1), background 0.8s cubic-bezier(0.4,0,0.2,1)",
       }} />
       <div style={{
