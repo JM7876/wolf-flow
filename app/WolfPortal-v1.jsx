@@ -145,6 +145,7 @@ function ServiceGrid({ onSelect, onTracker }) {
                 <div style={{ fontSize: 9, fontWeight: 400, fontFamily: FONT, color: FC.textDim, lineHeight: 1.4 }}>{"Track the progress of an existing request"}</div>
               </div>
             </GlassCard>
+          </div>
         </div>
       </div>
       <PageNav />
