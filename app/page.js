@@ -1,11 +1,11 @@
 /* ═══════════════════════════════════════════════════════════════════
-   WOLF FLOW SOLUTIONS — Command Center
+   WOLF FLOW SOLUTIONS — Communications Portal
    Created and Authored by Johnathon Moulds © 2026
 ═══════════════════════════════════════════════════════════════════ */
 "use client";
 import dynamic from "next/dynamic";
-const CommandCenter = dynamic(() => import("./CommandCenter"), { ssr: false });
+const NHBPPortal = dynamic(() => import("./WolfPortal-v1"), { ssr: false });
 export default function Home() {
-  return <CommandCenter />;
+  return <NHBPPortal />;
 }
 // Created and Authored by Johnathon Moulds © 2026 — Wolf Flow Solutions | All Rights Reserved
