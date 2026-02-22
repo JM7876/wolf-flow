@@ -234,4 +234,21 @@ export function PortalBackground({ nightMode }) {
   );
 }
 
+/* ═══ FOOTER ═══ */
+export function Footer() {
+  return (
+    <footer style={{
+      width: "100%", textAlign: "center",
+      padding: "20px 24px 28px",
+      fontFamily: FONT, fontSize: 12, fontWeight: 400,
+      color: "rgba(255,255,255,0.28)",
+      letterSpacing: "0.02em",
+      lineHeight: 1.6,
+      flexShrink: 0,
+    }}>
+      {"Developed and Created by: Johnathon Moulds | Wolf Flow Solutions."}
+    </footer>
+  );
+}
+
 // Created and Authored by Johnathon Moulds © 2026 — Wolf Flow Solutions | All Rights Reserved

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { WF, FC, FONT, GLASS, glassPill, CLICK, inputBase, DEPARTMENTS } from "../../lib/tokens";
-import { GlassCard, PortalBackground, PageNav, SectionLabel } from "../../lib/components";
+import { GlassCard, PortalBackground, PageNav, SectionLabel, Footer } from "../../lib/components";
 
 /* ═══════════════════════════════════════════════════════════
    THE STUDIO HUB — Headshots + Turtle Press
@@ -224,6 +224,7 @@ export default function StudioHubPage() {
           <TurtlePressForm onBack={() => setActiveSection(null)} />
         )}
       </div>
+      <Footer />
       <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 10 }}>
         <PageNav
           onBack={activeSection ? () => setActiveSection(null) : () => router.push("/")}

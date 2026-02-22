@@ -9,7 +9,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { WF, FC, FONT, CLICK, GLASS, inputBase } from "../../lib/tokens";
-import { GlassCard, TopShine, PortalBackground, PageNav } from "../../lib/components";
+import { GlassCard, TopShine, PortalBackground, PageNav, Footer } from "../../lib/components";
 
 /* --- CONSTANTS (inlined from old portal) --- */
 const ENTERPRISES = [
@@ -238,6 +238,7 @@ export default function StationeryKitPage() {
               background: `${WF.accent}15`, border: `1px solid ${WF.accent}40`, color: WF.accentLight,
             }}>{"Back to Services"}</button>
           </div>
+          <Footer />
         </div>
       </div>
     );
@@ -446,6 +447,7 @@ export default function StationeryKitPage() {
           {renderStep()}
         </div>
 
+        <Footer />
         {/* Bottom nav */}
         <PageNav
           onBack={step > 0 ? goBack : undefined}

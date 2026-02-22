@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { WF, FC, FONT, GLASS, glassPill, CLICK, inputBase, DEPARTMENTS } from "../../lib/tokens";
-import { GlassCard, PortalBackground, PageNav, SectionLabel } from "../../lib/components";
+import { GlassCard, PortalBackground, PageNav, SectionLabel, Footer } from "../../lib/components";
 
 /* ═══════════════════════════════════════════════════════════
    COMMUNITY OUTREACH — Social Media & Web Content Requests
@@ -125,6 +125,7 @@ export default function CommunityOutreachPage() {
             <button onClick={() => router.push("/")} style={{ ...glassPill, padding: "13px 28px", border: `1px solid ${WF.accent}40`, color: FC.textPrimary }}>{"Back to Portal"}</button>
           </div>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -232,6 +233,7 @@ export default function CommunityOutreachPage() {
           {renderStep()}
         </div>
       </div>
+      <Footer />
       <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 10 }}>
         <PageNav onBack={step > 0 ? navBack : () => router.push("/")} backLabel={step > 0 ? "Back" : "Portal"} onNext={canAdvance() ? navNext : undefined} nextLabel={nextLabel} />
       </div>

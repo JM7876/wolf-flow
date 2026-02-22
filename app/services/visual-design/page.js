@@ -10,7 +10,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { WF, FC, FONT, CLICK, inputBase } from "../../lib/tokens";
-import { PortalBackground } from "../../lib/components";
+import { PortalBackground, Footer } from "../../lib/components";
 
 // ═══════════════════════════════════════════════════════════
 //  VISUAL DESIGNS FORM — DATA
@@ -435,6 +435,7 @@ export default function VisualDesignPage() {
             onMouseLeave={e => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.color = FC.textSecondary; }}
           >{"\u2190 Back to Services"}</button>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -1145,6 +1146,7 @@ export default function VisualDesignPage() {
       <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "20px 24px 120px", zIndex: 1, position: "relative", overflowY: "auto" }}>
         {renderStep()}
       </div>
+      <Footer />
       {/* Nav */}
       <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 50, display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 24px", background: `linear-gradient(0deg, ${FC.dark}F2 50%, transparent)`, backdropFilter: "blur(12px)" }}>
         <button onClick={goBack} disabled={step === 0}

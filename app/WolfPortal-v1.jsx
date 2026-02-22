@@ -14,7 +14,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 import { WF, FC, FONT, MONO, CLICK, GLASS, glassPill, inputBase, WORKFLOW_STEPS, STEP_DESC, STEP_ICONS, WOLF_LOGO, DEPARTMENTS } from "./lib/tokens";
-import { GlassCard, SectionLabel, FormField, TripleToggle, MiniTrack, PageNav, PortalBackground } from "./lib/components";
+import { GlassCard, SectionLabel, FormField, TripleToggle, MiniTrack, PageNav, PortalBackground, Footer } from "./lib/components";
 import { SERVICES, FIELD_LABELS, MOCK_REQUESTS } from "./lib/services";
 
 
@@ -46,6 +46,7 @@ function WelcomePage({ onEnter }) {
           </button>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
@@ -148,7 +149,7 @@ function ServiceGrid({ onSelect, onTracker }) {
           </div>
         </div>
       </div>
-      <PageNav />
+      <Footer />
     </div>
   );
 }
@@ -240,6 +241,7 @@ function GenericServiceForm({ service, onSubmit, onBack }) {
         </div>
       </div>
       <PageNav onBack={onBack} backLabel="Back" onHome={onBack} />
+      <Footer />
     </div>
   );
 }
@@ -247,7 +249,7 @@ function GenericServiceForm({ service, onSubmit, onBack }) {
 
 /* ═══════════════════════════════════════════════════════════
    PAGE: SUBMISSION CONFIRMATION
-   ═══════════════════════════════════════════════════════════ */
+   ═════════════════════════════════���═════════════════════════ */
 function ConfirmationPage({ submission, onHome, onTracker }) {
   const [copied, setCopied] = useState(false);
 
@@ -380,6 +382,7 @@ function ConfirmationPage({ submission, onHome, onTracker }) {
         </div>
       </div>
       <PageNav onBack={onHome} backLabel="Back" onHome={onHome} onNext={onTracker} nextLabel="Track" />
+      <Footer />
     </div>
   );
 }
@@ -677,6 +680,7 @@ function CheckYourStats({ onBack, prefillId }) {
         </div>
       </div>
       <PageNav onBack={onBack} backLabel="Back" onHome={onBack} />
+      <Footer />
     </div>
   );
 }
@@ -863,6 +867,7 @@ export default function WolfFlowPortal() {
       {page === "form" && selectedService && <GenericServiceForm service={selectedService} onSubmit={handleSubmit} onBack={goServices} />}
       {page === "confirm" && <ConfirmationPage submission={submission} onHome={goServices} onTracker={() => goTracker(submission?.id)} />}
       {page === "tracker" && <CheckYourStats onBack={goServices} prefillId={trackerId} />}
+      <Footer />
     </div>
   );
 }
