@@ -6,8 +6,8 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Wolf Flow Communications — Request Portal",
-  description: "Where departments come to create — Wolf Flow Solutions",
+  title: "NHBP Communications Portal — Wolf Flow Solutions",
+  description: "Request services from the Communications Department — design, photography, writing, web updates, and more.",
 };
 
 export default function RootLayout({ children }) {

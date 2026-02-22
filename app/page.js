@@ -1,11 +1,11 @@
 /* ═══════════════════════════════════════════════════════════════════
-   WOLF FLOW SOLUTIONS — Welcome Page
+   WOLF FLOW SOLUTIONS — Communications Portal
    Created and Authored by Johnathon Moulds © 2026
 ═══════════════════════════════════════════════════════════════════ */
 "use client";
 import dynamic from "next/dynamic";
-const WolfWelcomeV1 = dynamic(() => import("./WolfWelcomeV1"), { ssr: false });
+const NHBPPortal = dynamic(() => import("./WolfPortal-v1"), { ssr: false });
 export default function Home() {
-  return <WolfWelcomeV1 />;
+  return <NHBPPortal />;
 }
 // Created and Authored by Johnathon Moulds © 2026 — Wolf Flow Solutions | All Rights Reserved
