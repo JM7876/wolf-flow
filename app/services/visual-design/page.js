@@ -341,6 +341,9 @@ export default function VisualDesignPage() {
     }
   }, [step, form.styleDir, form.designerChoice, form.paletteModifier, submitted]);
 
+  // Clear gradient on unmount (safety net for browser back, etc.)
+  useEffect(() => () => setPreviewGradient(null), []);
+
   // ═══ WOLF FLOW BACKGROUND ═══
   const BG = () => (
     <>
@@ -474,7 +477,7 @@ export default function VisualDesignPage() {
           <p style={{ fontSize: 13, color: FC.textDim, marginTop: 20, lineHeight: 1.6, maxWidth: 360, fontFamily: FONT }}>
             {"The Communications team will review your request and follow up within 24 hours."}
           </p>
-          <button onClick={() => router.push("/")} style={{ marginTop: 20, background: FC.glass, border: `1px solid ${FC.border}`, borderRadius: 10, padding: "12px 28px", cursor: "pointer", fontSize: 13, fontFamily: FONT, fontWeight: 500, color: FC.textSecondary, transition: `all ${CLICK.duration}` }}
+          <button onClick={() => { setPreviewGradient(null); router.push("/"); }} style={{ marginTop: 20, background: FC.glass, border: `1px solid ${FC.border}`, borderRadius: 10, padding: "12px 28px", cursor: "pointer", fontSize: 13, fontFamily: FONT, fontWeight: 500, color: FC.textSecondary, transition: `all ${CLICK.duration}` }}
             onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.color = FC.textPrimary; }}
             onMouseLeave={e => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.color = FC.textSecondary; }}
           >{"\u2190 Back to Services"}</button>
@@ -1180,7 +1183,7 @@ export default function VisualDesignPage() {
       </div>
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "18px 24px", zIndex: 10, position: "relative" }}>
-        <button onClick={() => router.push("/")} style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.06em", color: FC.textDim, background: "none", border: "none", cursor: "pointer", fontFamily: FONT, transition: `color ${CLICK.duration}` }}
+        <button onClick={() => { setPreviewGradient(null); router.push("/"); }} style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.06em", color: FC.textDim, background: "none", border: "none", cursor: "pointer", fontFamily: FONT, transition: `color ${CLICK.duration}` }}
           onMouseEnter={e => { e.currentTarget.style.color = FC.textPrimary; }}
           onMouseLeave={e => { e.currentTarget.style.color = FC.textDim; }}
         >{"\u2190 Wolf Flow"}</button>
