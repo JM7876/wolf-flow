@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
-import GlassControlPanel from "./GlassControlPanel";
+import { useState, useEffect, useRef } from "react";
 
 /* ═══════════════════════════════════════════════════════════
    WOLF FLOW COMMUNICATIONS PORTAL — v1 (Fresh Build)
@@ -320,56 +319,39 @@ function MiniTrack({ step, showLabels = false }) {
   );
 }
 
-/* ═══ TOP NAV — Back | Wolf | Next ═══ */
-function TopNav({ onBack, onHome, onNext, onGlassToggle, backLabel = "Back", nextLabel = "Next" }) {
-  const navBtnStyle = {
+/* ═══ PAGE NAV — Back | Home | Next (bottom center, below hero) ═══ */
+function PageNav({ onBack, onHome, onNext, backLabel = "Back", nextLabel = "Next" }) {
+  const navBtn = {
     background: FC.glass, border: `1px solid ${FC.border}`, borderRadius: 10,
-    padding: "8px 18px", cursor: "pointer", fontSize: 11, fontWeight: 500, fontFamily: FONT,
+    padding: "10px 22px", cursor: "pointer", fontSize: 12, fontWeight: 500, fontFamily: FONT,
     color: FC.textSecondary, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
-    transition: `all ${CLICK.duration}`, minWidth: 72, textAlign: "center",
+    transition: `all ${CLICK.duration}`, minWidth: 80, textAlign: "center",
   };
-  const handleHoverIn = (e) => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; e.currentTarget.style.color = FC.textPrimary; };
-  const handleHoverOut = (e) => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.color = FC.textSecondary; };
+  const hoverIn = (e) => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; e.currentTarget.style.color = FC.textPrimary; };
+  const hoverOut = (e) => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.color = FC.textSecondary; };
 
   return (
     <div style={{
-      display: "flex", justifyContent: "center", alignItems: "center", gap: 16,
-      padding: "16px 24px 8px", position: "relative", zIndex: 100,
+      display: "flex", justifyContent: "center", alignItems: "center", gap: 12,
+      padding: "24px 24px 32px",
     }}>
-      {/* Back button */}
       {onBack ? (
-        <button onClick={onBack} style={navBtnStyle}
-          onMouseEnter={handleHoverIn} onMouseLeave={handleHoverOut}
-        >
-          {"<"} {backLabel}
+        <button onClick={onBack} style={navBtn} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>
+          {backLabel}
         </button>
-      ) : <div style={{ minWidth: 72 }} />}
+      ) : <div style={{ minWidth: 80 }} />}
 
-      {/* Wolf logo — tap = home, double-tap = glass toggle */}
-      <button
-        onClick={onHome}
-        onDoubleClick={(e) => { e.stopPropagation(); onGlassToggle && onGlassToggle(); }}
-        style={{
-          background: "none", border: "none", cursor: "pointer", padding: 4,
-          filter: "drop-shadow(0 0 8px rgba(149,131,233,0.3))", transition: `filter ${CLICK.duration}, transform ${CLICK.duration}`,
-          width: 52, height: 52, display: "flex", alignItems: "center", justifyContent: "center",
-          borderRadius: "50%",
-        }}
-        onMouseEnter={e => { e.currentTarget.style.filter = "drop-shadow(0 0 16px rgba(189,149,238,0.5))"; e.currentTarget.style.transform = "scale(1.08)"; }}
-        onMouseLeave={e => { e.currentTarget.style.filter = "drop-shadow(0 0 8px rgba(149,131,233,0.3))"; e.currentTarget.style.transform = "scale(1)"; }}
-        title="Home (double-click for glass controls)"
-      >
-        <img src={WOLF_LOGO} alt="Wolf Flow" style={{ width: 44, height: 44, objectFit: "contain" }} />
-      </button>
+      {onHome ? (
+        <button onClick={onHome} style={navBtn} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>
+          Home
+        </button>
+      ) : <div style={{ minWidth: 80 }} />}
 
-      {/* Next button */}
       {onNext ? (
-        <button onClick={onNext} style={navBtnStyle}
-          onMouseEnter={handleHoverIn} onMouseLeave={handleHoverOut}
-        >
-          {nextLabel} {">"}
+        <button onClick={onNext} style={navBtn} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>
+          {nextLabel}
         </button>
-      ) : <div style={{ minWidth: 72 }} />}
+      ) : <div style={{ minWidth: 80 }} />}
     </div>
   );
 }
@@ -408,10 +390,9 @@ function PortalBackground({ nightMode }) {
 /* ═══════════════════════════════════════════════════════════
    PAGE: WELCOME
    ═══════════════════════════════════════════════════════════ */
-function WelcomePage({ onEnter, onGlassToggle }) {
+function WelcomePage({ onEnter }) {
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
-      <TopNav onHome={() => {}} onGlassToggle={onGlassToggle} onNext={onEnter} nextLabel="Start" />
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div style={{ textAlign: "center", maxWidth: 520, padding: "0 24px" }}>
         {/* Wolf Flow logo */}
@@ -444,6 +425,7 @@ function WelcomePage({ onEnter, onGlassToggle }) {
         </button>
       </div>
       </div>
+      <PageNav onNext={onEnter} nextLabel="Start" />
     </div>
   );
 }
@@ -452,12 +434,11 @@ function WelcomePage({ onEnter, onGlassToggle }) {
 /* ═══════════════════════════════════════════════════════════
    PAGE: SERVICE GRID — 8 services + Check Your Stats
    ═══════════════════════════════════════════════════════════ */
-function ServiceGrid({ onSelect, onTracker, onBack, onGlassToggle }) {
+function ServiceGrid({ onSelect, onTracker, onBack }) {
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
-      <TopNav onBack={onBack} backLabel="Home" onHome={onBack} onGlassToggle={onGlassToggle} onNext={onTracker} nextLabel="Stats" />
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <div style={{ maxWidth: 560, width: "100%", padding: "20px 24px 40px" }}>
+      <div style={{ maxWidth: 560, width: "100%", padding: "20px 24px 20px" }}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <div style={{ width: 68, height: 68, margin: "0 auto 8px", filter: `drop-shadow(0 2px 12px ${WF.accentGlow})` }}>
             <img src={WOLF_LOGO} alt="Wolf Flow" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
@@ -511,6 +492,7 @@ function ServiceGrid({ onSelect, onTracker, onBack, onGlassToggle }) {
         </GlassCard>
       </div>
       </div>
+      <PageNav onBack={onBack} backLabel="Home" onHome={onBack} onNext={onTracker} nextLabel="Stats" />
     </div>
   );
 }
@@ -519,7 +501,7 @@ function ServiceGrid({ onSelect, onTracker, onBack, onGlassToggle }) {
 /* ═══════════════════════════════════════════════════════════
    PAGE: SERVICE FORM — Compact single-page per service
    ═══════════════════════════════════════════════════════════ */
-function ServiceForm({ serviceId, onSubmit, onBack, onGlassToggle }) {
+function ServiceForm({ serviceId, onSubmit, onBack }) {
   const svc = SERVICES.find(s => s.id === serviceId);
   const [formData, setFormData] = useState({});
   const [priority, setPriority] = useState("standard");
@@ -546,9 +528,8 @@ function ServiceForm({ serviceId, onSubmit, onBack, onGlassToggle }) {
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
-      <TopNav onBack={onBack} backLabel="Services" onHome={onBack} onGlassToggle={onGlassToggle} />
       <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center" }}>
-      <div style={{ maxWidth: 480, width: "100%", padding: "20px 24px 60px" }}>
+      <div style={{ maxWidth: 480, width: "100%", padding: "20px 24px 20px" }}>
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 28 }}>
           <span style={{ fontSize: 36 }}>{svc.icon}</span>
@@ -621,6 +602,7 @@ function ServiceForm({ serviceId, onSubmit, onBack, onGlassToggle }) {
         </GlassCard>
       </div>
       </div>
+      <PageNav onBack={onBack} backLabel="Services" onHome={onBack} />
     </div>
   );
 }
@@ -629,7 +611,7 @@ function ServiceForm({ serviceId, onSubmit, onBack, onGlassToggle }) {
 /* ═══════════════════════════════════════════════════════════
    PAGE: SUBMISSION CONFIRMATION
    ═══════════════════════════════════════════════════════════ */
-function ConfirmationPage({ submission, onHome, onTracker, onGlassToggle }) {
+function ConfirmationPage({ submission, onHome, onTracker }) {
   const [copied, setCopied] = useState(false);
 
   const copyId = () => {
@@ -643,9 +625,8 @@ function ConfirmationPage({ submission, onHome, onTracker, onGlassToggle }) {
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
-      <TopNav onBack={onHome} backLabel="Services" onHome={onHome} onGlassToggle={onGlassToggle} onNext={onTracker} nextLabel="Track" />
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <div style={{ maxWidth: 480, width: "100%", padding: "20px 24px 40px" }}>
+      <div style={{ maxWidth: 480, width: "100%", padding: "20px 24px 20px" }}>
         {/* Success indicator */}
         <div style={{ textAlign: "center", marginBottom: 28 }}>
           <div style={{
@@ -760,6 +741,7 @@ function ConfirmationPage({ submission, onHome, onTracker, onGlassToggle }) {
         </div>
       </div>
       </div>
+      <PageNav onBack={onHome} backLabel="Services" onHome={onHome} onNext={onTracker} nextLabel="Track" />
     </div>
   );
 }
@@ -768,7 +750,7 @@ function ConfirmationPage({ submission, onHome, onTracker, onGlassToggle }) {
 /* ═══════════════════════════════════════════════════════════
    PAGE: CHECK YOUR STATS — Request Tracker
    ═══════════════════════════════════════════════════════════ */
-function CheckYourStats({ onBack, prefillId, onGlassToggle }) {
+function CheckYourStats({ onBack, prefillId }) {
   const [inputId, setInputId] = useState(prefillId || "");
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
@@ -809,9 +791,8 @@ function CheckYourStats({ onBack, prefillId, onGlassToggle }) {
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
-      <TopNav onBack={onBack} backLabel="Services" onHome={onBack} onGlassToggle={onGlassToggle} />
       <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center" }}>
-      <div style={{ maxWidth: 520, width: "100%", padding: "20px 24px 40px" }}>
+      <div style={{ maxWidth: 520, width: "100%", padding: "20px 24px 20px" }}>
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 28 }}>
           <div style={{
@@ -1072,6 +1053,159 @@ function CheckYourStats({ onBack, prefillId, onGlassToggle }) {
         )}
       </div>
       </div>
+      <PageNav onBack={onBack} backLabel="Services" onHome={onBack} />
+    </div>
+  );
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   SETTINGS DROPDOWN — Gear icon > Day/Night + Glass sliders
+   ═══════════════════════════════════════════════════════════ */
+const GLASS_PRESETS = {
+  frost:  { label: "Soft Frost",  values: { displacement: 0, blur: 22, opacity: 0.22, brightness: 1.08, saturation: 1.05, bezel: 20 } },
+  dream:  { label: "Dream Glass", values: { displacement: 2, blur: 28, opacity: 0.28, brightness: 1.1,  saturation: 1.25, bezel: 26 } },
+  studio: { label: "Studio Glass",values: { displacement: 0, blur: 14, opacity: 0.14, brightness: 1,    saturation: 1,    bezel: 12 } },
+};
+const GLASS_SLIDERS = [
+  { key: "displacement", label: "Displacement", cssVar: "--glass-displacement", unit: "px", min: 0, max: 10, step: 0.5, def: 0 },
+  { key: "blur",         label: "Blur",         cssVar: "--glass-blur",         unit: "px", min: 0, max: 50, step: 1,   def: 18 },
+  { key: "opacity",      label: "Opacity",      cssVar: "--glass-opacity",      unit: "",   min: 0, max: 0.5, step: 0.01, def: 0.18 },
+  { key: "brightness",   label: "Brightness",   cssVar: "--glass-brightness",   unit: "",   min: 0.8, max: 1.4, step: 0.01, def: 1.05 },
+  { key: "saturation",   label: "Saturation",   cssVar: "--glass-saturation",   unit: "",   min: 0.5, max: 2,   step: 0.05, def: 1.1 },
+  { key: "bezel",        label: "Bezel Depth",  cssVar: "--glass-bezel-depth",  unit: "px", min: 0, max: 40, step: 1,   def: 18 },
+];
+
+function SettingsDropdown({ nightMode, onToggleNight }) {
+  const [open, setOpen] = useState(false);
+  const [glassVals, setGlassVals] = useState(() => {
+    const init = {};
+    GLASS_SLIDERS.forEach(s => { init[s.key] = s.def; });
+    return init;
+  });
+  const [activePreset, setActivePreset] = useState(null);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const close = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, [open]);
+
+  const setGlassVar = (cssVar, v, unit) => document.documentElement.style.setProperty(cssVar, v + unit);
+
+  const updateSlider = (key, val) => {
+    const s = GLASS_SLIDERS.find(x => x.key === key);
+    const num = parseFloat(val);
+    setGlassVals(prev => ({ ...prev, [key]: num }));
+    setActivePreset(null);
+    setGlassVar(s.cssVar, num, s.unit);
+  };
+
+  const applyPreset = (pk) => {
+    const p = GLASS_PRESETS[pk];
+    const nv = {};
+    GLASS_SLIDERS.forEach(s => { nv[s.key] = p.values[s.key]; setGlassVar(s.cssVar, p.values[s.key], s.unit); });
+    setGlassVals(nv);
+    setActivePreset(pk);
+  };
+
+  const gearBtnStyle = {
+    position: "fixed", top: 18, right: 18, zIndex: 300,
+    background: open ? "rgba(149,131,233,0.15)" : FC.glass,
+    border: `1px solid ${open ? "rgba(149,131,233,0.4)" : FC.border}`, borderRadius: 12,
+    padding: "8px 12px", cursor: "pointer", fontSize: 18, lineHeight: 1,
+    backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
+    transition: `all ${CLICK.duration}`,
+  };
+
+  return (
+    <div ref={ref}>
+      <button onClick={() => setOpen(o => !o)} style={gearBtnStyle}
+        onMouseEnter={e => e.currentTarget.style.borderColor = CLICK.hover.borderColor}
+        onMouseLeave={e => { if (!open) e.currentTarget.style.borderColor = FC.border; }}
+        title="Settings"
+        aria-label="Open settings"
+      >
+        {"⚙️"}
+      </button>
+
+      <div style={{
+        position: "fixed", top: 58, right: 16, zIndex: 300, width: 290, borderRadius: 20,
+        padding: open ? 20 : 0, maxHeight: open ? 520 : 0, overflow: "hidden",
+        background: "rgba(34,28,53,0.92)", backdropFilter: "blur(24px) brightness(1.05) saturate(1.15)",
+        WebkitBackdropFilter: "blur(24px) brightness(1.05) saturate(1.15)",
+        border: open ? "1px solid rgba(149,131,233,0.2)" : "1px solid transparent",
+        boxShadow: open ? "0 8px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06)" : "none",
+        opacity: open ? 1 : 0, transform: open ? "translateY(0)" : "translateY(-8px)",
+        pointerEvents: open ? "auto" : "none",
+        transition: "opacity 0.25s ease, transform 0.25s ease, max-height 0.3s ease, padding 0.25s ease",
+        fontFamily: FONT,
+      }}>
+        {/* Day / Night */}
+        <div style={{ marginBottom: 18 }}>
+          <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(240,205,243,0.5)", marginBottom: 10 }}>
+            Appearance
+          </div>
+          <button onClick={onToggleNight} style={{
+            width: "100%", padding: "10px 14px", borderRadius: 10, cursor: "pointer",
+            background: FC.glass, border: `1px solid ${FC.border}`,
+            color: FC.textSecondary, fontSize: 12, fontWeight: 500, fontFamily: FONT,
+            display: "flex", alignItems: "center", gap: 10,
+            transition: `all ${CLICK.duration}`,
+          }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.color = FC.textPrimary; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.color = FC.textSecondary; }}
+          >
+            <span style={{ fontSize: 16 }}>{nightMode ? "☀️" : "🌙"}</span>
+            <span>{nightMode ? "Switch to Day Mode" : "Switch to Night Mode"}</span>
+          </button>
+        </div>
+
+        {/* Divider */}
+        <div style={{ height: 1, background: FC.border, marginBottom: 18 }} />
+
+        {/* Glass Engine */}
+        <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(240,205,243,0.5)", marginBottom: 10 }}>
+          Glass Engine
+        </div>
+
+        {/* Presets */}
+        <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
+          {Object.entries(GLASS_PRESETS).map(([key, preset]) => (
+            <button key={key} onClick={() => applyPreset(key)} style={{
+              flex: 1, padding: "7px 4px", fontSize: 9, fontWeight: 600, fontFamily: FONT,
+              letterSpacing: "0.04em",
+              border: `1px solid ${activePreset === key ? "rgba(149,131,233,0.5)" : "rgba(149,131,233,0.15)"}`,
+              borderRadius: 10,
+              background: activePreset === key ? "rgba(149,131,233,0.15)" : "rgba(255,255,255,0.04)",
+              color: activePreset === key ? "#BD95EE" : "rgba(240,205,243,0.5)",
+              cursor: "pointer", transition: "all 0.2s ease",
+            }}>
+              {preset.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Sliders */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {GLASS_SLIDERS.map(s => (
+            <div key={s.key}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                <span style={{ fontSize: 10, fontWeight: 500, color: "rgba(240,205,243,0.6)" }}>{s.label}</span>
+                <span style={{ fontSize: 10, fontFamily: FONT, color: "rgba(189,149,238,0.7)" }}>
+                  {s.unit === "px" ? `${glassVals[s.key]}px` : glassVals[s.key].toFixed(2)}
+                </span>
+              </div>
+              <input type="range" min={s.min} max={s.max} step={s.step} value={glassVals[s.key]}
+                onChange={e => updateSlider(s.key, e.target.value)}
+                style={{ width: "100%", cursor: "pointer" }}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -1081,13 +1215,11 @@ function CheckYourStats({ onBack, prefillId, onGlassToggle }) {
    MAIN PORTAL COMPONENT
    ═══════════════════════════════════════════════════════════ */
 export default function WolfFlowPortal() {
-  const [page, setPage] = useState("welcome");       // welcome | services | form | confirm | tracker
+  const [page, setPage] = useState("welcome");
   const [selectedService, setSelectedService] = useState(null);
   const [submission, setSubmission] = useState(null);
   const [nightMode, setNightMode] = useState(false);
   const [trackerId, setTrackerId] = useState("");
-  const [glassOpen, setGlassOpen] = useState(false);
-  const toggleGlass = useCallback(() => setGlassOpen(prev => !prev), []);
 
   const goServices = () => { setPage("services"); setSelectedService(null); };
   const goForm = (id) => { setSelectedService(id); setPage("form"); };
@@ -1100,35 +1232,19 @@ export default function WolfFlowPortal() {
 
   return (
     <div style={{ minHeight: "100vh", fontFamily: FONT, color: FC.textPrimary, position: "relative", overflow: "hidden" }}>
-      {/* Google Fonts */}
       <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,500&display=swap" rel="stylesheet" />
 
       <PortalBackground nightMode={nightMode} />
 
-      {/* Day/Night toggle */}
-      <button onClick={() => setNightMode(!nightMode)} style={{
-        position: "fixed", top: 18, right: 18, zIndex: 200,
-        background: FC.glass, border: `1px solid ${FC.border}`, borderRadius: 10,
-        padding: "6px 12px", cursor: "pointer", fontSize: 14,
-        backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
-        transition: `all ${CLICK.duration}`,
-      }}
-        onMouseEnter={e => e.currentTarget.style.borderColor = CLICK.hover.borderColor}
-        onMouseLeave={e => e.currentTarget.style.borderColor = FC.border}
-        title={nightMode ? "Switch to Day" : "Switch to Night"}
-      >
-        {nightMode ? "☀️" : "🌙"}
-      </button>
+      {/* Settings gear — Day/Night + Glass Engine */}
+      <SettingsDropdown nightMode={nightMode} onToggleNight={() => setNightMode(n => !n)} />
 
       {/* Pages */}
-      {page === "welcome" && <WelcomePage onEnter={goServices} onGlassToggle={toggleGlass} />}
-      {page === "services" && <ServiceGrid onSelect={goForm} onTracker={() => goTracker()} onBack={() => setPage("welcome")} onGlassToggle={toggleGlass} />}
-      {page === "form" && <ServiceForm serviceId={selectedService} onSubmit={handleSubmit} onBack={goServices} onGlassToggle={toggleGlass} />}
-      {page === "confirm" && <ConfirmationPage submission={submission} onHome={goServices} onTracker={() => goTracker(submission?.id)} onGlassToggle={toggleGlass} />}
-      {page === "tracker" && <CheckYourStats onBack={goServices} prefillId={trackerId} onGlassToggle={toggleGlass} />}
-
-      {/* Glass Control Panel — toggled via double-click on wolf logo */}
-      <GlassControlPanel open={glassOpen} onClose={() => setGlassOpen(false)} />
+      {page === "welcome" && <WelcomePage onEnter={goServices} />}
+      {page === "services" && <ServiceGrid onSelect={goForm} onTracker={() => goTracker()} onBack={() => setPage("welcome")} />}
+      {page === "form" && <ServiceForm serviceId={selectedService} onSubmit={handleSubmit} onBack={goServices} />}
+      {page === "confirm" && <ConfirmationPage submission={submission} onHome={goServices} onTracker={() => goTracker(submission?.id)} />}
+      {page === "tracker" && <CheckYourStats onBack={goServices} prefillId={trackerId} />}
     </div>
   );
 }
