@@ -40,7 +40,7 @@ const FC = {
 };
 const FONT = "'Montserrat Alternates', -apple-system, BlinkMacSystemFont, sans-serif";
 const MONO = "'Montserrat Alternates', monospace";
-const WOLF_LOGO = "/images/wolf-logo.gif";
+const WOLF_LOGO = "/images/wolf-logo.png";
 const CLICK = {
   hover: { borderColor: "rgba(149,131,233,0.5)", boxShadow: "0 8px 32px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 25px rgba(149,131,233,0.2)" },
   duration: "0.3s ease",
@@ -339,13 +339,13 @@ function BottomNav({ onBack, onHome, onGlassToggle, backLabel = "← Back" }) {
         style={{
           background: "none", border: "none", cursor: "pointer", padding: "2px 6px",
           filter: "drop-shadow(0 0 8px rgba(149,131,233,0.3))", transition: `filter ${CLICK.duration}`,
-          width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center",
+          width: 48, height: 48, display: "flex", alignItems: "center", justifyContent: "center",
         }}
         onMouseEnter={e => e.currentTarget.style.filter = "drop-shadow(0 0 16px rgba(189,149,238,0.4))"}
         onMouseLeave={e => e.currentTarget.style.filter = "drop-shadow(0 0 8px rgba(149,131,233,0.3))"}
         title="Back to Services (double-click for glass controls)"
       >
-        <img src={WOLF_LOGO} alt="Wolf Flow" style={{ width: 32, height: 32, objectFit: "contain" }} />
+        <img src={WOLF_LOGO} alt="Wolf Flow" style={{ width: 44, height: 44, objectFit: "contain" }} />
       </button>
       <div style={{ width: 48 }} />
     </div>
@@ -392,7 +392,7 @@ function WelcomePage({ onEnter }) {
       <div style={{ textAlign: "center", maxWidth: 520, padding: "0 24px" }}>
         {/* Wolf Flow logo */}
         <div style={{
-          width: 100, height: 100, margin: "0 auto 24px",
+          width: 150, height: 150, margin: "0 auto 24px",
           display: "flex", alignItems: "center", justifyContent: "center",
           filter: `drop-shadow(0 4px 20px ${WF.accentGlow})`,
         }}>
@@ -432,7 +432,7 @@ function ServiceGrid({ onSelect, onTracker }) {
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 1 }}>
       <div style={{ maxWidth: 560, width: "100%", padding: "40px 24px 80px" }}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <div style={{ width: 48, height: 48, margin: "0 auto 8px", filter: `drop-shadow(0 2px 12px ${WF.accentGlow})` }}>
+          <div style={{ width: 68, height: 68, margin: "0 auto 8px", filter: `drop-shadow(0 2px 12px ${WF.accentGlow})` }}>
             <img src={WOLF_LOGO} alt="Wolf Flow" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
           </div>
           <h2 style={{ fontFamily: FONT, fontWeight: 200, fontSize: 26, color: FC.textPrimary, marginBottom: 4 }}>
