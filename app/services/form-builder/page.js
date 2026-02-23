@@ -13,6 +13,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { WF, FC, FONT, MONO, CLICK, GLASS, glassPill, inputBase } from "../../lib/tokens";
 import { GlassCard, SectionLabel, FormField, PageNav, PortalBackground, Footer } from "../../lib/components";
+import { generateQR } from "../../lib/qr-encoder";
 
 /* ═══ CONSTANTS ═══ */
 const BUILDER_STEPS = { TITLE: 0, DESCRIPTION: 1, QUESTIONS: 2, NOTIFICATIONS: 3, REVIEW: 4 };
@@ -125,52 +126,169 @@ function CopyButton({ text }) {
   );
 }
 
-/* ═══ QR CODE DISPLAY ═══ */
-function QRCodeDisplay({ url, size = 200 }) {
-  const canvasRef = useRef(null);
-  const [imgLoaded, setImgLoaded] = useState(false);
-  const [imgError, setImgError] = useState(false);
-  const encodedUrl = encodeURIComponent(url);
-  const apiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodedUrl}&bgcolor=1A1628&color=9583E9&format=svg`;
+/* ═══ QR CODE DISPLAY — Canvas + Wolf Overlay ═══ */
+function QRCodeDisplay({ url, size = 240, externalCanvasRef }) {
+  const internalRef = useRef(null);
+  const canvasRef = externalCanvasRef || internalRef;
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (imgError && canvasRef.current) {
-      const ctx = canvasRef.current.getContext("2d");
-      ctx.fillStyle = "#1A1628";
+    if (!url || !canvasRef.current) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    const scale = 2; // retina
+    canvas.width = size * scale;
+    canvas.height = size * scale;
+    ctx.scale(scale, scale);
+
+    // Generate QR matrix
+    let qr;
+    try { qr = generateQR(url); } catch {
+      ctx.fillStyle = FC.dark;
       ctx.fillRect(0, 0, size, size);
       ctx.fillStyle = WF.accent;
-      ctx.font = `13px ${FONT}`;
+      ctx.font = "13px sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("QR Code", size / 2, size / 2 - 10);
-      ctx.font = `11px ${FONT}`;
-      ctx.fillStyle = "rgba(255,255,255,0.4)";
-      ctx.fillText("(requires network)", size / 2, size / 2 + 10);
+      ctx.fillText("QR Error", size / 2, size / 2);
+      setReady(true);
+      return;
     }
-  }, [imgError, size]);
+
+    const { modules, size: qrSize } = qr;
+    const quiet = 2; // quiet zone modules
+    const totalModules = qrSize + quiet * 2;
+    const modSize = size / totalModules;
+
+    // Background
+    ctx.fillStyle = FC.dark;
+    ctx.fillRect(0, 0, size, size);
+
+    // Center exclusion zone for wolf overlay (circular)
+    const centerX = size / 2;
+    const centerY = size / 2;
+    const overlayRadius = size * 0.28; // wolf circle takes ~28% radius
+
+    // Draw QR modules with Wolf Flow accent gradient
+    const grad = ctx.createLinearGradient(0, 0, size, size);
+    grad.addColorStop(0, WF.accentLight);
+    grad.addColorStop(0.5, WF.accent);
+    grad.addColorStop(1, WF.pink);
+
+    for (let r = 0; r < qrSize; r++) {
+      for (let c = 0; c < qrSize; c++) {
+        if (!modules[r][c]) continue;
+        const x = (c + quiet) * modSize;
+        const y = (r + quiet) * modSize;
+        const mx = x + modSize / 2;
+        const my = y + modSize / 2;
+        const dist = Math.sqrt((mx - centerX) ** 2 + (my - centerY) ** 2);
+
+        // Skip modules inside wolf overlay zone
+        if (dist < overlayRadius - modSize * 0.5) continue;
+
+        ctx.fillStyle = grad;
+        // Rounded modules for modern look
+        const pad = modSize * 0.1;
+        const rad = modSize * 0.25;
+        const rx = x + pad;
+        const ry = y + pad;
+        const rw = modSize - pad * 2;
+        const rh = modSize - pad * 2;
+        ctx.beginPath();
+        ctx.moveTo(rx + rad, ry);
+        ctx.lineTo(rx + rw - rad, ry);
+        ctx.quadraticCurveTo(rx + rw, ry, rx + rw, ry + rad);
+        ctx.lineTo(rx + rw, ry + rh - rad);
+        ctx.quadraticCurveTo(rx + rw, ry + rh, rx + rw - rad, ry + rh);
+        ctx.lineTo(rx + rad, ry + rh);
+        ctx.quadraticCurveTo(rx, ry + rh, rx, ry + rh - rad);
+        ctx.lineTo(rx, ry + rad);
+        ctx.quadraticCurveTo(rx, ry, rx + rad, ry);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+
+    // Load and draw wolf SVG overlay in center
+    const wolfImg = new Image();
+    wolfImg.crossOrigin = "anonymous";
+    wolfImg.onload = () => {
+      const wolfSize = overlayRadius * 2;
+      const dx = centerX - wolfSize / 2;
+      const dy = centerY - wolfSize / 2;
+
+      // Dark background circle behind wolf
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, overlayRadius + modSize * 0.5, 0, Math.PI * 2);
+      ctx.fillStyle = FC.dark;
+      ctx.fill();
+
+      // Draw the wolf SVG
+      ctx.drawImage(wolfImg, dx, dy, wolfSize, wolfSize);
+      setReady(true);
+    };
+    wolfImg.onerror = () => {
+      // Fallback: draw a simple branded circle if SVG fails
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, overlayRadius, 0, Math.PI * 2);
+      ctx.fillStyle = FC.dark;
+      ctx.fill();
+      ctx.strokeStyle = WF.accent;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.fillStyle = WF.accent;
+      ctx.font = `bold ${size * 0.06}px sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("WF", centerX, centerY);
+      setReady(true);
+    };
+    wolfImg.src = "/images/qr-wolf-overlay.svg";
+  }, [url, size]);
 
   return (
     <div style={{
-      width: size, height: size, borderRadius: 14, overflow: "hidden",
+      width: size, height: size, borderRadius: 16, overflow: "hidden",
       border: `1px solid ${FC.border}`, background: FC.dark,
       display: "flex", alignItems: "center", justifyContent: "center",
+      position: "relative",
     }}>
-      {!imgError && (
-        <img
-          src={apiUrl}
-          alt={`QR Code for ${url}`}
-          width={size}
-          height={size}
-          crossOrigin="anonymous"
-          onLoad={() => setImgLoaded(true)}
-          onError={() => setImgError(true)}
-          style={{ display: imgLoaded ? "block" : "none" }}
-        />
+      <canvas ref={canvasRef} style={{ width: size, height: size, display: ready ? "block" : "none" }}
+        aria-label={`QR Code for ${url}`} role="img" />
+      {!ready && (
+        <div style={{ color: FC.textDim, fontSize: 12, fontFamily: FONT }}>{"Generating QR..."}</div>
       )}
-      {!imgLoaded && !imgError && (
-        <div style={{ color: FC.textDim, fontSize: 12, fontFamily: FONT }}>{"Loading QR..."}</div>
-      )}
-      {imgError && <canvas ref={canvasRef} width={size} height={size} />}
     </div>
+  );
+}
+
+/* ═══ PUBLISHED QR SECTION (with download) ═══ */
+function PublishedQRSection({ url, title }) {
+  const pubCanvasRef = useRef(null);
+  const handleDownloadPub = () => {
+    if (pubCanvasRef.current) {
+      const link = document.createElement("a");
+      link.download = `${(title || "form").replace(/\s+/g, "-").toLowerCase()}-qr-wolf-flow.png`;
+      link.href = pubCanvasRef.current.toDataURL("image/png");
+      link.click();
+    }
+  };
+  return (
+    <GlassCard style={{ padding: 20, marginBottom: 24 }}>
+      <SectionLabel>{"Scan to open form"}</SectionLabel>
+      <div style={{ display: "flex", justifyContent: "center", margin: "12px 0" }}>
+        <QRCodeDisplay url={url} size={220} externalCanvasRef={pubCanvasRef} />
+      </div>
+      <button style={{
+        ...glassPill, padding: "8px 20px", fontSize: 11,
+        border: `1px solid ${FC.border}`, color: FC.textSecondary,
+      }} onClick={handleDownloadPub}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.color = FC.textPrimary; }}
+        onMouseLeave={e => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.color = FC.textSecondary; }}
+      >
+        {"Download QR Code"}
+      </button>
+    </GlassCard>
   );
 }
 
@@ -182,9 +300,15 @@ function QRCodeBuilder({ onClose }) {
 
   const handleGenerate = () => { if (url.trim()) setGenerated(true); };
   const handleReset = () => { setUrl(""); setLabel(""); setGenerated(false); };
+  const downloadRef = useRef(null);
   const handleDownload = () => {
-    const downloadUrl = `https://api.qrserver.com/v1/create-qr-code/?size=600x600&data=${encodeURIComponent(url)}&bgcolor=ffffff&color=000000&format=png`;
-    window.open(downloadUrl, "_blank");
+    // Render a high-res QR for download
+    if (downloadRef.current) {
+      const link = document.createElement("a");
+      link.download = `${(label || "qr-code").replace(/\s+/g, "-").toLowerCase()}-wolf-flow.png`;
+      link.href = downloadRef.current.toDataURL("image/png");
+      link.click();
+    }
   };
 
   const focusIn = (e) => { e.target.style.borderColor = `${WF.accent}60`; };
@@ -240,7 +364,7 @@ function QRCodeBuilder({ onClose }) {
         <div style={{ textAlign: "center" }}>
           {label && <div style={{ fontSize: 15, fontWeight: 500, fontFamily: FONT, color: FC.textPrimary, marginBottom: 16 }}>{label}</div>}
           <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
-            <QRCodeDisplay url={url} size={200} />
+            <QRCodeDisplay url={url} size={240} externalCanvasRef={downloadRef} />
           </div>
           <GlassCard style={{ padding: "12px 14px", marginBottom: 20 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -517,24 +641,7 @@ export default function DIYFormBuilder() {
           </GlassCard>
 
           {/* QR Code */}
-          <GlassCard style={{ padding: 20, marginBottom: 24 }}>
-            <SectionLabel>{"Scan to open form"}</SectionLabel>
-            <div style={{ display: "flex", justifyContent: "center", margin: "12px 0" }}>
-              <QRCodeDisplay url={f.url} size={180} />
-            </div>
-            <button style={{
-              ...glassPill, padding: "8px 20px", fontSize: 11,
-              border: `1px solid ${FC.border}`, color: FC.textSecondary,
-            }} onClick={() => {
-              const downloadUrl = `https://api.qrserver.com/v1/create-qr-code/?size=600x600&data=${encodeURIComponent(f.url)}&format=png`;
-              window.open(downloadUrl, "_blank");
-            }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.color = FC.textPrimary; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.color = FC.textSecondary; }}
-            >
-              {"Download QR Code"}
-            </button>
-          </GlassCard>
+          <PublishedQRSection url={f.url} title={f.title} />
 
           {/* Actions */}
           <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
