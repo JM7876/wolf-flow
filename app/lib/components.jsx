@@ -225,8 +225,8 @@ export function PageNav({ onBack, onHome, onNext, backLabel = "Back", nextLabel 
 
 /* ═══ PORTAL BACKGROUND — day/night image swap ═══ */
 export function PortalBackground({ nightMode }) {
-  const dayImg = "/images/day-aligned-4k.png";
-  const nightImg = "/images/night-aligned-4k.jpg";
+  const dayImg = "/images/WW-Website-BG-Day-V1.webp";
+  const nightImg = "/images/WW-Website-BG-Night-V1.webp";
   return (
     <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0 }}>
       {/* Night layer */}

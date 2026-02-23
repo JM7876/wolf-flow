@@ -213,6 +213,20 @@ body {
   z-index: 1;
 }
 
+/* ═══ FOCUS-VISIBLE — Accessibility ═══ */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid rgba(149, 131, 233, 0.6);
+  outline-offset: 2px;
+}
+
+/* ═══ BUTTON TRANSITION DEFAULTS ═══ */
+button {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+}
+
 /* ═══ DATE / TIME INPUT STYLING ═══ */
 input[type="date"],
 input[type="time"] {

@@ -65,15 +65,18 @@ function OutreachGlass({ children, active, onClick, glowColor, style: s = {} }) 
   return (
     <div onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
       style={{
-        background: active ? `${gc}14` : "rgba(255,255,255,0.025)",
-        backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)",
-        border: `1px solid ${active ? gc + "55" : h && onClick ? gc + "25" : "rgba(255,255,255,0.06)"}`,
-        borderRadius: 14, padding: "16px 18px",
+        background: active
+          ? `linear-gradient(168deg, ${gc}1A 0%, ${gc}0D 40%, ${gc}08 100%)`
+          : "linear-gradient(168deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 40%, rgba(255,255,255,0.015) 100%)",
+        backdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12)) contrast(var(--glass-contrast,1.05))",
+        WebkitBackdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12)) contrast(var(--glass-contrast,1.05))",
+        border: `1px solid ${active ? gc + "55" : h && onClick ? gc + "25" : "rgba(255,255,255,0.1)"}`,
+        borderRadius: 16, padding: "16px 18px",
         transition: `all ${CLICK.duration}`,
         cursor: onClick ? "pointer" : "default",
         boxShadow: active
-          ? `0 0 28px ${gc}25, inset 0 1px 0 rgba(255,255,255,0.08)`
-          : h && onClick ? `0 6px 24px rgba(0,0,0,0.25)` : `inset 0 1px 0 rgba(255,255,255,0.03)`,
+          ? `0 8px 32px ${gc}20, 0 2px 8px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -1px 0 rgba(255,255,255,0.04)`
+          : h && onClick ? `0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.16)` : `0 2px 8px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.1), inset 0 -1px 0 rgba(255,255,255,0.03)`,
         transform: h && onClick ? "translateY(-1px)" : "none",
         position: "relative", overflow: "hidden", ...s,
       }}>
@@ -271,8 +274,8 @@ export default function CommunityOutreachPage() {
 
   const S = {
     hero:     { fontSize: 56, marginBottom: 18, display: "block" },
-    h1:       { fontSize: 30, fontWeight: 700, color: FC.textPrimary, fontFamily: FONT, marginBottom: 8 },
-    h2:       { fontSize: 22, fontWeight: 700, color: FC.textPrimary, fontFamily: FONT, marginBottom: 8 },
+    h1:       { fontSize: 28, fontWeight: 300, color: FC.textPrimary, fontFamily: FONT, marginBottom: 8 },
+    h2:       { fontSize: 22, fontWeight: 300, color: FC.textPrimary, fontFamily: FONT, marginBottom: 8 },
     sub:      { fontSize: 14, color: FC.textSecondary, marginBottom: 28, lineHeight: 1.7 },
     label:    { fontSize: 11, color: FC.textDim, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 10, fontFamily: FONT, textAlign: "left", display: "block" },
     noteBox:  { fontSize: 12, color: FC.textSecondary, lineHeight: 1.6, padding: "12px 16px", background: `${WF.accent}08`, borderRadius: 10, border: `1px solid ${WF.accent}22`, marginBottom: 18, textAlign: "left" },
@@ -327,7 +330,7 @@ export default function CommunityOutreachPage() {
         <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 24px", zIndex: 1 }}>
           <div style={{ textAlign: "center", maxWidth: 440 }}>
             <div style={{ fontSize: 64, marginBottom: 22 }}>{isSocial ? "\uD83D\uDCE3" : (urgencyObj?.icon || "\u26A1")}</div>
-            <h2 style={{ fontSize: 26, fontWeight: 700, color: FC.textPrimary, marginBottom: 8, fontFamily: FONT }}>
+            <h2 style={{ fontSize: 26, fontWeight: 300, color: FC.textPrimary, marginBottom: 8, fontFamily: FONT }}>
               {isSocial ? "Request Submitted" : "Alert Submitted"}
             </h2>
             <p style={{ fontSize: 14, color: FC.textSecondary, marginBottom: 24, lineHeight: 1.7 }}>
