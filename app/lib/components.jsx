@@ -240,7 +240,17 @@ export function PortalBackground({ nightMode }) {
   const dayImg = "/images/WW-Website-BG-Day-V1.webp";
   const nightImg = "/images/WW-Website-BG-Night-V1.webp";
   return (
-    <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0 }}>
+    <div style={{
+      position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0,
+      /* Pre-promote to own GPU layer to avoid recomposite flash */
+      willChange: "transform",
+      contain: "strict",
+      backfaceVisibility: "hidden",
+      WebkitBackfaceVisibility: "hidden",
+    }}>
+      {/* Preload both images to prevent flash on first swap */}
+      <link rel="preload" as="image" href={dayImg} />
+      <link rel="preload" as="image" href={nightImg} />
       {/* Night layer */}
       <div style={{
         position: "absolute", inset: 0,
@@ -248,6 +258,9 @@ export function PortalBackground({ nightMode }) {
         backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat",
         opacity: nightMode ? 1 : 0,
         transition: "opacity 0.8s ease",
+        willChange: "opacity",
+        backfaceVisibility: "hidden",
+        WebkitBackfaceVisibility: "hidden",
       }} />
       {/* Day layer */}
       <div style={{
@@ -256,6 +269,9 @@ export function PortalBackground({ nightMode }) {
         backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat",
         opacity: nightMode ? 0 : 1,
         transition: "opacity 0.8s ease",
+        willChange: "opacity",
+        backfaceVisibility: "hidden",
+        WebkitBackfaceVisibility: "hidden",
       }} />
       {/* Subtle scrim for content readability */}
       <div style={{

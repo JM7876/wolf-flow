@@ -171,8 +171,8 @@ const Glass = ({ children, active, onClick, style: s = {}, hoverGlow }) => {
         background: active
           ? `linear-gradient(168deg, ${gc}1A 0%, ${gc}0D 40%, ${gc}08 100%)`
           : "linear-gradient(168deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 40%, rgba(255,255,255,0.015) 100%)",
-        backdropFilter: "blur(24px) saturate(1.4) brightness(1.12) contrast(1.05)",
-        WebkitBackdropFilter: "blur(24px) saturate(1.4) brightness(1.12) contrast(1.05)",
+        backdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12)) contrast(var(--glass-contrast,1.05))",
+        WebkitBackdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12)) contrast(var(--glass-contrast,1.05))",
         border: `1px solid ${active ? gc + "50" : h && onClick ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.1)"}`,
         borderRadius: 16, transition: "all 0.3s cubic-bezier(0.4,0,0.2,1)",
         cursor: onClick ? "pointer" : "default",
@@ -211,8 +211,8 @@ const SectionCard = ({ icon, title, subtitle, children, isDone }) => {
       background: isDone
         ? `linear-gradient(168deg, ${WF.pink}18 0%, ${WF.pink}0A 40%, ${WF.pink}06 100%)`
         : `linear-gradient(168deg, ${WF.accent}12 0%, ${WF.accent}08 40%, ${WF.accent}04 100%)`,
-      backdropFilter: "blur(24px) saturate(1.4) brightness(1.12)",
-      WebkitBackdropFilter: "blur(24px) saturate(1.4) brightness(1.12)",
+      backdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12))",
+      WebkitBackdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12))",
       border: `1px solid ${bc}${isDone ? "40" : "30"}`,
       borderRadius: 18, padding: "20px 20px 22px",
       boxShadow: isDone

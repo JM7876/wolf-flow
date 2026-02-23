@@ -826,6 +826,39 @@ function SettingsDropdown({ nightMode, onToggleNight }) {
 
 
 /* ═══════════════════════════════════════════════════════════
+   FADE TRANSITION WRAPPER — smooth cross-fade between pages
+   Prevents the hardware flash by keeping the old page visible
+   while the new page fades in, avoiding a blank GPU recomposite.
+   ═══════════════════════════════════════════════════════════ */
+function FadeTransition({ pageKey, children }) {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    // Request double-rAF to ensure the DOM has painted the initial
+    // opacity:0 frame before we transition to opacity:1
+    const raf1 = requestAnimationFrame(() => {
+      const raf2 = requestAnimationFrame(() => setVisible(true));
+      return () => cancelAnimationFrame(raf2);
+    });
+    return () => cancelAnimationFrame(raf1);
+  }, [pageKey]);
+
+  return (
+    <div
+      key={pageKey}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(6px)",
+        transition: "opacity 0.32s cubic-bezier(0.4,0,0.2,1), transform 0.32s cubic-bezier(0.4,0,0.2,1)",
+        willChange: "opacity, transform",
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+
+/* ═══════════════════════════════════════════════════════════
    MAIN PORTAL COMPONENT
    ═══════════════════════════════════════════════════════════ */
   export default function WolfFlowPortal() {
@@ -864,12 +897,13 @@ function SettingsDropdown({ nightMode, onToggleNight }) {
       <PortalBackground nightMode={nightMode} />
       <SettingsDropdown nightMode={nightMode} onToggleNight={() => setNightMode(n => !n)} />
 
-      {page === "welcome" && <WelcomePage onEnter={goServices} />}
-      {page === "services" && <ServiceGrid onSelect={handleServiceSelect} onTracker={() => goTracker()} />}
-      {page === "form" && selectedService && <GenericServiceForm service={selectedService} onSubmit={handleSubmit} onBack={goServices} />}
-      {page === "confirm" && <ConfirmationPage submission={submission} onHome={goServices} onTracker={() => goTracker(submission?.id)} />}
-      {page === "tracker" && <CheckYourStats onBack={goServices} prefillId={trackerId} />}
-      <Footer />
+      <FadeTransition pageKey={page}>
+        {page === "welcome" && <WelcomePage onEnter={goServices} />}
+        {page === "services" && <ServiceGrid onSelect={handleServiceSelect} onTracker={() => goTracker()} />}
+        {page === "form" && selectedService && <GenericServiceForm service={selectedService} onSubmit={handleSubmit} onBack={goServices} />}
+        {page === "confirm" && <ConfirmationPage submission={submission} onHome={goServices} onTracker={() => goTracker(submission?.id)} />}
+        {page === "tracker" && <CheckYourStats onBack={goServices} prefillId={trackerId} />}
+      </FadeTransition>
     </div>
   );
 }

@@ -44,9 +44,11 @@ export const GLASS = {
     background: "linear-gradient(168deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.08) 40%, rgba(255,255,255,0.04) 100%)",
     backdropFilter: "blur(var(--glass-blur,24px)) brightness(var(--glass-brightness,1.12)) saturate(var(--glass-saturation,1.4)) contrast(var(--glass-contrast,1.05))",
     WebkitBackdropFilter: "blur(var(--glass-blur,24px)) brightness(var(--glass-brightness,1.12)) saturate(var(--glass-saturation,1.4)) contrast(var(--glass-contrast,1.05))",
-    transform: "translateY(var(--glass-displacement,0px))",
+    transform: "translateY(var(--glass-displacement,0px)) translateZ(0)",
     border: "1px solid rgba(255,255,255,0.12)", borderRadius: 18,
     boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08), 0 0 var(--glass-bezel-depth,24px) rgba(149,131,233,0.06), inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -1px 0 rgba(255,255,255,0.04)",
+    backfaceVisibility: "hidden",
+    WebkitBackfaceVisibility: "hidden",
   },
 };
 
@@ -60,6 +62,9 @@ export const glassPill = {
   boxShadow: "0 8px 32px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(255,255,255,0.04)",
   cursor: "pointer", fontFamily: FONT,
   transition: `border-color ${CLICK.duration}, box-shadow ${CLICK.duration}, transform ${CLICK.duration}`,
+  transform: "translateZ(0)",
+  backfaceVisibility: "hidden",
+  WebkitBackfaceVisibility: "hidden",
 };
 
 export const inputBase = {
