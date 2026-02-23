@@ -237,8 +237,13 @@ export default function StationeryKitPage() {
           <div style={{ marginTop: 24 }}>
             <button onClick={() => router.push("/?page=services")} style={{
               ...inputBase, cursor: "pointer", textAlign: "center", fontWeight: 600,
-              background: `${WF.accent}15`, border: `1px solid ${WF.accent}40`, color: WF.accentLight,
-            }}>{"Back to Services"}</button>
+              background: `linear-gradient(135deg, ${WF.accent}22, ${WF.accent}12)`,
+              border: `1px solid ${WF.accent}50`, color: WF.accentLight,
+              boxShadow: `0 4px 20px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.14)`,
+            }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = `${WF.accent}50`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.14)`; }}
+            >{"Back to Services"}</button>
           </div>
           <Footer />
         </div>
@@ -449,6 +454,7 @@ export default function StationeryKitPage() {
           onNext={canAdvance() ? goNext : undefined}
           backLabel="Back"
           nextLabel={step === totalSteps - 1 ? "Submit Order" : "Next"}
+          showDisabledNext={!canAdvance()}
         />
         <Footer />
       </div>

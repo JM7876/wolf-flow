@@ -38,10 +38,10 @@ export default function OtherPage() {
     return (
       <div style={{ minHeight: "100vh", color: FC.textPrimary, fontFamily: FONT, position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" }}>
         <PortalBackground />
-        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 24px", zIndex: 1 }}>
-          <div style={{ textAlign: "center", maxWidth: 440 }}>
+        <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "20px 24px 20px", zIndex: 1 }}>
+          <div style={{ textAlign: "center", maxWidth: 480, width: "100%", paddingTop: 24 }}>
             <div style={{ fontSize: 64, marginBottom: 24 }}>{"💡"}</div>
-            <h2 style={{ fontSize: 28, fontWeight: 700, color: FC.textPrimary, marginBottom: 8 }}>{"Request Submitted"}</h2>
+            <h2 style={{ fontSize: 28, fontWeight: 300, color: FC.textPrimary, fontFamily: FONT, marginBottom: 8 }}>{"Request Submitted"}</h2>
             <p style={{ fontSize: 15, color: FC.textSecondary, marginBottom: 28, lineHeight: 1.7 }}>{"We've received your request and will follow up shortly."}</p>
             <GlassCard style={{ textAlign: "left", maxWidth: 340, margin: "0 auto 24px", padding: "20px 18px" }}>
               {[
@@ -58,7 +58,15 @@ export default function OtherPage() {
                 </div>
               ))}
             </GlassCard>
-            <button onClick={() => router.push("/")} style={{ ...glassPill, padding: "13px 28px", border: `1px solid ${WF.accent}40`, color: FC.textPrimary }}>{"Back to Portal"}</button>
+            <button onClick={() => router.push("/?page=services")} style={{
+              ...glassPill, padding: "13px 28px",
+              background: `linear-gradient(135deg, ${WF.accent}22, ${WF.accent}12)`,
+              border: `1px solid ${WF.accent}50`, color: WF.accentLight,
+              boxShadow: `0 4px 20px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.14)`,
+            }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = `${WF.accent}50`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.14)`; }}
+            >{"Back to Services"}</button>
           </div>
         </div>
         <Footer />
@@ -69,11 +77,11 @@ export default function OtherPage() {
   return (
     <div style={{ minHeight: "100vh", color: FC.textPrimary, fontFamily: FONT, position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" }}>
       <PortalBackground />
-      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 24px", zIndex: 1 }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "20px 24px 20px", zIndex: 1 }}>
         <div style={{ maxWidth: 480, width: "100%" }}>
           <div style={{ textAlign: "center", marginBottom: 28 }}>
             <div style={{ fontSize: 48, marginBottom: 12 }}>{"💡"}</div>
-            <h2 style={{ fontSize: 24, fontWeight: 700, color: FC.textPrimary, fontFamily: FONT, marginBottom: 6 }}>{"General Request"}</h2>
+            <h2 style={{ fontSize: 24, fontWeight: 300, color: FC.textPrimary, fontFamily: FONT, marginBottom: 6 }}>{"General Request"}</h2>
             <p style={{ fontSize: 13, color: FC.textSecondary, lineHeight: 1.6 }}>{"Something that doesn't fit another category? Tell us what you need."}</p>
           </div>
           <GlassCard style={{ padding: "22px 18px" }}>
@@ -112,16 +120,21 @@ export default function OtherPage() {
               </div>
             </div>
             <button onClick={handleSubmit} disabled={!canSubmit} style={{
-              ...glassPill, width: "100%", padding: "16px", border: `1px solid ${WF.accent}40`, color: FC.textPrimary,
-              opacity: canSubmit ? 1 : 0.5,
-            }}>{"Submit Request"}</button>
+              ...glassPill, width: "100%", padding: "16px",
+              background: canSubmit ? `linear-gradient(135deg, ${WF.accent}28, ${WF.accent}14)` : "rgba(255,255,255,0.04)",
+              border: `1px solid ${canSubmit ? WF.accent + "50" : "rgba(255,255,255,0.06)"}`,
+              color: canSubmit ? WF.accentLight : FC.textDim,
+              opacity: canSubmit ? 1 : 0.5, cursor: canSubmit ? "pointer" : "not-allowed",
+              boxShadow: canSubmit ? `0 4px 16px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.12)` : "none",
+            }}
+              onMouseEnter={canSubmit ? e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; } : undefined}
+              onMouseLeave={canSubmit ? e => { e.currentTarget.style.borderColor = `${WF.accent}50`; e.currentTarget.style.boxShadow = `0 4px 16px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.12)`; } : undefined}
+            >{"Submit Request"}</button>
           </GlassCard>
         </div>
       </div>
+      <PageNav onBack={() => router.push("/?page=services")} backLabel="Back" onHome={() => router.push("/?page=services")} />
       <Footer />
-      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 10 }}>
-        <PageNav onBack={() => router.push("/")} backLabel="Portal" />
-      </div>
     </div>
   );
 }

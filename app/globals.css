@@ -213,6 +213,49 @@ body {
   z-index: 1;
 }
 
+/* ═══ GPU COMPOSITING HINTS — prevent flash on page transitions ═══ */
+
+/* Pre-promote elements with backdrop-filter to their own GPU layers.
+   This avoids the expensive recomposite that causes a white flash
+   on older hardware when new glass elements mount. */
+.glass,
+.lg-glass-panel {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Smooth out page-level transitions by keeping the background
+   composited on its own layer */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Reduce paint storms during transitions */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ═══ FOCUS-VISIBLE — Accessibility ═══ */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid rgba(149, 131, 233, 0.6);
+  outline-offset: 2px;
+}
+
+/* ═══ BUTTON TRANSITION DEFAULTS ═══ */
+button {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+}
+
 /* ═══ DATE / TIME INPUT STYLING ═══ */
 input[type="date"],
 input[type="time"] {

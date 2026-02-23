@@ -39,8 +39,8 @@ const Glass = ({ children, active, onClick, style: s = {} }) => {
         background: active
           ? `linear-gradient(168deg, ${WF.accent}1A 0%, ${WF.accent}0D 40%, ${WF.accent}08 100%)`
           : "linear-gradient(168deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 40%, rgba(255,255,255,0.015) 100%)",
-        backdropFilter: "blur(24px) saturate(1.4) brightness(1.12) contrast(1.05)",
-        WebkitBackdropFilter: "blur(24px) saturate(1.4) brightness(1.12) contrast(1.05)",
+        backdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12)) contrast(var(--glass-contrast,1.05))",
+        WebkitBackdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12)) contrast(var(--glass-contrast,1.05))",
         border: `1px solid ${active ? WF.accent + "50" : h && onClick ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.1)"}`,
         borderRadius: 16, transition: "all 0.3s cubic-bezier(0.4,0,0.2,1)",
         cursor: onClick ? "pointer" : "default",

@@ -171,8 +171,8 @@ const Glass = ({ children, active, onClick, style: s = {}, hoverGlow }) => {
         background: active
           ? `linear-gradient(168deg, ${gc}1A 0%, ${gc}0D 40%, ${gc}08 100%)`
           : "linear-gradient(168deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 40%, rgba(255,255,255,0.015) 100%)",
-        backdropFilter: "blur(24px) saturate(1.4) brightness(1.12) contrast(1.05)",
-        WebkitBackdropFilter: "blur(24px) saturate(1.4) brightness(1.12) contrast(1.05)",
+        backdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12)) contrast(var(--glass-contrast,1.05))",
+        WebkitBackdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12)) contrast(var(--glass-contrast,1.05))",
         border: `1px solid ${active ? gc + "50" : h && onClick ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.1)"}`,
         borderRadius: 16, transition: "all 0.3s cubic-bezier(0.4,0,0.2,1)",
         cursor: onClick ? "pointer" : "default",
@@ -211,8 +211,8 @@ const SectionCard = ({ icon, title, subtitle, children, isDone }) => {
       background: isDone
         ? `linear-gradient(168deg, ${WF.pink}18 0%, ${WF.pink}0A 40%, ${WF.pink}06 100%)`
         : `linear-gradient(168deg, ${WF.accent}12 0%, ${WF.accent}08 40%, ${WF.accent}04 100%)`,
-      backdropFilter: "blur(24px) saturate(1.4) brightness(1.12)",
-      WebkitBackdropFilter: "blur(24px) saturate(1.4) brightness(1.12)",
+      backdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12))",
+      WebkitBackdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12))",
       border: `1px solid ${bc}${isDone ? "40" : "30"}`,
       borderRadius: 18, padding: "20px 20px 22px",
       boxShadow: isDone
@@ -514,9 +514,16 @@ export default function VisualDesignPage() {
           <p style={{ fontSize: 13, color: FC.textDim, marginTop: 20, lineHeight: 1.6, maxWidth: 360, fontFamily: FONT }}>
             {"The Communications team will review your request and follow up within 24 hours."}
           </p>
-          <button onClick={() => { setIsNavigatingAway(true); setPreviewGradient(null); router.push("/?page=services"); }} style={{ marginTop: 20, background: FC.glass, border: `1px solid ${FC.border}`, borderRadius: 10, padding: "12px 28px", cursor: "pointer", fontSize: 13, fontFamily: FONT, fontWeight: 500, color: FC.textSecondary, transition: `all ${CLICK.duration}` }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.color = FC.textPrimary; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.color = FC.textSecondary; }}
+          <button onClick={() => { setIsNavigatingAway(true); setPreviewGradient(null); router.push("/?page=services"); }} style={{
+            marginTop: 20, background: `linear-gradient(135deg, ${WF.accent}22, ${WF.accent}12)`,
+            border: `1px solid ${WF.accent}50`, borderRadius: 10, padding: "12px 28px",
+            cursor: "pointer", fontSize: 13, fontFamily: FONT, fontWeight: 500, color: WF.accentLight,
+            transition: `all ${CLICK.duration}`,
+            boxShadow: `0 4px 20px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.14)`,
+            backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)",
+          }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = `${WF.accent}50`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.14)`; }}
           >{"Back to Services"}</button>
         </div>
         <Footer />
@@ -524,7 +531,7 @@ export default function VisualDesignPage() {
     );
   }
 
-  // ═══ STEP RENDERER ═══
+  // ══��� STEP RENDERER ═══
   const renderStep = () => {
     switch (step) {
 
@@ -1226,6 +1233,7 @@ export default function VisualDesignPage() {
         onNext={canAdvance() ? goNext : undefined}
         backLabel="Back"
         nextLabel={step === totalSteps - 1 ? "Submit" : "Next"}
+        showDisabledNext={!canAdvance()}
       />
       <Footer />
     </div>
