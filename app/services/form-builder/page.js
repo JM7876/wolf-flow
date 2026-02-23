@@ -1013,9 +1013,10 @@ export default function DIYFormBuilder() {
           </div>
         </div>
         <PageNav
-          onBack={() => router.push("/")}
-          backLabel="Portal"
-          onHome={() => setView("welcome")}
+          onBack={() => setView("welcome")}
+          backLabel="Back"
+          onHome={() => router.push("/?page=services")}
+          onNext={null}
         />
         <Footer />
       </div>
