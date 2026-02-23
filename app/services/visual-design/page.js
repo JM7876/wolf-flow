@@ -514,9 +514,16 @@ export default function VisualDesignPage() {
           <p style={{ fontSize: 13, color: FC.textDim, marginTop: 20, lineHeight: 1.6, maxWidth: 360, fontFamily: FONT }}>
             {"The Communications team will review your request and follow up within 24 hours."}
           </p>
-          <button onClick={() => { setIsNavigatingAway(true); setPreviewGradient(null); router.push("/?page=services"); }} style={{ marginTop: 20, background: FC.glass, border: `1px solid ${FC.border}`, borderRadius: 10, padding: "12px 28px", cursor: "pointer", fontSize: 13, fontFamily: FONT, fontWeight: 500, color: FC.textSecondary, transition: `all ${CLICK.duration}` }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.color = FC.textPrimary; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.color = FC.textSecondary; }}
+          <button onClick={() => { setIsNavigatingAway(true); setPreviewGradient(null); router.push("/?page=services"); }} style={{
+            marginTop: 20, background: `linear-gradient(135deg, ${WF.accent}22, ${WF.accent}12)`,
+            border: `1px solid ${WF.accent}50`, borderRadius: 10, padding: "12px 28px",
+            cursor: "pointer", fontSize: 13, fontFamily: FONT, fontWeight: 500, color: WF.accentLight,
+            transition: `all ${CLICK.duration}`,
+            boxShadow: `0 4px 20px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.14)`,
+            backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)",
+          }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = `${WF.accent}50`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.14)`; }}
           >{"Back to Services"}</button>
         </div>
         <Footer />
@@ -524,7 +531,7 @@ export default function VisualDesignPage() {
     );
   }
 
-  // ═══ STEP RENDERER ═══
+  // ══��� STEP RENDERER ═══
   const renderStep = () => {
     switch (step) {
 
@@ -1226,6 +1233,7 @@ export default function VisualDesignPage() {
         onNext={canAdvance() ? goNext : undefined}
         backLabel="Back"
         nextLabel={step === totalSteps - 1 ? "Submit" : "Next"}
+        showDisabledNext={!canAdvance()}
       />
       <Footer />
     </div>

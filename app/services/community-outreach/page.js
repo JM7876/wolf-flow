@@ -295,17 +295,20 @@ export default function CommunityOutreachPage() {
     btn: {
       display: "block", width: "100%", marginTop: 24,
       padding: "14px 28px",
-      background: `${accentColor}18`,
-      border: `1px solid ${accentColor}35`,
+      background: `linear-gradient(135deg, ${accentColor}30, ${accentColor}18)`,
+      border: `1px solid ${accentColor}50`,
       color: accentColor,
       borderRadius: 12, fontSize: 14, fontWeight: 600,
       cursor: "pointer", fontFamily: FONT,
       transition: `all ${CLICK.duration}`,
+      backdropFilter: "blur(24px) brightness(0.9)",
+      WebkitBackdropFilter: "blur(24px) brightness(0.9)",
+      boxShadow: `0 4px 16px ${accentColor}15, inset 0 1px 0 rgba(255,255,255,0.12)`,
     },
     btnSubmit: {
       display: "block", width: "100%", marginTop: 24,
       padding: "15px 28px",
-      background: accentColor,
+      background: `linear-gradient(135deg, ${accentColor}, ${accentColor}dd)`,
       border: "none", color: "#fff",
       borderRadius: 12, fontSize: 14, fontWeight: 700,
       cursor: "pointer", fontFamily: FONT,
@@ -379,15 +382,20 @@ export default function CommunityOutreachPage() {
             <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 20 }}>
               <button
                 onClick={() => { setSubmitted(false); setStep(0); setPath(null); setUploadedFiles([]); }}
-                style={{ ...glassPill, padding: "13px 28px", border: `1px solid ${WF.accent}40`, color: WF.accentLight }}
+                style={{
+                  ...glassPill, padding: "13px 28px",
+                  background: `linear-gradient(135deg, ${WF.accent}22, ${WF.accent}12)`,
+                  border: `1px solid ${WF.accent}50`, color: WF.accentLight,
+                  boxShadow: `0 4px 20px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.14)`,
+                }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = `${WF.accent}40`; e.currentTarget.style.boxShadow = glassPill.boxShadow; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = `${WF.accent}50`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.14)`; }}
               >{"Submit Another"}</button>
               <button
                 onClick={() => router.push("/?page=services")}
-                style={{ ...glassPill, padding: "13px 28px", border: `1px solid ${FC.border}`, color: FC.textSecondary }}
+                style={{ ...glassPill, padding: "13px 28px", border: `1px solid rgba(255,255,255,0.18)`, color: FC.textSecondary }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.color = FC.textPrimary; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.color = FC.textSecondary; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.18)"; e.currentTarget.style.color = FC.textSecondary; }}
               >{"Back to Services"}</button>
             </div>
           </div>
@@ -460,8 +468,8 @@ export default function CommunityOutreachPage() {
           </div>
           <button style={{ ...S.btn, opacity: step1Valid ? 1 : 0.25, cursor: step1Valid ? "pointer" : "default" }}
             onClick={() => step1Valid && goTo(path === "social" ? 2 : 6)} disabled={!step1Valid}
-            onMouseEnter={step1Valid ? e => { e.currentTarget.style.background = `${accentColor}28`; e.currentTarget.style.boxShadow = `0 4px 20px ${accentColor}20`; } : undefined}
-            onMouseLeave={step1Valid ? e => { e.currentTarget.style.background = `${accentColor}18`; e.currentTarget.style.boxShadow = "none"; } : undefined}
+            onMouseEnter={step1Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${accentColor}40, ${accentColor}28)`; e.currentTarget.style.boxShadow = `0 4px 20px ${accentColor}25`; } : undefined}
+            onMouseLeave={step1Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${accentColor}30, ${accentColor}18)`; e.currentTarget.style.boxShadow = `0 4px 16px ${accentColor}15, inset 0 1px 0 rgba(255,255,255,0.12)`; } : undefined}
           >{"Continue"}</button>
         </div>
       );
@@ -521,8 +529,8 @@ export default function CommunityOutreachPage() {
           </div>
           <button style={{ ...S.btn, opacity: step2Valid ? 1 : 0.25, cursor: step2Valid ? "pointer" : "default" }}
             onClick={() => step2Valid && goTo(3)} disabled={!step2Valid}
-            onMouseEnter={step2Valid ? e => { e.currentTarget.style.background = `${WF.accent}28`; } : undefined}
-            onMouseLeave={step2Valid ? e => { e.currentTarget.style.background = `${WF.accent}18`; } : undefined}
+            onMouseEnter={step2Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${WF.accent}40, ${WF.accent}28)`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accent}25`; } : undefined}
+            onMouseLeave={step2Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${WF.accent}30, ${WF.accent}18)`; e.currentTarget.style.boxShadow = `0 4px 16px ${WF.accent}15, inset 0 1px 0 rgba(255,255,255,0.12)`; } : undefined}
           >{"Continue"}</button>
         </div>
       );
@@ -607,8 +615,8 @@ export default function CommunityOutreachPage() {
           </div>
           <button style={{ ...S.btn, opacity: step3Valid ? 1 : 0.25, cursor: step3Valid ? "pointer" : "default" }}
             onClick={() => step3Valid && goTo(4)} disabled={!step3Valid}
-            onMouseEnter={step3Valid ? e => { e.currentTarget.style.background = `${WF.accent}28`; } : undefined}
-            onMouseLeave={step3Valid ? e => { e.currentTarget.style.background = `${WF.accent}18`; } : undefined}
+            onMouseEnter={step3Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${WF.accent}40, ${WF.accent}28)`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accent}25`; } : undefined}
+            onMouseLeave={step3Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${WF.accent}30, ${WF.accent}18)`; e.currentTarget.style.boxShadow = `0 4px 16px ${WF.accent}15, inset 0 1px 0 rgba(255,255,255,0.12)`; } : undefined}
           >{"Review Request"}</button>
         </div>
       );
@@ -701,10 +709,10 @@ export default function CommunityOutreachPage() {
             </div>
             <WFInput label="Approved By (if applicable)" value={form.approvedBy} onChange={v => u("approvedBy", v)} placeholder="Director, Council, Department Head..." />
           </div>
-          <button style={{ ...S.btn, opacity: step7Valid ? 1 : 0.25, cursor: step7Valid ? "pointer" : "default", borderColor: `${accentColor}35`, color: accentColor, background: `${accentColor}18` }}
+          <button style={{ ...S.btn, opacity: step7Valid ? 1 : 0.25, cursor: step7Valid ? "pointer" : "default" }}
             onClick={() => step7Valid && goTo(8)} disabled={!step7Valid}
-            onMouseEnter={step7Valid ? e => { e.currentTarget.style.background = `${accentColor}28`; } : undefined}
-            onMouseLeave={step7Valid ? e => { e.currentTarget.style.background = `${accentColor}18`; } : undefined}
+            onMouseEnter={step7Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${accentColor}40, ${accentColor}28)`; e.currentTarget.style.boxShadow = `0 4px 20px ${accentColor}25`; } : undefined}
+            onMouseLeave={step7Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${accentColor}30, ${accentColor}18)`; e.currentTarget.style.boxShadow = `0 4px 16px ${accentColor}15, inset 0 1px 0 rgba(255,255,255,0.12)`; } : undefined}
           >{"Continue"}</button>
         </div>
       );
@@ -725,10 +733,10 @@ export default function CommunityOutreachPage() {
               </OutreachGlass>
             ))}
           </div>
-          <button style={{ ...S.btn, opacity: step8Valid ? 1 : 0.25, cursor: step8Valid ? "pointer" : "default", borderColor: `${accentColor}35`, color: accentColor, background: `${accentColor}18` }}
+          <button style={{ ...S.btn, opacity: step8Valid ? 1 : 0.25, cursor: step8Valid ? "pointer" : "default" }}
             onClick={() => step8Valid && goTo(9)} disabled={!step8Valid}
-            onMouseEnter={step8Valid ? e => { e.currentTarget.style.background = `${accentColor}28`; } : undefined}
-            onMouseLeave={step8Valid ? e => { e.currentTarget.style.background = `${accentColor}18`; } : undefined}
+            onMouseEnter={step8Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${accentColor}40, ${accentColor}28)`; e.currentTarget.style.boxShadow = `0 4px 20px ${accentColor}25`; } : undefined}
+            onMouseLeave={step8Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${accentColor}30, ${accentColor}18)`; e.currentTarget.style.boxShadow = `0 4px 16px ${accentColor}15, inset 0 1px 0 rgba(255,255,255,0.12)`; } : undefined}
           >{"Review Alert"}</button>
         </div>
       );

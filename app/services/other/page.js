@@ -58,9 +58,14 @@ export default function OtherPage() {
                 </div>
               ))}
             </GlassCard>
-            <button onClick={() => router.push("/?page=services")} style={{ ...glassPill, padding: "13px 28px", border: `1px solid ${WF.accent}40`, color: WF.accentLight }}
+            <button onClick={() => router.push("/?page=services")} style={{
+              ...glassPill, padding: "13px 28px",
+              background: `linear-gradient(135deg, ${WF.accent}22, ${WF.accent}12)`,
+              border: `1px solid ${WF.accent}50`, color: WF.accentLight,
+              boxShadow: `0 4px 20px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.14)`,
+            }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = `${WF.accent}40`; e.currentTarget.style.boxShadow = glassPill.boxShadow; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = `${WF.accent}50`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.14)`; }}
             >{"Back to Services"}</button>
           </div>
         </div>
@@ -115,12 +120,15 @@ export default function OtherPage() {
               </div>
             </div>
             <button onClick={handleSubmit} disabled={!canSubmit} style={{
-              ...glassPill, width: "100%", padding: "16px", border: `1px solid ${WF.accent}40`,
+              ...glassPill, width: "100%", padding: "16px",
+              background: canSubmit ? `linear-gradient(135deg, ${WF.accent}28, ${WF.accent}14)` : "rgba(255,255,255,0.04)",
+              border: `1px solid ${canSubmit ? WF.accent + "50" : "rgba(255,255,255,0.06)"}`,
               color: canSubmit ? WF.accentLight : FC.textDim,
               opacity: canSubmit ? 1 : 0.5, cursor: canSubmit ? "pointer" : "not-allowed",
+              boxShadow: canSubmit ? `0 4px 16px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.12)` : "none",
             }}
               onMouseEnter={canSubmit ? e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; } : undefined}
-              onMouseLeave={canSubmit ? e => { e.currentTarget.style.borderColor = `${WF.accent}40`; e.currentTarget.style.boxShadow = glassPill.boxShadow; } : undefined}
+              onMouseLeave={canSubmit ? e => { e.currentTarget.style.borderColor = `${WF.accent}50`; e.currentTarget.style.boxShadow = `0 4px 16px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.12)`; } : undefined}
             >{"Submit Request"}</button>
           </GlassCard>
         </div>

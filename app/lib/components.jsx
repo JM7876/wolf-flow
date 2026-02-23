@@ -200,7 +200,7 @@ export function MiniTrack({ step, showLabels = false }) {
 }
 
 /* ═══ PAGE NAV — Back | Home | Next ═══ */
-export function PageNav({ onBack, onHome, onNext, backLabel = "Back", nextLabel = "Next" }) {
+export function PageNav({ onBack, onHome, onNext, backLabel = "Back", nextLabel = "Next", showDisabledNext = false }) {
   const navBtn = {
     background: "linear-gradient(168deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.04) 100%)",
     border: "1px solid rgba(255,255,255,0.12)", borderRadius: 14,
@@ -211,6 +211,12 @@ export function PageNav({ onBack, onHome, onNext, backLabel = "Back", nextLabel 
     boxShadow: "0 4px 16px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -1px 0 rgba(255,255,255,0.03)",
     transition: `all ${CLICK.duration}`, minWidth: 80, textAlign: "center",
   };
+  const disabledBtn = {
+    ...navBtn,
+    opacity: 0.3,
+    cursor: "not-allowed",
+    color: FC.textDim,
+  };
   const hoverIn = (e) => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; e.currentTarget.style.color = FC.textPrimary; e.currentTarget.style.transform = "translateY(-1px)"; };
   const hoverOut = (e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.boxShadow = navBtn.boxShadow; e.currentTarget.style.color = FC.textSecondary; e.currentTarget.style.transform = "none"; };
 
@@ -218,7 +224,13 @@ export function PageNav({ onBack, onHome, onNext, backLabel = "Back", nextLabel 
     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, padding: "24px 24px 32px" }}>
       {onBack ? <button onClick={onBack} style={navBtn} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>{backLabel}</button> : <div style={{ minWidth: 80 }} />}
       {onHome ? <button onClick={onHome} style={navBtn} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>{"Home"}</button> : <div style={{ minWidth: 80 }} />}
-      {onNext ? <button onClick={onNext} style={navBtn} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>{nextLabel}</button> : <div style={{ minWidth: 80 }} />}
+      {onNext ? (
+        <button onClick={onNext} style={navBtn} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>{nextLabel}</button>
+      ) : showDisabledNext ? (
+        <button disabled style={disabledBtn}>{nextLabel}</button>
+      ) : (
+        <div style={{ minWidth: 80 }} />
+      )}
     </div>
   );
 }
@@ -249,8 +261,8 @@ export function PortalBackground({ nightMode }) {
       <div style={{
         position: "absolute", inset: 0,
         background: nightMode
-          ? "linear-gradient(180deg, rgba(26,22,40,0.35) 0%, rgba(34,28,53,0.45) 100%)"
-          : "linear-gradient(180deg, rgba(26,22,40,0.15) 0%, rgba(34,28,53,0.25) 100%)",
+          ? "linear-gradient(180deg, rgba(26,22,40,0.40) 0%, rgba(34,28,53,0.50) 100%)"
+          : "linear-gradient(180deg, rgba(26,22,40,0.22) 0%, rgba(34,28,53,0.32) 100%)",
         transition: "background 0.8s ease",
       }} />
     </div>
