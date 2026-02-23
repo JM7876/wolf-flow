@@ -30,10 +30,10 @@ export const SERVICES = [
     id: "studio-hub",
     name: "The Studio Hub",
     icon: "📷",
-    description: "Headshots, photo booth, event photography",
+    description: "Photography, headshots, digital archives, and video services",
     status: "live",
     formType: "custom",
-    subsections: ["headshots", "turtle-press"],
+    subsections: ["lens", "camera", "archives", "photography", "headshots"],
   },
   {
     id: "event-coverage",
