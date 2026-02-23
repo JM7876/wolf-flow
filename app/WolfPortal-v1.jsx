@@ -11,7 +11,7 @@
    Created and Authored by Johnathon Moulds © 2026
    ═══════════════════════════════════════════════════════════ */
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { WF, FC, FONT, MONO, CLICK, GLASS, glassPill, inputBase, WORKFLOW_STEPS, STEP_DESC, STEP_ICONS, WOLF_LOGO, DEPARTMENTS } from "./lib/tokens";
 import { GlassCard, SectionLabel, FormField, TripleToggle, MiniTrack, PageNav, PortalBackground, Footer } from "./lib/components";
@@ -828,9 +828,11 @@ function SettingsDropdown({ nightMode, onToggleNight }) {
 /* ═══════════════════════════════════════════════════════════
    MAIN PORTAL COMPONENT
    ═══════════════════════════════════════════════════════════ */
-export default function WolfFlowPortal() {
+  export default function WolfFlowPortal() {
   const router = useRouter();
-  const [page, setPage] = useState("welcome");
+  const searchParams = useSearchParams();
+  const initialPage = searchParams.get("page") === "services" ? "services" : "welcome";
+  const [page, setPage] = useState(initialPage);
   const [selectedService, setSelectedService] = useState(null);
   const [submission, setSubmission] = useState(null);
   const [nightMode, setNightMode] = useState(false);

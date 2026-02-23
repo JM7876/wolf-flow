@@ -19,11 +19,13 @@ const ENTERPRISES = [
 ];
 
 const OFFICE_LOCATIONS = [
-  { id: "main-campus", label: "Main Campus", address: "1485 Mno-Bmadsen", city: "Dowagiac", state: "MI", zip: "49047", enterprise: "nhbp" },
-  { id: "health", label: "Health Services", address: "1474 Mno-Bmadsen", city: "Dowagiac", state: "MI", zip: "49047", enterprise: "nhbp" },
-  { id: "housing", label: "Housing Department", address: "58620 Sink Rd", city: "Dowagiac", state: "MI", zip: "49047", enterprise: "nhbp" },
-  { id: "court", label: "Tribal Court", address: "1485 Mno-Bmadsen", city: "Dowagiac", state: "MI", zip: "49047", enterprise: "tribal-court" },
-  { id: "police-hq", label: "Police Headquarters", address: "1485 Mno-Bmadsen", city: "Dowagiac", state: "MI", zip: "49047", enterprise: "tribal-police" },
+  { id: "main-office", label: "Main Office", address: "1485 Mno-Bemadzewen Way", city: "Fulton", state: "MI", zip: "49052", enterprise: "nhbp" },
+  { id: "tribal-court", label: "Tribal Court", address: "2221 1 1/2 Mile Rd", city: "Fulton", state: "MI", zip: "49052", enterprise: "tribal-court" },
+  { id: "gaming-commission", label: "Gaming Commission", address: "11177 E Michigan Ave", city: "Battle Creek", state: "MI", zip: "", enterprise: "nhbp" },
+  { id: "health-pine-creek", label: "NHBP Health | Pine Creek", address: "1474 Mno-Bemadzewen Way", city: "Fulton", state: "MI", zip: "49052", enterprise: "nhbp" },
+  { id: "health-grand-rapids", label: "NHBP Health | Grand Rapids", address: "311 State Street", city: "Grand Rapids", state: "MI", zip: "49011", enterprise: "nhbp" },
+  { id: "health-firekeepers", label: "NHBP Health | Firekeepers Casino", address: "11177 E Michigan Ave", city: "Battle Creek", state: "MI", zip: "49014", enterprise: "nhbp" },
+  { id: "police-hq", label: "Police Headquarters", address: "1485 Mno-Bemadzewen Way", city: "Fulton", state: "MI", zip: "49052", enterprise: "tribal-police" },
 ];
 
 const STATIONERY_ITEMS = [
@@ -203,7 +205,7 @@ export default function StationeryKitPage() {
             display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36, color: "#fff",
             boxShadow: `0 0 50px ${WF.accentGlow}`,
           }}>{"✓"}</div>
-          <h1 style={{ fontSize: 32, fontWeight: 300, margin: "0 0 8px", fontFamily: FONT }}>Stationery Kit Submitted</h1>
+          <h1 style={{ fontSize: 32, fontWeight: 300, margin: "0 0 8px", fontFamily: FONT }}>Stationeries Submitted</h1>
           <p style={{ fontSize: 14, color: FC.textDim, margin: "0 0 24px", fontFamily: FONT }}>Your order is ready for printing verification</p>
           <GlassCard style={{ padding: "14px 32px", marginBottom: 24 }}>
             <span style={{ fontSize: 11, color: FC.textDim, textTransform: "uppercase", letterSpacing: "0.15em", display: "block", fontFamily: FONT }}>Request</span>
@@ -233,7 +235,7 @@ export default function StationeryKitPage() {
           </GlassCard>
           <p style={{ fontSize: 13, color: FC.textDim, textAlign: "center", maxWidth: 380, fontFamily: FONT }}>{"Print-ready PDFs will be attached to your request."}<br />{"The admin team will verify and send to printer."}</p>
           <div style={{ marginTop: 24 }}>
-            <button onClick={() => router.push("/")} style={{
+            <button onClick={() => router.push("/?page=services")} style={{
               ...inputBase, cursor: "pointer", textAlign: "center", fontWeight: 600,
               background: `${WF.accent}15`, border: `1px solid ${WF.accent}40`, color: WF.accentLight,
             }}>{"Back to Services"}</button>
@@ -248,11 +250,11 @@ export default function StationeryKitPage() {
   const renderStep = () => {
     switch (step) {
       case 0: return (
-        <div style={slideStyle}>
+        <div style={{ ...slideStyle, textAlign: "center" }}>
           <p style={{ fontSize: 12, color: FC.textDim, letterSpacing: "0.2em", marginBottom: 14, fontFamily: FONT }}>{"01 / 0"}{totalSteps}</p>
           <h2 style={{ fontSize: "clamp(24px, 4vw, 36px)", fontWeight: 300, lineHeight: 1.25, margin: "0 0 8px", color: FC.textPrimary, fontFamily: FONT }}>Which enterprise are you with?</h2>
           <p style={{ fontSize: 14, color: FC.textDim, margin: "0 0 32px", fontFamily: FONT }}>This determines your card template and logo</p>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 440 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 440, margin: "0 auto", textAlign: "left" }}>
             {ENTERPRISES.map(e => (
               <GlassCard key={e.id} hover onClick={() => { update("enterprise", e.id); update("officeLocation", null); setTimeout(goNext, 400); }}
                 style={{ padding: "20px 22px", display: "flex", alignItems: "center", gap: 16, cursor: "pointer", border: form.enterprise === e.id ? `1px solid ${WF.accent}60` : undefined }}>
@@ -268,11 +270,11 @@ export default function StationeryKitPage() {
       );
 
       case 1: return (
-        <div style={slideStyle}>
+        <div style={{ ...slideStyle, textAlign: "center" }}>
           <p style={{ fontSize: 12, color: FC.textDim, letterSpacing: "0.2em", marginBottom: 14, fontFamily: FONT }}>{"02 / 0"}{totalSteps}</p>
           <h2 style={{ fontSize: "clamp(24px, 4vw, 36px)", fontWeight: 300, lineHeight: 1.25, margin: "0 0 8px", color: FC.textPrimary, fontFamily: FONT }}>What do you need?</h2>
           <p style={{ fontSize: 14, color: FC.textDim, margin: "0 0 32px", fontFamily: FONT }}>Select all that apply</p>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 440 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 440, margin: "0 auto", textAlign: "left" }}>
             {STATIONERY_ITEMS.map(item => {
               const sel = form.items.includes(item.id);
               return (
@@ -300,11 +302,11 @@ export default function StationeryKitPage() {
       );
 
       case 2: return (
-        <div style={slideStyle}>
+        <div style={{ ...slideStyle, textAlign: "center" }}>
           <p style={{ fontSize: 12, color: FC.textDim, letterSpacing: "0.2em", marginBottom: 14, fontFamily: FONT }}>{"03 / 0"}{totalSteps}</p>
           <h2 style={{ fontSize: "clamp(24px, 4vw, 36px)", fontWeight: 300, lineHeight: 1.25, margin: "0 0 8px", color: FC.textPrimary, fontFamily: FONT }}>{"What's the reason?"}</h2>
           <p style={{ fontSize: 14, color: FC.textDim, margin: "0 0 32px", fontFamily: FONT }}>Helps us know if this is a first order or reprint</p>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 440 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 440, margin: "0 auto", textAlign: "left" }}>
             {ORDER_REASONS.map(r => (
               <GlassCard key={r.id} hover onClick={() => { update("reason", r.id); setTimeout(goNext, 400); }}
                 style={{ padding: "20px 22px", cursor: "pointer", border: form.reason === r.id ? `1px solid ${WF.accent}60` : undefined }}>
@@ -317,11 +319,11 @@ export default function StationeryKitPage() {
       );
 
       case 3: return (
-        <div style={slideStyle}>
+        <div style={{ ...slideStyle, textAlign: "center" }}>
           <p style={{ fontSize: 12, color: FC.textDim, letterSpacing: "0.2em", marginBottom: 14, fontFamily: FONT }}>{"04 / 0"}{totalSteps}</p>
           <h2 style={{ fontSize: "clamp(24px, 4vw, 36px)", fontWeight: 300, lineHeight: 1.25, margin: "0 0 8px", color: FC.textPrimary, fontFamily: FONT }}>Your information</h2>
           <p style={{ fontSize: 14, color: FC.textDim, margin: "0 0 28px", fontFamily: FONT }}>Exactly as it should appear on your stationery</p>
-          <div style={{ maxWidth: 440, display: "flex", flexDirection: "column", gap: 16 }}>
+          <div style={{ maxWidth: 440, margin: "0 auto", display: "flex", flexDirection: "column", gap: 16, textAlign: "left" }}>
             <div style={{ display: "flex", gap: 12 }}>
               <div style={{ flex: 1 }}><label style={labelStyle}>{"First Name *"}</label><input ref={inputRef} type="text" placeholder="First" value={form.firstName} onChange={e => update("firstName", e.target.value)} onKeyDown={handleKeyDown} style={fieldInputStyle} /></div>
               <div style={{ flex: 1 }}><label style={labelStyle}>{"Last Name *"}</label><input type="text" placeholder="Last" value={form.lastName} onChange={e => update("lastName", e.target.value)} onKeyDown={handleKeyDown} style={fieldInputStyle} /></div>
@@ -348,11 +350,11 @@ export default function StationeryKitPage() {
       );
 
       case 4: return (
-        <div style={slideStyle}>
+        <div style={{ ...slideStyle, textAlign: "center" }}>
           <p style={{ fontSize: 12, color: FC.textDim, letterSpacing: "0.2em", marginBottom: 14, fontFamily: FONT }}>{"05 / 0"}{totalSteps}</p>
           <h2 style={{ fontSize: "clamp(24px, 4vw, 36px)", fontWeight: 300, lineHeight: 1.25, margin: "0 0 8px", color: FC.textPrimary, fontFamily: FONT }}>Select your office location</h2>
           <p style={{ fontSize: 14, color: FC.textDim, margin: "0 0 32px", fontFamily: FONT }}>This address appears on the back of your business card</p>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 440 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 440, margin: "0 auto", textAlign: "left" }}>
             {filteredLocations.map(loc => (
               <GlassCard key={loc.id} hover onClick={() => { update("officeLocation", loc.id); setTimeout(goNext, 400); }}
                 style={{ padding: "18px 22px", cursor: "pointer", border: form.officeLocation === loc.id ? `1px solid ${WF.accent}60` : undefined }}>
@@ -368,7 +370,7 @@ export default function StationeryKitPage() {
         const loc = OFFICE_LOCATIONS.find(l => l.id === form.officeLocation);
         const ent = ENTERPRISES.find(e => e.id === form.enterprise);
         return (
-          <div style={slideStyle}>
+          <div style={{ ...slideStyle, textAlign: "center" }}>
             <p style={{ fontSize: 12, color: FC.textDim, letterSpacing: "0.2em", marginBottom: 14, fontFamily: FONT }}>{"06 / 0"}{totalSteps}</p>
             <h2 style={{ fontSize: "clamp(24px, 4vw, 36px)", fontWeight: 300, lineHeight: 1.25, margin: "0 0 8px", color: FC.textPrimary, fontFamily: FONT }}>{"Review & Submit"}</h2>
             <p style={{ fontSize: 14, color: FC.textDim, margin: "0 0 28px", fontFamily: FONT }}>Make sure everything looks right</p>
@@ -419,43 +421,36 @@ export default function StationeryKitPage() {
       <PortalBackground />
       <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", minHeight: "100vh" }}>
         {/* Header */}
-        <div style={{ padding: "20px 24px 0", display: "flex", alignItems: "center", gap: 10 }}>
-          <button onClick={() => router.push("/")} style={{ background: "none", border: "none", color: FC.textDim, fontSize: 13, cursor: "pointer", fontFamily: FONT, padding: "6px 0" }}>
-            {"\u2190 Back to Services"}
-          </button>
-        </div>
-        <div style={{ padding: "12px 24px 16px", borderBottom: `1px solid ${FC.border}`, margin: "0 24px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: 22 }}>{"◎"}</span>
-            <span style={{ fontSize: 14, fontWeight: 600, color: FC.textSecondary, fontFamily: FONT }}>Employee Stationery Kit</span>
-          </div>
-        </div>
-
-        {/* Progress bar */}
-        <div style={{ display: "flex", gap: 3, padding: "16px 24px 0" }}>
-          {Array.from({ length: totalSteps }).map((_, i) => (
-            <div key={i} style={{
-              flex: 1, height: 3, borderRadius: 2,
-              background: i < step ? `linear-gradient(90deg, ${WF.accent}, ${WF.pink}80)` : i === step ? WF.accent : FC.glass,
-              transition: `all ${CLICK.duration}`,
-            }} />
-          ))}
+        <div style={{ textAlign: "center", padding: "28px 24px 0" }}>
+          <div style={{
+            width: 52, height: 52, borderRadius: 14, margin: "0 auto 10px",
+            background: `linear-gradient(135deg, ${WF.accent}25, ${WF.accent}08)`,
+            border: `1px solid ${WF.accent}35`,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 22, boxShadow: `0 4px 24px ${WF.accentGlow}`,
+          }}>{"◎"}</div>
+          <h2 style={{ fontFamily: FONT, fontWeight: 200, fontSize: 22, color: FC.textPrimary, marginBottom: 4 }}>
+            {"Employee "}<span style={{ color: WF.accent }}>{"Stationeries"}</span>
+          </h2>
+          <p style={{ fontFamily: FONT, fontSize: 11, fontWeight: 400, color: FC.textDim, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+            {"Wolf Flow Solutions"}
+          </p>
         </div>
 
         {/* Content */}
-        <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "32px 24px 24px" }}>
+        <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "24px 24px 24px" }}>
           {renderStep()}
         </div>
 
-        <Footer />
         {/* Bottom nav */}
         <PageNav
           onBack={step > 0 ? goBack : undefined}
-          onHome={() => router.push("/")}
+          onHome={() => router.push("/?page=services")}
           onNext={canAdvance() ? goNext : undefined}
-          backLabel={"\u2190 Back"}
-          nextLabel={step === totalSteps - 1 ? "Submit Order \u2192" : "Next \u2192"}
+          backLabel="Back"
+          nextLabel={step === totalSteps - 1 ? "Submit Order" : "Next"}
         />
+        <Footer />
       </div>
     </div>
   );

@@ -20,7 +20,7 @@ export const SERVICES = [
   },
   {
     id: "stationery-kit",
-    name: "Employee Stationery Kit",
+    name: "Employee Stationeries",
     icon: "◎",
     description: "Business cards, name plates, personalized notepads",
     status: "live",
@@ -67,9 +67,7 @@ export const SERVICES = [
     icon: "▦",
     description: "Create surveys, feedback forms, sign-up sheets with QR codes",
     status: "live",
-    formType: "generic",
-    est: "Self-service",
-    fields: ["title", "dept", "description"],
+    formType: "custom",
   },
   {
     id: "other",
@@ -97,7 +95,7 @@ export const FIELD_LABELS = {
 export const MOCK_REQUESTS = {
   "WF-2026-0412": {
     title: "New Hire — Maria Gonzalez", dept: "Human Resources", requester: "Donna P.",
-    service: "Employee Stationery Kit", priority: "Standard", mediaType: "Print",
+    service: "Employee Stationeries", priority: "Standard", mediaType: "Print",
     step: 4, assignee: "Tracy", assigneeAvatar: "📋", assigneeRole: "Admin / Coordinator",
     size: "XS", created: "Feb 10, 2026", updated: "Feb 13, 9:15 AM", due: "Feb 14, 2026",
     activity: [

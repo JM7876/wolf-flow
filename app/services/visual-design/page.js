@@ -10,7 +10,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { WF, FC, FONT, CLICK, inputBase } from "../../lib/tokens";
-import { PortalBackground, Footer } from "../../lib/components";
+import { PortalBackground, Footer, PageNav } from "../../lib/components";
 
 // ═══════════════════════════════════════════════════════════
 //  VISUAL DESIGNS FORM — DATA
@@ -514,10 +514,10 @@ export default function VisualDesignPage() {
           <p style={{ fontSize: 13, color: FC.textDim, marginTop: 20, lineHeight: 1.6, maxWidth: 360, fontFamily: FONT }}>
             {"The Communications team will review your request and follow up within 24 hours."}
           </p>
-          <button onClick={() => { setIsNavigatingAway(true); setPreviewGradient(null); router.push("/"); }} style={{ marginTop: 20, background: FC.glass, border: `1px solid ${FC.border}`, borderRadius: 10, padding: "12px 28px", cursor: "pointer", fontSize: 13, fontFamily: FONT, fontWeight: 500, color: FC.textSecondary, transition: `all ${CLICK.duration}` }}
+          <button onClick={() => { setIsNavigatingAway(true); setPreviewGradient(null); router.push("/?page=services"); }} style={{ marginTop: 20, background: FC.glass, border: `1px solid ${FC.border}`, borderRadius: 10, padding: "12px 28px", cursor: "pointer", fontSize: 13, fontFamily: FONT, fontWeight: 500, color: FC.textSecondary, transition: `all ${CLICK.duration}` }}
             onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.color = FC.textPrimary; }}
             onMouseLeave={e => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.color = FC.textSecondary; }}
-          >{"\u2190 Back to Services"}</button>
+          >{"Back to Services"}</button>
         </div>
         <Footer />
       </div>
@@ -1019,21 +1019,21 @@ export default function VisualDesignPage() {
                 <div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <label style={{ fontSize: 10, color: FC.textDim, display: "block", marginBottom: 6, fontWeight: 600, fontFamily: FONT }}>{"\u{1F4BC} Job Title"}</label>
-                    <input placeholder="e.g. Photographer" value={form.contactTitle} onChange={e => set("contactTitle", e.target.value)} style={{ ...localInput, fontSize: 18 }} />
+                    <input placeholder="Job Title" value={form.contactTitle} onChange={e => set("contactTitle", e.target.value)} style={{ ...localInput, fontSize: 18 }} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <label style={{ fontSize: 10, color: FC.textDim, display: "block", marginBottom: 6, fontWeight: 600, fontFamily: FONT }}>{"\u{1F3F7}\uFE0F Name"}</label>
-                    <input placeholder="e.g. Johnathon Moulds" value={form.contactName} onChange={e => set("contactName", e.target.value)} style={{ ...localInput, fontSize: 18 }} />
+                    <input placeholder="Full Name" value={form.contactName} onChange={e => set("contactName", e.target.value)} style={{ ...localInput, fontSize: 18 }} />
                   </div>
                 </div>
                 <div style={{ display: "flex", gap: 10 }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <label style={{ fontSize: 10, color: FC.textDim, display: "block", marginBottom: 6, fontWeight: 600, fontFamily: FONT }}>{"\u{1F4DE} Phone"}</label>
-                    <input placeholder="e.g. 616.432.7200" type="tel" value={form.contactPhone} onChange={e => set("contactPhone", e.target.value)} style={{ ...localInput, fontSize: 18 }} />
+                    <input placeholder="Phone Number" type="tel" value={form.contactPhone} onChange={e => set("contactPhone", e.target.value)} style={{ ...localInput, fontSize: 18 }} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <label style={{ fontSize: 10, color: FC.textDim, display: "block", marginBottom: 6, fontWeight: 600, fontFamily: FONT }}>{"\u2709\uFE0F Email"}</label>
-                    <input placeholder="e.g. name@nhbp-nsn.gov" type="email" value={form.contactEmail} onChange={e => set("contactEmail", e.target.value)} style={{ ...localInput, fontSize: 18 }} />
+                    <input placeholder="Email Address" type="email" value={form.contactEmail} onChange={e => set("contactEmail", e.target.value)} style={{ ...localInput, fontSize: 18 }} />
                   </div>
                 </div>
                 {(form.contactTitle || form.contactName) && (
@@ -1214,52 +1214,20 @@ export default function VisualDesignPage() {
     <div style={{ minHeight: "100vh", color: FC.textPrimary, fontFamily: FONT, position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" }}>
       <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,500&display=swap" rel="stylesheet" />
       <BG />
-      {/* Progress bar */}
-      <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: 2, background: "rgba(255,255,255,0.03)", zIndex: 100 }}>
-        <div style={{ height: "100%", borderRadius: "0 1px 1px 0", width: `${((step + 1) / totalSteps) * 100}%`, background: `linear-gradient(90deg, ${WF.accent}, ${WF.accentLight})`, boxShadow: `0 0 12px ${WF.accentGlow}`, transition: "width 0.5s cubic-bezier(0.4,0,0.2,1)" }} />
-      </div>
-      {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "18px 24px", zIndex: 10, position: "relative" }}>
-        <button onClick={() => { setIsNavigatingAway(true); setPreviewGradient(null); router.push("/"); }} style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.06em", color: FC.textDim, background: "none", border: "none", cursor: "pointer", fontFamily: FONT, transition: `color ${CLICK.duration}` }}
-          onMouseEnter={e => { e.currentTarget.style.color = FC.textPrimary; }}
-          onMouseLeave={e => { e.currentTarget.style.color = FC.textDim; }}
-        >{"\u2190 Wolf Flow"}</button>
-        <span style={{ fontSize: 12, color: WF.accent, fontWeight: 600, letterSpacing: "0.04em", fontFamily: FONT }}>{"Visual Design Request"}</span>
-      </div>
+      
       {/* Content */}
-      <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "20px 24px 120px", zIndex: 1, position: "relative", overflowY: "auto" }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "32px 24px 24px", zIndex: 1, position: "relative", overflowY: "auto" }}>
         {renderStep()}
       </div>
-      <Footer />
       {/* Nav */}
-      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 50, display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 24px", background: `linear-gradient(0deg, ${FC.dark}F2 50%, transparent)`, backdropFilter: "blur(12px)" }}>
-        <button onClick={goBack} disabled={step === 0}
-          style={{ background: "none", border: "none", color: FC.textDim, fontSize: 13, cursor: step === 0 ? "default" : "pointer", padding: "10px 16px", fontFamily: FONT, opacity: step === 0 ? 0.3 : 1, transition: "opacity 0.3s" }}>
-          {"\u2190 Back"}
-        </button>
-        <div style={{ display: "flex", gap: 3, alignItems: "center" }}>
-          {Array.from({ length: totalSteps }).map((_, i) => (
-            <div key={i} style={{
-              height: 5, borderRadius: 3, width: i === step ? 24 : 5,
-              background: i === step ? WF.accent : i < step ? WF.accent + "45" : "rgba(255,255,255,0.08)",
-              boxShadow: i === step ? `0 0 8px ${WF.accentGlow}` : "none",
-              transition: "all 0.4s cubic-bezier(0.4,0,0.2,1)",
-            }} />
-          ))}
-        </div>
-        <button onClick={goNext} disabled={!canAdvance()}
-          style={{
-            background: canAdvance() ? `${WF.accent}12` : "transparent",
-            border: `1px solid ${canAdvance() ? WF.accent + "28" : "rgba(255,255,255,0.04)"}`,
-            color: canAdvance() ? WF.accentLight : FC.textDim,
-            fontSize: 13, fontWeight: 600, cursor: canAdvance() ? "pointer" : "default",
-            padding: "10px 20px", borderRadius: 10, fontFamily: FONT,
-            transition: "all 0.3s ease",
-            boxShadow: canAdvance() ? `0 0 14px ${WF.accent}0a` : "none",
-          }}>
-          {step === totalSteps - 1 ? "Submit \u2713" : "Next \u2192"}
-        </button>
-      </div>
+      <PageNav
+        onBack={step > 0 ? goBack : undefined}
+        onHome={() => { setIsNavigatingAway(true); setPreviewGradient(null); router.push("/?page=services"); }}
+        onNext={canAdvance() ? goNext : undefined}
+        backLabel="Back"
+        nextLabel={step === totalSteps - 1 ? "Submit" : "Next"}
+      />
+      <Footer />
     </div>
   );
 }
