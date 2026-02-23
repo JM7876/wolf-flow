@@ -67,9 +67,7 @@ export const SERVICES = [
     icon: "▦",
     description: "Create surveys, feedback forms, sign-up sheets with QR codes",
     status: "live",
-    formType: "generic",
-    est: "Self-service",
-    fields: ["title", "dept", "description"],
+    formType: "custom",
   },
   {
     id: "other",
