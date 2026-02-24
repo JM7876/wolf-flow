@@ -503,43 +503,55 @@ export function SettingsDropdown({ nightMode, onToggleNight }) {
   );
 }
 
-/* ═══ PORTAL BACKGROUND — day/night image swap ═══ */
+/* ═══ PORTAL BACKGROUND — day/night image swap (optimised WebP) ═══ */
 export function PortalBackground({ nightMode }) {
-  const dayImg = "/images/WW-Website-BG-Day-V1-4K.png";
-  const nightImg = "/images/WW-Website-BG-Night-V1-4K.png";
+  const dayImg = "/images/WW-Website-BG-Day-V1.webp";
+  const nightImg = "/images/WW-Website-BG-Night-V1.webp";
+  const [altReady, setAltReady] = useState(false);
+
+  /* Pre-decode the *inactive* variant so toggling feels instant.
+     The active variant is loaded natively by the browser via
+     background-image — no extra Image() needed. */
+  useEffect(() => {
+    let cancelled = false;
+    const inactiveSrc = nightMode ? dayImg : nightImg;
+    const img = new window.Image();
+    img.src = inactiveSrc;
+    const ready = () => { if (!cancelled) setAltReady(true); };
+    if (img.decode) img.decode().then(ready, ready);
+    else { img.onload = ready; img.onerror = ready; }
+    return () => { cancelled = true; };
+  }, [nightMode]);
+
+  const layerBase = {
+    position: "absolute", inset: 0,
+    backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat",
+    transition: "opacity 0.8s ease",
+    willChange: "opacity",
+    backfaceVisibility: "hidden",
+    WebkitBackfaceVisibility: "hidden",
+  };
+
   return (
     <div style={{
       position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0,
-      /* Pre-promote to own GPU layer to avoid recomposite flash */
-      willChange: "transform",
-      contain: "layout paint",
+      contain: "layout paint style",
       backfaceVisibility: "hidden",
       WebkitBackfaceVisibility: "hidden",
     }}>
-      {/* Preload both images to prevent flash on first swap */}
-      <link rel="preload" as="image" href={dayImg} />
-      <link rel="preload" as="image" href={nightImg} />
-      {/* Night layer */}
+      {/* Night layer — only set backgroundImage when night is active or alt is pre-decoded */}
       <div style={{
-        position: "absolute", inset: 0,
-        backgroundImage: `url('${nightImg}')`,
-        backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat",
+        ...layerBase,
+        backgroundImage: (nightMode || altReady) ? `url('${nightImg}')` : "none",
         opacity: nightMode ? 1 : 0,
-        transition: "opacity 0.8s ease",
-        willChange: "opacity",
-        backfaceVisibility: "hidden",
-        WebkitBackfaceVisibility: "hidden",
+        contentVisibility: nightMode ? "visible" : "auto",
       }} />
-      {/* Day layer */}
+      {/* Day layer — always loaded (preloaded in layout.js) */}
       <div style={{
-        position: "absolute", inset: 0,
+        ...layerBase,
         backgroundImage: `url('${dayImg}')`,
-        backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat",
         opacity: nightMode ? 0 : 1,
-        transition: "opacity 0.8s ease",
-        willChange: "opacity",
-        backfaceVisibility: "hidden",
-        WebkitBackfaceVisibility: "hidden",
+        contentVisibility: nightMode ? "auto" : "visible",
       }} />
       {/* Subtle scrim for content readability */}
       <div style={{

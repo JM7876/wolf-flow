@@ -14,9 +14,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" data-theme="dark">
       <head>
-        {/* Preload background images to prevent flash on route transitions */}
-        <link rel="preload" as="image" href="/images/WW-Website-BG-Day-V1-4K.png" type="image/png" />
-        <link rel="preload" as="image" href="/images/WW-Website-BG-Night-V1-4K.png" type="image/png" />
+        {/* Preload the default (day) BG as WebP; night variant loaded lazily on toggle */}
+        <link rel="preload" as="image" href="/images/WW-Website-BG-Day-V1.webp" type="image/webp" fetchPriority="high" />
       </head>
       <body>{children}</body>
     </html>
