@@ -938,32 +938,8 @@ export default function DIYFormBuilder() {
     );
   }
 
-  function renderBuilderNav() {
-    const isLastStep = step === BUILDER_STEPS.REVIEW;
-    const canProceed = step === BUILDER_STEPS.TITLE ? formTitle.trim().length > 0 : step === BUILDER_STEPS.QUESTIONS ? questions.length > 0 : true;
-    return (
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 0" }}>
-        <button style={{
-          ...glassPill, padding: "12px 24px", fontSize: 12,
-          border: `1px solid ${FC.border}`, color: FC.textSecondary,
-        }} onClick={step === BUILDER_STEPS.TITLE ? () => setView("welcome") : handleBack}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.color = FC.textPrimary; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.color = FC.textSecondary; }}
-        >
-          {step === BUILDER_STEPS.TITLE ? "Cancel" : "Back"}
-        </button>
-        <button style={{
-          ...glassPill, padding: "12px 28px", fontSize: 12,
-          border: `1px solid ${WF.accent}30`, color: WF.accentLight,
-          opacity: canProceed ? 1 : 0.4, pointerEvents: canProceed ? "auto" : "none",
-        }} onClick={isLastStep ? handlePublish : handleNext}
-          onMouseEnter={canProceed ? e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; } : undefined}
-          onMouseLeave={canProceed ? e => { e.currentTarget.style.borderColor = `${WF.accent}30`; e.currentTarget.style.boxShadow = glassPill.boxShadow; } : undefined}
-        >
-          {isLastStep ? "Publish Form" : "Continue"}
-        </button>
-      </div>
-    );
+  function getBuilderCanProceed() {
+    return step === BUILDER_STEPS.TITLE ? formTitle.trim().length > 0 : step === BUILDER_STEPS.QUESTIONS ? questions.length > 0 : true;
   }
 
   function renderBuilder() {
@@ -975,7 +951,6 @@ export default function DIYFormBuilder() {
         {step === BUILDER_STEPS.QUESTIONS && renderQuestionsStep()}
         {step === BUILDER_STEPS.NOTIFICATIONS && renderNotificationsStep()}
         {step === BUILDER_STEPS.REVIEW && renderReviewStep()}
-        {renderBuilderNav()}
       </div>
     );
   }
@@ -1013,10 +988,20 @@ export default function DIYFormBuilder() {
           </div>
         </div>
         <PageNav
-          onBack={() => setView("welcome")}
-          backLabel="Back"
+          onBack={view === "builder" && step > 0
+            ? handleBack
+            : view === "builder" && step === 0
+              ? () => setView("welcome")
+              : view === "my-forms" || view === "published" || view === "qr-builder"
+                ? () => setView("welcome")
+                : () => router.push("/?page=services")}
+          backLabel={view === "builder" && step === 0 ? "Cancel" : "Back"}
           onHome={() => router.push("/?page=services")}
-          onNext={null}
+          onNext={view === "builder" && getBuilderCanProceed()
+            ? (step === BUILDER_STEPS.REVIEW ? handlePublish : handleNext)
+            : undefined}
+          nextLabel={view === "builder" ? (step === BUILDER_STEPS.REVIEW ? "Publish Form" : "Continue") : undefined}
+          showDisabledNext={view === "builder" && !getBuilderCanProceed()}
         />
         <Footer />
       </div>

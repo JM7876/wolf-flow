@@ -211,21 +211,30 @@ export function PageNav({ onBack, onHome, onNext, backLabel = "Back", nextLabel 
     boxShadow: "0 4px 16px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -1px 0 rgba(255,255,255,0.03)",
     transition: `all ${CLICK.duration}`, minWidth: 80, textAlign: "center",
   };
-  const disabledBtn = {
+  const nextBtn = {
     ...navBtn,
-    opacity: 0.3,
+    background: `linear-gradient(135deg, ${WF.accent}55, ${WF.accent}38)`,
+    border: `1px solid ${WF.accent}60`,
+    color: "#fff",
+    fontWeight: 600,
+    boxShadow: `0 4px 20px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.18)`,
+  };
+  const disabledBtn = {
+    ...nextBtn,
+    opacity: 0.35,
     cursor: "not-allowed",
-    color: FC.textDim,
   };
   const hoverIn = (e) => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; e.currentTarget.style.color = FC.textPrimary; e.currentTarget.style.transform = "translateY(-1px)"; };
   const hoverOut = (e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; e.currentTarget.style.boxShadow = navBtn.boxShadow; e.currentTarget.style.color = FC.textSecondary; e.currentTarget.style.transform = "none"; };
+  const nextHoverIn = (e) => { e.currentTarget.style.background = `linear-gradient(135deg, ${WF.accent}70, ${WF.accent}50)`; e.currentTarget.style.boxShadow = `0 6px 28px ${WF.accent}40`; e.currentTarget.style.transform = "translateY(-1px)"; };
+  const nextHoverOut = (e) => { e.currentTarget.style.background = `linear-gradient(135deg, ${WF.accent}55, ${WF.accent}38)`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.18)`; e.currentTarget.style.transform = "none"; };
 
   return (
     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, padding: "24px 24px 32px" }}>
       {onBack ? <button onClick={onBack} style={navBtn} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>{backLabel}</button> : <div style={{ minWidth: 80 }} />}
       {onHome ? <button onClick={onHome} style={navBtn} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>{"Home"}</button> : <div style={{ minWidth: 80 }} />}
       {onNext ? (
-        <button onClick={onNext} style={navBtn} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>{nextLabel}</button>
+        <button onClick={onNext} style={nextBtn} onMouseEnter={nextHoverIn} onMouseLeave={nextHoverOut}>{nextLabel}</button>
       ) : showDisabledNext ? (
         <button disabled style={disabledBtn}>{nextLabel}</button>
       ) : (
