@@ -509,49 +509,61 @@ export function PortalBackground({ nightMode }) {
   const nightImg = "/images/WW-Website-BG-Night-V1.webp";
   const [altReady, setAltReady] = useState(false);
 
-  /* Pre-decode the *inactive* variant so toggling feels instant.
-     The active variant is loaded natively by the browser via
-     background-image — no extra Image() needed. */
+  /* After initial paint settles, pre-decode the *inactive* variant
+     so toggling later feels instant. requestIdleCallback (with a
+     fallback setTimeout) keeps this off the critical path. */
   useEffect(() => {
     let cancelled = false;
     const inactiveSrc = nightMode ? dayImg : nightImg;
-    const img = new window.Image();
-    img.src = inactiveSrc;
-    const ready = () => { if (!cancelled) setAltReady(true); };
-    if (img.decode) img.decode().then(ready, ready);
-    else { img.onload = ready; img.onerror = ready; }
-    return () => { cancelled = true; };
+
+    const preload = () => {
+      if (cancelled) return;
+      const img = new window.Image();
+      img.src = inactiveSrc;
+      const done = () => { if (!cancelled) setAltReady(true); };
+      if (img.decode) img.decode().then(done, done);
+      else { img.onload = done; img.onerror = done; }
+    };
+
+    /* Delay pre-decode until the browser is idle */
+    const id = typeof requestIdleCallback === "function"
+      ? requestIdleCallback(preload, { timeout: 3000 })
+      : setTimeout(preload, 1500);
+
+    return () => {
+      cancelled = true;
+      if (typeof cancelIdleCallback === "function") cancelIdleCallback(id);
+      else clearTimeout(id);
+    };
   }, [nightMode]);
 
   const layerBase = {
     position: "absolute", inset: 0,
     backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat",
     transition: "opacity 0.8s ease",
-    willChange: "opacity",
-    backfaceVisibility: "hidden",
-    WebkitBackfaceVisibility: "hidden",
+    /* No willChange here — avoid eagerly promoting both layers and
+       forcing synchronous 4K decode on the main thread. The browser
+       will promote automatically when opacity transitions begin. */
   };
 
   return (
     <div style={{
       position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0,
-      contain: "layout paint style",
-      backfaceVisibility: "hidden",
-      WebkitBackfaceVisibility: "hidden",
+      contain: "strict",
     }}>
       {/* Night layer — only set backgroundImage when night is active or alt is pre-decoded */}
-      <div style={{
-        ...layerBase,
-        backgroundImage: (nightMode || altReady) ? `url('${nightImg}')` : "none",
-        opacity: nightMode ? 1 : 0,
-        contentVisibility: nightMode ? "visible" : "auto",
-      }} />
-      {/* Day layer — always loaded (preloaded in layout.js) */}
+      {(nightMode || altReady) && (
+        <div style={{
+          ...layerBase,
+          backgroundImage: `url('${nightImg}')`,
+          opacity: nightMode ? 1 : 0,
+        }} />
+      )}
+      {/* Day layer — preloaded in layout.js via <link rel="preload"> */}
       <div style={{
         ...layerBase,
         backgroundImage: `url('${dayImg}')`,
         opacity: nightMode ? 0 : 1,
-        contentVisibility: nightMode ? "auto" : "visible",
       }} />
       {/* Subtle scrim for content readability */}
       <div style={{

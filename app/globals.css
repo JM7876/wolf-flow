@@ -233,10 +233,11 @@ body {
 }
 
 /* ═══ IMAGE DECODE OPTIMIZATION ═══ */
-/* Tell the browser to decode images asynchronously to avoid
+/* Hint the browser to decode images asynchronously to avoid
    blocking the main thread (fixes high INP from image decode). */
 img {
-  content-visibility: auto;
+  image-rendering: auto;
+  decoding: async;
 }
 
 /* Smooth out page-level transitions by keeping the background
