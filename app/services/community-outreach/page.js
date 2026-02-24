@@ -91,7 +91,7 @@ function OutreachGlass({ children, active, onClick, glowColor, style: s = {} }) 
 function WFInput({ label, value, onChange, placeholder, type = "text", required, multiline, inputRef }) {
   const base = { ...inputBase, width: "100%", boxSizing: "border-box" };
   const focusIn = (e) => { e.target.style.borderColor = `${WF.accent}60`; e.target.style.boxShadow = `0 0 12px ${WF.accentGlow}`; };
-  const focusOut = (e) => { e.target.style.borderColor = "rgba(255,255,255,0.1)"; e.target.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.08), 0 2px 6px rgba(0,0,0,0.06)"; };
+  const focusOut = (e) => { e.target.style.borderColor = "rgba(255,255,255,0.16)"; e.target.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.08), 0 2px 6px rgba(0,0,0,0.06)"; };
   return (
     <div style={{ marginBottom: 14, flex: 1 }}>
       {label && (
@@ -114,7 +114,7 @@ function WFInput({ label, value, onChange, placeholder, type = "text", required,
 
 function WFSelect({ label, value, onChange, options, placeholder, required }) {
   const focusIn = (e) => { e.target.style.borderColor = `${WF.accent}60`; };
-  const focusOut = (e) => { e.target.style.borderColor = "rgba(255,255,255,0.1)"; };
+  const focusOut = (e) => { e.target.style.borderColor = "rgba(255,255,255,0.16)"; };
   return (
     <div style={{ marginBottom: 14 }}>
       {label && (
@@ -278,14 +278,14 @@ export default function CommunityOutreachPage() {
     h2:       { fontSize: 22, fontWeight: 300, color: FC.textPrimary, fontFamily: FONT, marginBottom: 8 },
     sub:      { fontSize: 14, color: FC.textSecondary, marginBottom: 28, lineHeight: 1.7 },
     label:    { fontSize: 11, color: FC.textDim, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 10, fontFamily: FONT, textAlign: "left", display: "block" },
-    noteBox:  { fontSize: 12, color: FC.textSecondary, lineHeight: 1.6, padding: "12px 16px", background: `${WF.accent}08`, borderRadius: 10, border: `1px solid ${WF.accent}22`, marginBottom: 18, textAlign: "left" },
-    warnBox:  { fontSize: 12, color: FC.textSecondary, lineHeight: 1.6, padding: "14px 16px", background: `${FC.gold}08`, borderRadius: 12, border: `1px solid ${FC.gold}28`, marginTop: 16, textAlign: "left" },
+    noteBox:  { fontSize: 12, color: FC.textSecondary, lineHeight: 1.6, padding: "12px 16px", background: `${WF.accent}0D`, borderRadius: 10, border: `1px solid ${WF.accent}28`, marginBottom: 18, textAlign: "left" },
+    warnBox:  { fontSize: 12, color: FC.textSecondary, lineHeight: 1.6, padding: "14px 16px", background: `${FC.gold}0D`, borderRadius: 12, border: `1px solid ${FC.gold}30`, marginTop: 16, textAlign: "left" },
     fieldRow: { display: "flex", gap: 12 },
     uploadZone: {
-      border: `2px dashed ${FC.border}`,
+      border: `2px dashed rgba(255,255,255,0.18)`,
       borderRadius: 12, padding: "28px 20px", textAlign: "center",
       cursor: "pointer", marginBottom: 12,
-      background: "rgba(255,255,255,0.02)",
+      background: "rgba(255,255,255,0.05)",
       transition: `all ${CLICK.duration}`,
     },
     previewGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(76px, 1fr))", gap: 8, marginBottom: 14 },
@@ -294,26 +294,26 @@ export default function CommunityOutreachPage() {
     summaryVal: { fontSize: 14, color: FC.textPrimary, lineHeight: 1.5 },
     btn: {
       display: "block", width: "100%", marginTop: 24,
-      padding: "14px 28px",
-      background: `linear-gradient(135deg, ${accentColor}30, ${accentColor}18)`,
-      border: `1px solid ${accentColor}50`,
-      color: accentColor,
+      padding: "15px 28px",
+      background: `linear-gradient(135deg, ${accentColor}55, ${accentColor}38)`,
+      border: `1px solid ${accentColor}65`,
+      color: "#fff",
       borderRadius: 12, fontSize: 14, fontWeight: 600,
       cursor: "pointer", fontFamily: FONT,
       transition: `all ${CLICK.duration}`,
-      backdropFilter: "blur(24px) brightness(0.9)",
-      WebkitBackdropFilter: "blur(24px) brightness(0.9)",
-      boxShadow: `0 4px 16px ${accentColor}15, inset 0 1px 0 rgba(255,255,255,0.12)`,
+      backdropFilter: "blur(24px) brightness(1.05)",
+      WebkitBackdropFilter: "blur(24px) brightness(1.05)",
+      boxShadow: `0 4px 20px ${accentColor}25, inset 0 1px 0 rgba(255,255,255,0.18)`,
     },
     btnSubmit: {
       display: "block", width: "100%", marginTop: 24,
       padding: "15px 28px",
       background: `linear-gradient(135deg, ${accentColor}, ${accentColor}dd)`,
-      border: "none", color: "#fff",
+      border: `1px solid ${accentColor}80`, color: "#fff",
       borderRadius: 12, fontSize: 14, fontWeight: 700,
       cursor: "pointer", fontFamily: FONT,
       letterSpacing: "0.03em", transition: `all ${CLICK.duration}`,
-      boxShadow: `0 4px 24px ${urgencyObj?.glow || WF.accentGlow}`,
+      boxShadow: `0 6px 28px ${urgencyObj?.glow || WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.2)`,
       opacity: isSubmitting ? 0.6 : 1,
     },
   };
@@ -331,7 +331,7 @@ export default function CommunityOutreachPage() {
       <div style={{ minHeight: "100vh", color: FC.textPrimary, fontFamily: FONT, position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" }}>
         <PortalBackground />
         <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 24px", zIndex: 1 }}>
-          <div style={{ textAlign: "center", maxWidth: 440 }}>
+          <div style={{ textAlign: "center", maxWidth: 520 }}>
             <div style={{ fontSize: 64, marginBottom: 22 }}>{isSocial ? "\uD83D\uDCE3" : (urgencyObj?.icon || "\u26A1")}</div>
             <h2 style={{ fontSize: 26, fontWeight: 300, color: FC.textPrimary, marginBottom: 8, fontFamily: FONT }}>
               {isSocial ? "Request Submitted" : "Alert Submitted"}
@@ -353,7 +353,7 @@ export default function CommunityOutreachPage() {
             </div>
 
             {/* Summary card */}
-            <GlassCard style={{ textAlign: "left", maxWidth: 360, margin: "0 auto 8px", padding: "20px 18px" }}>
+            <GlassCard style={{ textAlign: "left", maxWidth: 440, margin: "0 auto 8px", padding: "20px 22px" }}>
               {(isSocial ? [
                 ["Ticket No.", ticketNumber, true],
                 ["Platforms",  selectedPlatforms.map(p => `${p.icon} ${p.label}`).join(", ")],
@@ -393,9 +393,13 @@ export default function CommunityOutreachPage() {
               >{"Submit Another"}</button>
               <button
                 onClick={() => router.push("/?page=services")}
-                style={{ ...glassPill, padding: "13px 28px", border: `1px solid rgba(255,255,255,0.18)`, color: FC.textSecondary }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.color = FC.textPrimary; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.18)"; e.currentTarget.style.color = FC.textSecondary; }}
+                style={{
+                  ...glassPill, padding: "13px 28px",
+                  borderColor: `${WF.accent}40`, color: WF.accentLight,
+                  boxShadow: `0 4px 20px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.14)`,
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = `${WF.accent}40`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.14)`; }}
               >{"Back to Services"}</button>
             </div>
           </div>
@@ -466,10 +470,10 @@ export default function CommunityOutreachPage() {
               )}
             </div>
           </div>
-          <button style={{ ...S.btn, opacity: step1Valid ? 1 : 0.25, cursor: step1Valid ? "pointer" : "default" }}
+          <button style={{ ...S.btn, opacity: step1Valid ? 1 : 0.35, cursor: step1Valid ? "pointer" : "default" }}
             onClick={() => step1Valid && goTo(path === "social" ? 2 : 6)} disabled={!step1Valid}
-            onMouseEnter={step1Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${accentColor}40, ${accentColor}28)`; e.currentTarget.style.boxShadow = `0 4px 20px ${accentColor}25`; } : undefined}
-            onMouseLeave={step1Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${accentColor}30, ${accentColor}18)`; e.currentTarget.style.boxShadow = `0 4px 16px ${accentColor}15, inset 0 1px 0 rgba(255,255,255,0.12)`; } : undefined}
+            onMouseEnter={step1Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${accentColor}70, ${accentColor}50)`; e.currentTarget.style.boxShadow = `0 6px 28px ${accentColor}35`; e.currentTarget.style.transform = "translateY(-1px)"; } : undefined}
+            onMouseLeave={step1Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${accentColor}55, ${accentColor}38)`; e.currentTarget.style.boxShadow = `0 4px 20px ${accentColor}25, inset 0 1px 0 rgba(255,255,255,0.18)`; e.currentTarget.style.transform = "none"; } : undefined}
           >{"Continue"}</button>
         </div>
       );
@@ -516,7 +520,7 @@ export default function CommunityOutreachPage() {
             )}
 
             {form.schedule === "recurring" && (
-              <div style={{ marginTop: 14, padding: 16, background: `${WF.accent}06`, border: `1px solid ${WF.accent}18`, borderRadius: 12 }}>
+              <div style={{ marginTop: 14, padding: 16, background: `${WF.accent}0D`, border: `1px solid ${WF.accent}25`, borderRadius: 12 }}>
                 <WFSelect label="Posting Frequency" value={form.frequency} onChange={v => u("frequency", v)} options={FREQUENCY_OPTIONS} placeholder="Select frequency..." />
                 {showCampaignEnd && (
                   <div>
@@ -527,10 +531,10 @@ export default function CommunityOutreachPage() {
               </div>
             )}
           </div>
-          <button style={{ ...S.btn, opacity: step2Valid ? 1 : 0.25, cursor: step2Valid ? "pointer" : "default" }}
+          <button style={{ ...S.btn, opacity: step2Valid ? 1 : 0.35, cursor: step2Valid ? "pointer" : "default" }}
             onClick={() => step2Valid && goTo(3)} disabled={!step2Valid}
-            onMouseEnter={step2Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${WF.accent}40, ${WF.accent}28)`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accent}25`; } : undefined}
-            onMouseLeave={step2Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${WF.accent}30, ${WF.accent}18)`; e.currentTarget.style.boxShadow = `0 4px 16px ${WF.accent}15, inset 0 1px 0 rgba(255,255,255,0.12)`; } : undefined}
+            onMouseEnter={step2Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${WF.accent}70, ${WF.accent}50)`; e.currentTarget.style.boxShadow = `0 6px 28px ${WF.accent}35`; e.currentTarget.style.transform = "translateY(-1px)"; } : undefined}
+            onMouseLeave={step2Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${WF.accent}55, ${WF.accent}38)`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accent}25, inset 0 1px 0 rgba(255,255,255,0.18)`; e.currentTarget.style.transform = "none"; } : undefined}
           >{"Continue"}</button>
         </div>
       );
@@ -552,8 +556,8 @@ export default function CommunityOutreachPage() {
                     style={{
                       flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
                       padding: "10px 12px", borderRadius: 10, cursor: "pointer",
-                      background: checked ? `${WF.accent}12` : "rgba(255,255,255,0.03)",
-                      border: `1px solid ${checked ? `${WF.accent}45` : FC.border}`,
+                      background: checked ? `${WF.accent}18` : "rgba(255,255,255,0.08)",
+                      border: `1px solid ${checked ? `${WF.accent}50` : "rgba(255,255,255,0.16)"}`,
                       transition: `all ${CLICK.duration}`,
                       boxShadow: checked ? `0 0 16px ${WF.accentGlow}` : "none",
                     }}>
@@ -613,10 +617,10 @@ export default function CommunityOutreachPage() {
 
             <WFInput label="Additional Notes" value={form.notes} onChange={v => u("notes", v)} placeholder="Hashtags, tone preferences, special instructions, tags..." multiline />
           </div>
-          <button style={{ ...S.btn, opacity: step3Valid ? 1 : 0.25, cursor: step3Valid ? "pointer" : "default" }}
+          <button style={{ ...S.btn, opacity: step3Valid ? 1 : 0.35, cursor: step3Valid ? "pointer" : "default" }}
             onClick={() => step3Valid && goTo(4)} disabled={!step3Valid}
-            onMouseEnter={step3Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${WF.accent}40, ${WF.accent}28)`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accent}25`; } : undefined}
-            onMouseLeave={step3Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${WF.accent}30, ${WF.accent}18)`; e.currentTarget.style.boxShadow = `0 4px 16px ${WF.accent}15, inset 0 1px 0 rgba(255,255,255,0.12)`; } : undefined}
+            onMouseEnter={step3Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${WF.accent}70, ${WF.accent}50)`; e.currentTarget.style.boxShadow = `0 6px 28px ${WF.accent}35`; e.currentTarget.style.transform = "translateY(-1px)"; } : undefined}
+            onMouseLeave={step3Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${WF.accent}55, ${WF.accent}38)`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accent}25, inset 0 1px 0 rgba(255,255,255,0.18)`; e.currentTarget.style.transform = "none"; } : undefined}
           >{"Review Request"}</button>
         </div>
       );
@@ -709,10 +713,10 @@ export default function CommunityOutreachPage() {
             </div>
             <WFInput label="Approved By (if applicable)" value={form.approvedBy} onChange={v => u("approvedBy", v)} placeholder="Director, Council, Department Head..." />
           </div>
-          <button style={{ ...S.btn, opacity: step7Valid ? 1 : 0.25, cursor: step7Valid ? "pointer" : "default" }}
+          <button style={{ ...S.btn, opacity: step7Valid ? 1 : 0.35, cursor: step7Valid ? "pointer" : "default" }}
             onClick={() => step7Valid && goTo(8)} disabled={!step7Valid}
-            onMouseEnter={step7Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${accentColor}40, ${accentColor}28)`; e.currentTarget.style.boxShadow = `0 4px 20px ${accentColor}25`; } : undefined}
-            onMouseLeave={step7Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${accentColor}30, ${accentColor}18)`; e.currentTarget.style.boxShadow = `0 4px 16px ${accentColor}15, inset 0 1px 0 rgba(255,255,255,0.12)`; } : undefined}
+            onMouseEnter={step7Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${accentColor}70, ${accentColor}50)`; e.currentTarget.style.boxShadow = `0 6px 28px ${accentColor}35`; e.currentTarget.style.transform = "translateY(-1px)"; } : undefined}
+            onMouseLeave={step7Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${accentColor}55, ${accentColor}38)`; e.currentTarget.style.boxShadow = `0 4px 20px ${accentColor}25, inset 0 1px 0 rgba(255,255,255,0.18)`; e.currentTarget.style.transform = "none"; } : undefined}
           >{"Continue"}</button>
         </div>
       );
@@ -733,15 +737,15 @@ export default function CommunityOutreachPage() {
               </OutreachGlass>
             ))}
           </div>
-          <button style={{ ...S.btn, opacity: step8Valid ? 1 : 0.25, cursor: step8Valid ? "pointer" : "default" }}
+          <button style={{ ...S.btn, opacity: step8Valid ? 1 : 0.35, cursor: step8Valid ? "pointer" : "default" }}
             onClick={() => step8Valid && goTo(9)} disabled={!step8Valid}
-            onMouseEnter={step8Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${accentColor}40, ${accentColor}28)`; e.currentTarget.style.boxShadow = `0 4px 20px ${accentColor}25`; } : undefined}
-            onMouseLeave={step8Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${accentColor}30, ${accentColor}18)`; e.currentTarget.style.boxShadow = `0 4px 16px ${accentColor}15, inset 0 1px 0 rgba(255,255,255,0.12)`; } : undefined}
+            onMouseEnter={step8Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${accentColor}70, ${accentColor}50)`; e.currentTarget.style.boxShadow = `0 6px 28px ${accentColor}35`; e.currentTarget.style.transform = "translateY(-1px)"; } : undefined}
+            onMouseLeave={step8Valid ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${accentColor}55, ${accentColor}38)`; e.currentTarget.style.boxShadow = `0 4px 20px ${accentColor}25, inset 0 1px 0 rgba(255,255,255,0.18)`; e.currentTarget.style.transform = "none"; } : undefined}
           >{"Review Alert"}</button>
         </div>
       );
 
-      /* ── Step 9: Alert Review ────────────────────────────── */
+      /* ── Step 9: Alert Review ─────────────────────────────��� */
       case 9: {
         const selectedChannels = Object.entries(form.channels).filter(([, v]) => v).map(([k]) => CHANNELS.find(c => c.id === k));
         const items = [
@@ -789,7 +793,7 @@ export default function CommunityOutreachPage() {
     <div style={{ minHeight: "100vh", color: FC.textPrimary, fontFamily: FONT, position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" }}>
       <PortalBackground />
       <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "32px 24px 24px", zIndex: 1, position: "relative", overflowY: "auto" }}>
-        <div style={{ maxWidth: 460, width: "100%", opacity: animating ? 0 : 1, transform: animating ? "translateY(12px)" : "translateY(0)", transition: "opacity 0.24s ease, transform 0.24s ease" }}>
+        <div style={{ maxWidth: 520, width: "100%", opacity: animating ? 0 : 1, transform: animating ? "translateY(12px)" : "translateY(0)", transition: "opacity 0.24s ease, transform 0.24s ease" }}>
           {renderStep()}
         </div>
       </div>
