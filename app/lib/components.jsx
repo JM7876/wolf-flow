@@ -1,3 +1,4 @@
+"use client";
 /* ═══════════════════════════════════════════════════════════
    WOLF FLOW SOLUTIONS — Shared UI Components
    ─────────────────────────────────────────────────────────
@@ -5,7 +6,6 @@
    PageNav, PortalBackground, SettingsDropdown — shared across all services.
    Created and Authored by Johnathon Moulds © 2026
    ═══════════════════════════════════════════════════════════ */
-"use client";
 import { useState, useEffect, useRef } from "react";
 import { WF, FC, FONT, MONO, CLICK, GLASS, glassPill, inputBase, WORKFLOW_STEPS, STEP_DESC } from "./tokens";
 
@@ -391,6 +391,44 @@ const GLASS_SLIDERS = [
 ];
 const setGlassVar = (cssVar, v, unit) => document.documentElement.style.setProperty(cssVar, v + unit);
 
+/* ═══ FONT + COLOR TOKENS for Style Panel ═══ */
+const FONT_OPTIONS = [
+  { label: "Montserrat Alt", value: "'Montserrat Alternates', sans-serif" },
+  { label: "DM Sans",        value: "'DM Sans', sans-serif" },
+  { label: "Josefin Sans",   value: "'Josefin Sans', sans-serif" },
+  { label: "Inter",          value: "'Inter', sans-serif" },
+  { label: "Space Grotesk",  value: "'Space Grotesk', sans-serif" },
+  { label: "Playfair",       value: "'Playfair Display', serif" },
+];
+
+const ACCENT_SWATCHES = [
+  { label: "Wolf Violet",  hex: "#9583E9", light: "#BD95EE", glow: "rgba(149,131,233,0.25)" },
+  { label: "Wolf Pink",    hex: "#DDACEF", light: "#F0CDF3", glow: "rgba(221,172,239,0.25)" },
+  { label: "Turquoise",    hex: "#14A9A2", light: "#1bc4bc", glow: "rgba(20,169,162,0.25)" },
+  { label: "Gold",         hex: "#C9A84C", light: "#e0bc5e", glow: "rgba(201,168,76,0.25)" },
+  { label: "Rose",         hex: "#e63946", light: "#ff6b6b", glow: "rgba(230,57,70,0.25)" },
+  { label: "Forest",       hex: "#40916c", light: "#52b788", glow: "rgba(64,145,108,0.25)" },
+  { label: "Coral",        hex: "#FDC3BE", light: "#fdd2d7", glow: "rgba(253,195,190,0.25)" },
+  { label: "Steel",        hex: "#6b8cba", light: "#89a8d0", glow: "rgba(107,140,186,0.25)" },
+];
+
+function applyAccent(swatch) {
+  const r = document.documentElement;
+  r.style.setProperty("--wf-accent", swatch.hex);
+  r.style.setProperty("--wf-accent-light", swatch.light);
+  r.style.setProperty("--wf-accent-glow", swatch.glow);
+  r.style.setProperty("--accent-primary", swatch.hex);
+  r.style.setProperty("--accent-violet", swatch.light);
+}
+
+function applyFont(fontValue) {
+  document.documentElement.style.setProperty("--wf-font", fontValue);
+  // Inject override style so inline fontFamily references also update
+  let tag = document.getElementById("wf-font-override");
+  if (!tag) { tag = document.createElement("style"); tag.id = "wf-font-override"; document.head.appendChild(tag); }
+  tag.textContent = `*, *::before, *::after { font-family: ${fontValue} !important; }`;
+}
+
 /* ═══ SETTINGS DROPDOWN — Night mode toggle + Glass Engine sliders ═══ */
 export function SettingsDropdown({ nightMode, onToggleNight }) {
   const [open, setOpen] = useState(false);
@@ -400,6 +438,8 @@ export function SettingsDropdown({ nightMode, onToggleNight }) {
     return init;
   });
   const [activePreset, setActivePreset] = useState(null);
+  const [activeAccent, setActiveAccent] = useState(0);
+  const [activeFont, setActiveFont] = useState(0);
   const ref = useRef(null);
   const gearRef = useRef(null);
 
