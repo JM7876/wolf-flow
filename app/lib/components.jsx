@@ -42,7 +42,7 @@ export function GlassCard({ children, style: s = {}, hover = false, onClick }) {
         e.currentTarget.style.boxShadow = CLICK.hover.boxShadow;
       } : undefined}
       onMouseLeave={hover ? e => {
-        e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)";
+        e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)";
         e.currentTarget.style.transform = "none";
         e.currentTarget.style.boxShadow = GLASS.default.boxShadow;
       } : undefined}
@@ -202,8 +202,8 @@ export function MiniTrack({ step, showLabels = false }) {
 /* ═══ PAGE NAV — Back | Home | Next ═══ */
 export function PageNav({ onBack, onHome, onNext, backLabel = "Back", nextLabel = "Next", showDisabledNext = false }) {
   const navBtn = {
-    background: "linear-gradient(168deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.04) 100%)",
-    border: "1px solid rgba(255,255,255,0.12)", borderRadius: 14,
+    background: "linear-gradient(168deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.06) 100%)",
+    border: "1px solid rgba(255,255,255,0.16)", borderRadius: 14,
     padding: "10px 22px", cursor: "pointer", fontSize: 12, fontWeight: 500, fontFamily: FONT,
     color: FC.textSecondary,
     backdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4))",
@@ -218,7 +218,7 @@ export function PageNav({ onBack, onHome, onNext, backLabel = "Back", nextLabel 
     color: FC.textDim,
   };
   const hoverIn = (e) => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; e.currentTarget.style.color = FC.textPrimary; e.currentTarget.style.transform = "translateY(-1px)"; };
-  const hoverOut = (e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.boxShadow = navBtn.boxShadow; e.currentTarget.style.color = FC.textSecondary; e.currentTarget.style.transform = "none"; };
+  const hoverOut = (e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; e.currentTarget.style.boxShadow = navBtn.boxShadow; e.currentTarget.style.color = FC.textSecondary; e.currentTarget.style.transform = "none"; };
 
   return (
     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, padding: "24px 24px 32px" }}>
@@ -277,8 +277,8 @@ export function PortalBackground({ nightMode }) {
       <div style={{
         position: "absolute", inset: 0,
         background: nightMode
-          ? "linear-gradient(180deg, rgba(26,22,40,0.40) 0%, rgba(34,28,53,0.50) 100%)"
-          : "linear-gradient(180deg, rgba(26,22,40,0.22) 0%, rgba(34,28,53,0.32) 100%)",
+          ? "linear-gradient(180deg, rgba(26,22,40,0.35) 0%, rgba(34,28,53,0.45) 100%)"
+          : "linear-gradient(180deg, rgba(26,22,40,0.30) 0%, rgba(34,28,53,0.42) 100%)",
         transition: "background 0.8s ease",
       }} />
     </div>

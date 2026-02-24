@@ -169,11 +169,11 @@ const Glass = ({ children, active, onClick, style: s = {}, hoverGlow }) => {
     <div onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
       style={{
         background: active
-          ? `linear-gradient(168deg, ${gc}1A 0%, ${gc}0D 40%, ${gc}08 100%)`
-          : "linear-gradient(168deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 40%, rgba(255,255,255,0.015) 100%)",
+          ? `linear-gradient(168deg, ${gc}22 0%, ${gc}14 40%, ${gc}0A 100%)`
+          : "linear-gradient(168deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.03) 100%)",
         backdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12)) contrast(var(--glass-contrast,1.05))",
         WebkitBackdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12)) contrast(var(--glass-contrast,1.05))",
-        border: `1px solid ${active ? gc + "50" : h && onClick ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.1)"}`,
+        border: `1px solid ${active ? gc + "55" : h && onClick ? "rgba(255,255,255,0.22)" : "rgba(255,255,255,0.14)"}`,
         borderRadius: 16, transition: "all 0.3s cubic-bezier(0.4,0,0.2,1)",
         cursor: onClick ? "pointer" : "default",
         boxShadow: active
@@ -209,8 +209,8 @@ const SectionCard = ({ icon, title, subtitle, children, isDone }) => {
   return (
     <div style={{
       background: isDone
-        ? `linear-gradient(168deg, ${WF.pink}18 0%, ${WF.pink}0A 40%, ${WF.pink}06 100%)`
-        : `linear-gradient(168deg, ${WF.accent}12 0%, ${WF.accent}08 40%, ${WF.accent}04 100%)`,
+        ? `linear-gradient(168deg, ${WF.pink}22 0%, ${WF.pink}12 40%, ${WF.pink}08 100%)`
+        : `linear-gradient(168deg, ${WF.accent}1A 0%, ${WF.accent}0D 40%, ${WF.accent}07 100%)`,
       backdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12))",
       WebkitBackdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12))",
       border: `1px solid ${bc}${isDone ? "40" : "30"}`,
@@ -438,8 +438,8 @@ export default function VisualDesignPage() {
   );
 
   const localInput = {
-    width: "100%", background: "rgba(255,255,255,0.03)",
-    border: `1px solid ${FC.border}`, borderRadius: 10,
+    width: "100%", background: "rgba(255,255,255,0.06)",
+    border: `1px solid rgba(255,255,255,0.16)`, borderRadius: 10,
     color: FC.textPrimary, fontSize: 14, fontFamily: FONT,
     padding: "12px 14px", outline: "none", caretColor: WF.accent,
     boxSizing: "border-box", transition: `border-color ${CLICK.duration}`,
@@ -809,7 +809,7 @@ export default function VisualDesignPage() {
                       const isActive = form.styleDir === s.id && !form.designerChoice;
                       return (
                         <Glass key={s.id} active={isActive} onClick={() => { set("styleDir", s.id); set("designerChoice", false); }} hoverGlow={s.palette[0]}
-                          style={{ padding: 0, overflow: "hidden", opacity: form.designerChoice ? 0.4 : 1, transition: "all 0.3s ease" }}>
+                          style={{ padding: 0, overflow: "hidden", opacity: form.designerChoice ? 0.5 : 1, transition: "all 0.3s ease" }}>
                           <div style={{ height: 88, background: s.gradient, position: "relative", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 18px", overflow: "hidden" }}>
                             <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.15)" }} />
                             <div style={{ fontFamily: s.headingFont, fontWeight: s.headingWeight, fontSize: 18, color: "rgba(255,255,255,0.95)", position: "relative", zIndex: 1, textShadow: "0 1px 4px rgba(0,0,0,0.3)", letterSpacing: s.id === "modern-minimal" ? "0.04em" : s.id === "art-deco" ? "0.12em" : "0", textTransform: s.id === "art-deco" || s.id === "bold-vibrant" ? "uppercase" : "none" }}>{s.sampleHeading}</div>

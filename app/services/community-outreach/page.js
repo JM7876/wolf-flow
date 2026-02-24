@@ -66,11 +66,11 @@ function OutreachGlass({ children, active, onClick, glowColor, style: s = {} }) 
     <div onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
       style={{
         background: active
-          ? `linear-gradient(168deg, ${gc}1A 0%, ${gc}0D 40%, ${gc}08 100%)`
-          : "linear-gradient(168deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 40%, rgba(255,255,255,0.015) 100%)",
+          ? `linear-gradient(168deg, ${gc}22 0%, ${gc}14 40%, ${gc}0A 100%)`
+          : "linear-gradient(168deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.03) 100%)",
         backdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12)) contrast(var(--glass-contrast,1.05))",
         WebkitBackdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12)) contrast(var(--glass-contrast,1.05))",
-        border: `1px solid ${active ? gc + "55" : h && onClick ? gc + "25" : "rgba(255,255,255,0.1)"}`,
+        border: `1px solid ${active ? gc + "55" : h && onClick ? gc + "25" : "rgba(255,255,255,0.14)"}`,
         borderRadius: 16, padding: "16px 18px",
         transition: `all ${CLICK.duration}`,
         cursor: onClick ? "pointer" : "default",
