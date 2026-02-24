@@ -94,10 +94,12 @@ function ConfirmPage({ icon, title, subtitle, ticket, rows, note, onAnother, onH
         {/* Nav */}
         <div style={{ display: "flex", gap: 12, justifyContent: "center", paddingBottom: 32 }}>
           <button onClick={onAnother} style={{
-            ...glassPill, padding: "12px 28px", fontSize: 13, color: FC.textSecondary,
+            ...glassPill, padding: "12px 28px", fontSize: 13, fontWeight: 500,
+            borderColor: `${WF.accent}40`, color: WF.accentLight,
+            boxShadow: `0 4px 20px ${WF.accentGlow}`,
           }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.color = FC.textPrimary; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.color = FC.textSecondary; }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = `${WF.accent}40`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accentGlow}`; }}
           >Submit Another</button>
           <button onClick={onHome} style={{
             ...glassPill, padding: "12px 28px", fontSize: 13, fontWeight: 600,
@@ -189,9 +191,13 @@ function ArchivesForm({ onHome }) {
 
       {/* Submit */}
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 14, padding: "8px 0 12px" }}>
-        <button onClick={onHome} style={{ ...glassPill, padding: "12px 22px", fontSize: 13, color: FC.textDim }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.color = FC.textPrimary; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.color = FC.textDim; }}
+        <button onClick={onHome} style={{
+          ...glassPill, padding: "12px 22px", fontSize: 13,
+          borderColor: `${WF.accent}40`, color: WF.accentLight,
+          boxShadow: `0 4px 20px ${WF.accentGlow}`,
+        }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = `${WF.accent}40`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accentGlow}`; }}
         >Back</button>
         <button onClick={submit} disabled={!valid} style={{
           ...glassPill, padding: "13px 32px", fontSize: 14, fontWeight: 600,
@@ -308,9 +314,13 @@ function PhotographyForm({ onHome }) {
 
       {/* Submit */}
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 14, padding: "8px 0 12px" }}>
-        <button onClick={onHome} style={{ ...glassPill, padding: "12px 22px", fontSize: 13, color: FC.textDim }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.color = FC.textPrimary; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.color = FC.textDim; }}
+        <button onClick={onHome} style={{
+          ...glassPill, padding: "12px 22px", fontSize: 13,
+          borderColor: `${WF.accent}40`, color: WF.accentLight,
+          boxShadow: `0 4px 20px ${WF.accentGlow}`,
+        }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = `${WF.accent}40`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accentGlow}`; }}
         >Back</button>
         <button onClick={submit} disabled={!valid} style={{
           ...glassPill, padding: "13px 32px", fontSize: 14, fontWeight: 600,
@@ -443,9 +453,13 @@ function HeadshotsForm({ onHome }) {
 
       {/* Submit */}
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 14, padding: "8px 0 12px" }}>
-        <button onClick={onHome} style={{ ...glassPill, padding: "12px 22px", fontSize: 13, color: FC.textDim }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.color = FC.textPrimary; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.color = FC.textDim; }}
+        <button onClick={onHome} style={{
+          ...glassPill, padding: "12px 22px", fontSize: 13,
+          borderColor: `${WF.accent}40`, color: WF.accentLight,
+          boxShadow: `0 4px 20px ${WF.accentGlow}`,
+        }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = `${WF.accent}40`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accentGlow}`; }}
         >Back</button>
         <button onClick={submit} disabled={!valid} style={{
           ...glassPill, padding: "13px 32px", fontSize: 14, fontWeight: 600,
@@ -512,7 +526,7 @@ function BehindTheLens({ onBack, onSelect }) {
         {/* Service Cards */}
         <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 36, textAlign: "left" }}>
           {services.map(s => (
-            <GlassCard key={s.id} hover onClick={() => onSelect(s.id)} style={{ cursor: "pointer" }}>
+            <GlassCard key={s.id} hover onClick={() => onSelect(s.id)} style={{ cursor: "pointer", padding: 0 }}>
               <div style={{ display: "flex", alignItems: "flex-start", gap: 16, padding: "20px 24px" }}>
                 <span style={{ fontSize: 32, flexShrink: 0, marginTop: 2 }}>{s.icon}</span>
                 <div style={{ flex: 1 }}>
@@ -526,9 +540,13 @@ function BehindTheLens({ onBack, onSelect }) {
           ))}
         </div>
 
-        <button onClick={onBack} style={{ ...glassPill, padding: "12px 24px", fontSize: 13, color: FC.textDim }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.color = FC.textPrimary; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.color = FC.textDim; }}
+        <button onClick={onBack} style={{
+          ...glassPill, padding: "12px 24px", fontSize: 13,
+          borderColor: `${WF.accent}40`, color: WF.accentLight,
+          boxShadow: `0 4px 20px ${WF.accentGlow}`,
+        }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = `${WF.accent}40`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accentGlow}`; }}
         >Back to Studio Hub</button>
       </div>
     </PageWrap>
@@ -579,9 +597,13 @@ function BehindTheCamera({ onBack }) {
           </div>
         </div>
 
-        <button onClick={onBack} style={{ ...glassPill, padding: "12px 24px", fontSize: 13, color: FC.textDim, marginTop: 12 }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.color = FC.textPrimary; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.color = FC.textDim; }}
+        <button onClick={onBack} style={{
+          ...glassPill, padding: "12px 24px", fontSize: 13, marginTop: 12,
+          borderColor: `${WF.accent}40`, color: WF.accentLight,
+          boxShadow: `0 4px 20px ${WF.accentGlow}`,
+        }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = `${WF.accent}40`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accentGlow}`; }}
         >Back to Studio Hub</button>
       </div>
     </PageWrap>
@@ -645,7 +667,7 @@ export default function StudioHubPage() {
         {/* Two branch cards */}
         <div style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 40 }}>
           {branches.map(b => (
-            <GlassCard key={b.id} hover onClick={() => setView(b.id)} style={{ cursor: "pointer" }}>
+            <GlassCard key={b.id} hover onClick={() => setView(b.id)} style={{ cursor: "pointer", padding: 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 20, padding: "24px 28px" }}>
                 <span style={{ fontSize: 42, flexShrink: 0 }}>{b.icon}</span>
                 <div style={{ flex: 1 }}>

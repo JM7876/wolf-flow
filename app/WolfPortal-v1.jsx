@@ -249,7 +249,7 @@ function GenericServiceForm({ service, onSubmit, onBack }) {
 
 /* ═══════════════════════════════════════════════════════════
    PAGE: SUBMISSION CONFIRMATION
-   ═════════════���═══════════════════���═════════════════════════ */
+   ═════════════�����═══════════════════���═════════════════════════ */
 function ConfirmationPage({ submission, onHome, onTracker }) {
   const [copied, setCopied] = useState(false);
 
@@ -720,15 +720,11 @@ function SettingsDropdown({ nightMode, onToggleNight }) {
     return () => document.removeEventListener("mousedown", close);
   }, [open]);
 
-  const setGlassVar = (cssVar, v, unit) => {
-    console.log("[v0] Setting CSS var:", cssVar, "=", v + unit);
-    document.documentElement.style.setProperty(cssVar, v + unit);
-  };
+  const setGlassVar = (cssVar, v, unit) => document.documentElement.style.setProperty(cssVar, v + unit);
 
   const updateSlider = (key, val) => {
     const s = GLASS_SLIDERS.find(x => x.key === key);
     const num = parseFloat(val);
-    console.log("[v0] Slider update:", key, "->", num, "cssVar:", s.cssVar);
     setGlassVals(prev => ({ ...prev, [key]: num }));
     setActivePreset(null);
     setGlassVar(s.cssVar, num, s.unit);

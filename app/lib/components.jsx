@@ -54,7 +54,7 @@ export function GlassCard({ children, style: s = {}, hover = false, onClick }) {
         pointerEvents: "none",
         background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)",
       }} />
-      <div style={{ position: "relative", zIndex: 2 }}>{children}</div>
+      <div style={{ position: "relative", zIndex: 2, padding: s.padding !== undefined ? undefined : "20px 24px" }}>{children}</div>
     </div>
   );
 }
