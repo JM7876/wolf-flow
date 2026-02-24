@@ -496,8 +496,26 @@ export function SettingsDropdown({ nightMode, onToggleNight }) {
           ))}
         </div>
 
-        <div style={{ height: 1, background: FC.border, margin: "18px 0 4px" }} />
-        <div style={{ fontSize: 8, color: "rgba(255,255,255,0.2)", fontFamily: FONT, textAlign: "center", paddingBottom: 2 }}>{"Wolf Flow Style Engine © 2026"}</div>
+        <div style={{ height: 1, background: FC.border, margin: "18px 0" }} />
+
+        {/* Link to full Style Editor page */}
+        <a href="/style" style={{
+          display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+          width: "100%", padding: "10px 14px", borderRadius: 10, cursor: "pointer",
+          background: "rgba(149,131,233,0.1)", border: "1px solid rgba(149,131,233,0.25)",
+          color: "#BD95EE", fontSize: 11, fontWeight: 600, fontFamily: FONT,
+          letterSpacing: "0.04em", textDecoration: "none",
+          transition: "all 0.2s ease",
+        }}
+          onMouseEnter={e => { e.currentTarget.style.background = "rgba(149,131,233,0.18)"; e.currentTarget.style.borderColor = "rgba(149,131,233,0.45)"; }}
+          onMouseLeave={e => { e.currentTarget.style.background = "rgba(149,131,233,0.1)"; e.currentTarget.style.borderColor = "rgba(149,131,233,0.25)"; }}
+        >
+          <span style={{ fontSize: 14 }}>{"\u2728"}</span>
+          <span>{"Open Style Editor"}</span>
+        </a>
+
+        <div style={{ height: 1, background: FC.border, margin: "14px 0 4px" }} />
+        <div style={{ fontSize: 8, color: "rgba(255,255,255,0.2)", fontFamily: FONT, textAlign: "center", paddingBottom: 2 }}>{"Wolf Flow Style Engine \u00A9 2026"}</div>
 
       </div>
     </div>
