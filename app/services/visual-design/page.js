@@ -526,7 +526,7 @@ export default function VisualDesignPage() {
     );
   }
 
-  // ══��� STEP RENDERER ═══
+  // ══��� STEP RENDERER ═���═
   const renderStep = () => {
     switch (step) {
 
@@ -884,6 +884,93 @@ export default function VisualDesignPage() {
                 {"Style selections serve as a starting point for your designer. Final results may vary based on content, format, and brand requirements. Our team will work with you to refine the direction during the design process."}
               </p>
             </div>
+
+            {/* ── Inline Navigation for Style Step ── */}
+            <div style={{
+              marginTop: 28, padding: "20px 0 4px",
+              borderTop: `1px solid rgba(255,255,255,0.06)`,
+            }}>
+              {/* Step progress dots */}
+              <div style={{ display: "flex", justifyContent: "center", gap: 6, marginBottom: 14 }}>
+                {Array.from({ length: totalSteps }, (_, i) => (
+                  <div key={i} style={{
+                    width: i === step ? 22 : 6, height: 6, borderRadius: 3,
+                    background: i < step
+                      ? `linear-gradient(90deg, ${WF.pink}, ${WF.accent})`
+                      : i === step
+                        ? WF.accent
+                        : "rgba(255,255,255,0.10)",
+                    boxShadow: i === step ? `0 0 10px ${WF.accentGlow}` : "none",
+                    transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                  }} />
+                ))}
+              </div>
+              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                <button onClick={goBack} style={{
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                  padding: "11px 20px", borderRadius: 14, cursor: "pointer",
+                  background: "linear-gradient(168deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.05) 100%)",
+                  border: "1px solid rgba(255,255,255,0.14)",
+                  color: FC.textSecondary, fontSize: 13, fontWeight: 500, fontFamily: FONT,
+                  backdropFilter: "blur(var(--glass-blur,24px))", WebkitBackdropFilter: "blur(var(--glass-blur,24px))",
+                  boxShadow: "0 2px 10px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.10)",
+                  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)", WebkitAppearance: "none",
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.28)"; e.currentTarget.style.background = "linear-gradient(168deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.10) 100%)"; e.currentTarget.style.transform = "translateY(-1px)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.14)"; e.currentTarget.style.background = "linear-gradient(168deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.05) 100%)"; e.currentTarget.style.transform = "none"; }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+                  {"Back"}
+                </button>
+                <button onClick={() => { setIsNavigatingAway(true); setPreviewGradient(null); router.push("/?page=services"); }} style={{
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                  padding: "11px 16px", borderRadius: 14, cursor: "pointer",
+                  background: "linear-gradient(168deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.03) 100%)",
+                  border: "1px solid rgba(255,255,255,0.10)",
+                  color: FC.textDim, fontSize: 13, fontWeight: 500, fontFamily: FONT,
+                  backdropFilter: "blur(var(--glass-blur,24px))", WebkitBackdropFilter: "blur(var(--glass-blur,24px))",
+                  boxShadow: "0 1px 6px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.06)",
+                  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)", WebkitAppearance: "none",
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.22)"; e.currentTarget.style.color = FC.textSecondary; e.currentTarget.style.transform = "translateY(-1px)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.10)"; e.currentTarget.style.color = FC.textDim; e.currentTarget.style.transform = "none"; }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                  {"Home"}
+                </button>
+                <button
+                  onClick={canAdvance() ? goNext : undefined}
+                  disabled={!canAdvance()}
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: 6,
+                    padding: "11px 24px", borderRadius: 14,
+                    cursor: canAdvance() ? "pointer" : "not-allowed",
+                    background: canAdvance()
+                      ? `linear-gradient(135deg, ${WF.accent}60, ${WF.accent}40)`
+                      : `linear-gradient(135deg, ${WF.accent}25, ${WF.accent}15)`,
+                    border: `1px solid ${canAdvance() ? WF.accent + "55" : WF.accent + "20"}`,
+                    color: canAdvance() ? "#fff" : "rgba(255,255,255,0.3)",
+                    fontSize: 13, fontWeight: 600, fontFamily: FONT,
+                    backdropFilter: "blur(var(--glass-blur,24px))", WebkitBackdropFilter: "blur(var(--glass-blur,24px))",
+                    boxShadow: canAdvance()
+                      ? `0 4px 20px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.15)`
+                      : "none",
+                    opacity: canAdvance() ? 1 : 0.5,
+                    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)", WebkitAppearance: "none",
+                  }}
+                  onMouseEnter={canAdvance() ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${WF.accent}80, ${WF.accent}58)`; e.currentTarget.style.boxShadow = `0 6px 28px ${WF.accent}40`; e.currentTarget.style.transform = "translateY(-1px)"; } : undefined}
+                  onMouseLeave={canAdvance() ? e => { e.currentTarget.style.background = `linear-gradient(135deg, ${WF.accent}60, ${WF.accent}40)`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accentGlow}`; e.currentTarget.style.transform = "none"; } : undefined}
+                >
+                  {"Continue"}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg>
+                </button>
+              </div>
+              {!canAdvance() && (
+                <p style={{ fontSize: 11, color: FC.textDim, textAlign: "center", marginTop: 10, fontFamily: FONT, opacity: 0.7 }}>
+                  {"Select a style direction or choose Designer Control to continue"}
+                </p>
+              )}
+            </div>
           </div>
         );
       }
@@ -1222,15 +1309,19 @@ export default function VisualDesignPage() {
       <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "32px 24px 24px", zIndex: 1, position: "relative", overflowY: "auto" }}>
         {renderStep()}
       </div>
-      {/* Nav */}
-      <PageNav
-        onBack={step > 0 ? goBack : undefined}
-        onHome={() => { setIsNavigatingAway(true); setPreviewGradient(null); router.push("/?page=services"); }}
-        onNext={canAdvance() ? goNext : undefined}
-        backLabel="Back"
-        nextLabel={step === totalSteps - 1 ? "Submit" : "Next"}
-        showDisabledNext={!canAdvance()}
-      />
+      {/* Nav — hidden on step 4 (style direction) which has its own inline nav */}
+      {step !== 4 && (
+        <PageNav
+          onBack={step > 0 ? goBack : undefined}
+          onHome={() => { setIsNavigatingAway(true); setPreviewGradient(null); router.push("/?page=services"); }}
+          onNext={canAdvance() ? goNext : undefined}
+          backLabel="Back"
+          nextLabel={step === totalSteps - 1 ? "Submit" : "Next"}
+          showDisabledNext={!canAdvance()}
+          currentStep={step}
+          totalSteps={totalSteps}
+        />
+      )}
       <Footer />
     </div>
   );
