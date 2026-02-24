@@ -37,11 +37,11 @@ const Glass = ({ children, active, onClick, style: s = {} }) => {
     <div onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
       style={{
         background: active
-          ? `linear-gradient(168deg, ${WF.accent}1A 0%, ${WF.accent}0D 40%, ${WF.accent}08 100%)`
-          : "linear-gradient(168deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 40%, rgba(255,255,255,0.015) 100%)",
+          ? `linear-gradient(168deg, ${WF.accent}22 0%, ${WF.accent}14 40%, ${WF.accent}0A 100%)`
+          : "linear-gradient(168deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.03) 100%)",
         backdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12)) contrast(var(--glass-contrast,1.05))",
         WebkitBackdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12)) contrast(var(--glass-contrast,1.05))",
-        border: `1px solid ${active ? WF.accent + "50" : h && onClick ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.1)"}`,
+        border: `1px solid ${active ? WF.accent + "55" : h && onClick ? "rgba(255,255,255,0.22)" : "rgba(255,255,255,0.14)"}`,
         borderRadius: 16, transition: "all 0.3s cubic-bezier(0.4,0,0.2,1)",
         cursor: onClick ? "pointer" : "default",
         boxShadow: active
@@ -685,24 +685,24 @@ export default function DIYFormBuilder() {
         <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
           <button style={{
             ...glassPill, padding: "14px 40px", fontSize: 14,
-            border: `1px solid ${WF.accent}30`, color: WF.accentLight,
+            border: `1px solid ${WF.accent}40`, color: WF.accentLight,
           }} onClick={handleNewForm}
             onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = `${WF.accent}30`; e.currentTarget.style.boxShadow = glassPill.boxShadow; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = `${WF.accent}40`; e.currentTarget.style.boxShadow = glassPill.boxShadow; }}
           >{"Create New Form"}</button>
           <button style={{
             ...glassPill, padding: "14px 28px", fontSize: 14,
-            border: `1px solid ${FC.border}`, color: FC.textSecondary,
+            border: `1px solid ${WF.accent}40`, color: WF.accentLight,
           }} onClick={() => setView("my-forms")}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.color = FC.textPrimary; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.color = FC.textSecondary; }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = `${WF.accent}40`; e.currentTarget.style.boxShadow = glassPill.boxShadow; }}
           >{"My Forms"}</button>
           <button style={{
             ...glassPill, padding: "14px 28px", fontSize: 14,
-            border: `1px solid ${WF.accent}20`, color: WF.accentLight,
+            border: `1px solid ${WF.accent}40`, color: WF.accentLight,
           }} onClick={() => setView("qr-builder")}
             onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = `${WF.accent}20`; e.currentTarget.style.boxShadow = glassPill.boxShadow; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = `${WF.accent}40`; e.currentTarget.style.boxShadow = glassPill.boxShadow; }}
           >{"QR Code Generator"}</button>
         </div>
       </GlassCard>
@@ -938,32 +938,8 @@ export default function DIYFormBuilder() {
     );
   }
 
-  function renderBuilderNav() {
-    const isLastStep = step === BUILDER_STEPS.REVIEW;
-    const canProceed = step === BUILDER_STEPS.TITLE ? formTitle.trim().length > 0 : step === BUILDER_STEPS.QUESTIONS ? questions.length > 0 : true;
-    return (
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 0" }}>
-        <button style={{
-          ...glassPill, padding: "12px 24px", fontSize: 12,
-          border: `1px solid ${FC.border}`, color: FC.textSecondary,
-        }} onClick={step === BUILDER_STEPS.TITLE ? () => setView("welcome") : handleBack}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.color = FC.textPrimary; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.color = FC.textSecondary; }}
-        >
-          {step === BUILDER_STEPS.TITLE ? "Cancel" : "Back"}
-        </button>
-        <button style={{
-          ...glassPill, padding: "12px 28px", fontSize: 12,
-          border: `1px solid ${WF.accent}30`, color: WF.accentLight,
-          opacity: canProceed ? 1 : 0.4, pointerEvents: canProceed ? "auto" : "none",
-        }} onClick={isLastStep ? handlePublish : handleNext}
-          onMouseEnter={canProceed ? e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; } : undefined}
-          onMouseLeave={canProceed ? e => { e.currentTarget.style.borderColor = `${WF.accent}30`; e.currentTarget.style.boxShadow = glassPill.boxShadow; } : undefined}
-        >
-          {isLastStep ? "Publish Form" : "Continue"}
-        </button>
-      </div>
-    );
+  function getBuilderCanProceed() {
+    return step === BUILDER_STEPS.TITLE ? formTitle.trim().length > 0 : step === BUILDER_STEPS.QUESTIONS ? questions.length > 0 : true;
   }
 
   function renderBuilder() {
@@ -975,7 +951,6 @@ export default function DIYFormBuilder() {
         {step === BUILDER_STEPS.QUESTIONS && renderQuestionsStep()}
         {step === BUILDER_STEPS.NOTIFICATIONS && renderNotificationsStep()}
         {step === BUILDER_STEPS.REVIEW && renderReviewStep()}
-        {renderBuilderNav()}
       </div>
     );
   }
@@ -1013,10 +988,20 @@ export default function DIYFormBuilder() {
           </div>
         </div>
         <PageNav
-          onBack={() => setView("welcome")}
-          backLabel="Back"
+          onBack={view === "builder" && step > 0
+            ? handleBack
+            : view === "builder" && step === 0
+              ? () => setView("welcome")
+              : view === "my-forms" || view === "published" || view === "qr-builder"
+                ? () => setView("welcome")
+                : () => router.push("/?page=services")}
+          backLabel={view === "builder" && step === 0 ? "Cancel" : "Back"}
           onHome={() => router.push("/?page=services")}
-          onNext={null}
+          onNext={view === "builder" && getBuilderCanProceed()
+            ? (step === BUILDER_STEPS.REVIEW ? handlePublish : handleNext)
+            : undefined}
+          nextLabel={view === "builder" ? (step === BUILDER_STEPS.REVIEW ? "Publish Form" : "Continue") : undefined}
+          showDisabledNext={view === "builder" && !getBuilderCanProceed()}
         />
         <Footer />
       </div>

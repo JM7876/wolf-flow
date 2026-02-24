@@ -42,7 +42,7 @@ export function GlassCard({ children, style: s = {}, hover = false, onClick }) {
         e.currentTarget.style.boxShadow = CLICK.hover.boxShadow;
       } : undefined}
       onMouseLeave={hover ? e => {
-        e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)";
+        e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)";
         e.currentTarget.style.transform = "none";
         e.currentTarget.style.boxShadow = GLASS.default.boxShadow;
       } : undefined}
@@ -54,7 +54,7 @@ export function GlassCard({ children, style: s = {}, hover = false, onClick }) {
         pointerEvents: "none",
         background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)",
       }} />
-      <div style={{ position: "relative", zIndex: 2 }}>{children}</div>
+      <div style={{ position: "relative", zIndex: 2, padding: s.padding !== undefined ? undefined : "20px 24px" }}>{children}</div>
     </div>
   );
 }
@@ -202,8 +202,8 @@ export function MiniTrack({ step, showLabels = false }) {
 /* ═══ PAGE NAV — Back | Home | Next ═══ */
 export function PageNav({ onBack, onHome, onNext, backLabel = "Back", nextLabel = "Next", showDisabledNext = false }) {
   const navBtn = {
-    background: "linear-gradient(168deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.04) 100%)",
-    border: "1px solid rgba(255,255,255,0.12)", borderRadius: 14,
+    background: "linear-gradient(168deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.06) 100%)",
+    border: "1px solid rgba(255,255,255,0.16)", borderRadius: 14,
     padding: "10px 22px", cursor: "pointer", fontSize: 12, fontWeight: 500, fontFamily: FONT,
     color: FC.textSecondary,
     backdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4))",
@@ -211,21 +211,30 @@ export function PageNav({ onBack, onHome, onNext, backLabel = "Back", nextLabel 
     boxShadow: "0 4px 16px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -1px 0 rgba(255,255,255,0.03)",
     transition: `all ${CLICK.duration}`, minWidth: 80, textAlign: "center",
   };
-  const disabledBtn = {
+  const nextBtn = {
     ...navBtn,
-    opacity: 0.3,
+    background: `linear-gradient(135deg, ${WF.accent}55, ${WF.accent}38)`,
+    border: `1px solid ${WF.accent}60`,
+    color: "#fff",
+    fontWeight: 600,
+    boxShadow: `0 4px 20px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.18)`,
+  };
+  const disabledBtn = {
+    ...nextBtn,
+    opacity: 0.35,
     cursor: "not-allowed",
-    color: FC.textDim,
   };
   const hoverIn = (e) => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; e.currentTarget.style.color = FC.textPrimary; e.currentTarget.style.transform = "translateY(-1px)"; };
-  const hoverOut = (e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.boxShadow = navBtn.boxShadow; e.currentTarget.style.color = FC.textSecondary; e.currentTarget.style.transform = "none"; };
+  const hoverOut = (e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; e.currentTarget.style.boxShadow = navBtn.boxShadow; e.currentTarget.style.color = FC.textSecondary; e.currentTarget.style.transform = "none"; };
+  const nextHoverIn = (e) => { e.currentTarget.style.background = `linear-gradient(135deg, ${WF.accent}70, ${WF.accent}50)`; e.currentTarget.style.boxShadow = `0 6px 28px ${WF.accent}40`; e.currentTarget.style.transform = "translateY(-1px)"; };
+  const nextHoverOut = (e) => { e.currentTarget.style.background = `linear-gradient(135deg, ${WF.accent}55, ${WF.accent}38)`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.18)`; e.currentTarget.style.transform = "none"; };
 
   return (
     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, padding: "24px 24px 32px" }}>
       {onBack ? <button onClick={onBack} style={navBtn} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>{backLabel}</button> : <div style={{ minWidth: 80 }} />}
       {onHome ? <button onClick={onHome} style={navBtn} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>{"Home"}</button> : <div style={{ minWidth: 80 }} />}
       {onNext ? (
-        <button onClick={onNext} style={navBtn} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>{nextLabel}</button>
+        <button onClick={onNext} style={nextBtn} onMouseEnter={nextHoverIn} onMouseLeave={nextHoverOut}>{nextLabel}</button>
       ) : showDisabledNext ? (
         <button disabled style={disabledBtn}>{nextLabel}</button>
       ) : (
@@ -237,14 +246,14 @@ export function PageNav({ onBack, onHome, onNext, backLabel = "Back", nextLabel 
 
 /* ═══ PORTAL BACKGROUND — day/night image swap ═══ */
 export function PortalBackground({ nightMode }) {
-  const dayImg = "/images/WW-Website-BG-Day-V1.webp";
-  const nightImg = "/images/WW-Website-BG-Night-V1.webp";
+  const dayImg = "/images/WW-Website-BG-Day-V1-4K.png";
+  const nightImg = "/images/WW-Website-BG-Night-V1-4K.png";
   return (
     <div style={{
       position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0,
       /* Pre-promote to own GPU layer to avoid recomposite flash */
       willChange: "transform",
-      contain: "strict",
+      contain: "layout paint",
       backfaceVisibility: "hidden",
       WebkitBackfaceVisibility: "hidden",
     }}>
@@ -277,8 +286,8 @@ export function PortalBackground({ nightMode }) {
       <div style={{
         position: "absolute", inset: 0,
         background: nightMode
-          ? "linear-gradient(180deg, rgba(26,22,40,0.40) 0%, rgba(34,28,53,0.50) 100%)"
-          : "linear-gradient(180deg, rgba(26,22,40,0.22) 0%, rgba(34,28,53,0.32) 100%)",
+          ? "linear-gradient(180deg, rgba(26,22,40,0.35) 0%, rgba(34,28,53,0.45) 100%)"
+          : "linear-gradient(180deg, rgba(26,22,40,0.30) 0%, rgba(34,28,53,0.42) 100%)",
         transition: "background 0.8s ease",
       }} />
     </div>

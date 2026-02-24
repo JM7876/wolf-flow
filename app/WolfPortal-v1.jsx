@@ -249,7 +249,7 @@ function GenericServiceForm({ service, onSubmit, onBack }) {
 
 /* ═══════════════════════════════════════════════════════════
    PAGE: SUBMISSION CONFIRMATION
-   ═════════════════════════════════���═════════════════════════ */
+   ═════════════�����═══════════════════���═════════════════════════ */
 function ConfirmationPage({ submission, onHome, onTracker }) {
   const [copied, setCopied] = useState(false);
 

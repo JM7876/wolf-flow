@@ -23,8 +23,8 @@ export const FC = {
   green: "#40916c", greenLight: "#52b788",
   red: "#e63946", redLight: "#ff6b6b",
   textPrimary: "#FFFFFF", textSecondary: "rgba(255,255,255,0.82)",
-  textDim: "rgba(255,255,255,0.52)", border: "rgba(149,131,233,0.15)",
-  glass: "rgba(255,255,255,0.06)",
+  textDim: "rgba(255,255,255,0.52)", border: "rgba(149,131,233,0.20)",
+  glass: "rgba(255,255,255,0.08)",
 };
 
 export const FONT = "'Montserrat Alternates', -apple-system, BlinkMacSystemFont, sans-serif";
@@ -41,12 +41,12 @@ export const CLICK = {
 
 export const GLASS = {
   default: {
-    background: "linear-gradient(168deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.08) 40%, rgba(255,255,255,0.04) 100%)",
+    background: "linear-gradient(168deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.10) 40%, rgba(255,255,255,0.06) 100%)",
     backdropFilter: "blur(var(--glass-blur,24px)) brightness(var(--glass-brightness,1.12)) saturate(var(--glass-saturation,1.4)) contrast(var(--glass-contrast,1.05))",
     WebkitBackdropFilter: "blur(var(--glass-blur,24px)) brightness(var(--glass-brightness,1.12)) saturate(var(--glass-saturation,1.4)) contrast(var(--glass-contrast,1.05))",
     transform: "translateY(var(--glass-displacement,0px)) translateZ(0)",
-    border: "1px solid rgba(255,255,255,0.12)", borderRadius: 18,
-    boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08), 0 0 var(--glass-bezel-depth,24px) rgba(149,131,233,0.06), inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -1px 0 rgba(255,255,255,0.04)",
+    border: "1px solid rgba(255,255,255,0.16)", borderRadius: 18,
+    boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08), 0 0 var(--glass-bezel-depth,24px) rgba(149,131,233,0.06), inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(255,255,255,0.05)",
     backfaceVisibility: "hidden",
     WebkitBackfaceVisibility: "hidden",
   },
@@ -56,10 +56,10 @@ export const glassPill = {
   padding: "14px 40px", borderRadius: 28, position: "relative", overflow: "hidden",
   backdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12)) contrast(var(--glass-contrast,1.05))",
   WebkitBackdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12)) contrast(var(--glass-contrast,1.05))",
-  background: "linear-gradient(168deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.08) 40%, rgba(255,255,255,0.04) 100%)",
+  background: "linear-gradient(168deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.10) 40%, rgba(255,255,255,0.06) 100%)",
   fontSize: 14, fontWeight: 500, letterSpacing: "0.06em",
-  border: "1px solid rgba(255,255,255,0.12)",
-  boxShadow: "0 8px 32px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(255,255,255,0.04)",
+  border: "1px solid rgba(255,255,255,0.16)",
+  boxShadow: "0 8px 32px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(255,255,255,0.05)",
   cursor: "pointer", fontFamily: FONT,
   transition: `border-color ${CLICK.duration}, box-shadow ${CLICK.duration}, transform ${CLICK.duration}`,
   transform: "translateZ(0)",
@@ -68,8 +68,8 @@ export const glassPill = {
 };
 
 export const inputBase = {
-  background: "linear-gradient(168deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.05) 100%)",
-  border: "1px solid rgba(255,255,255,0.13)", borderRadius: 12,
+  background: "linear-gradient(168deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.07) 100%)",
+  border: "1px solid rgba(255,255,255,0.16)", borderRadius: 12,
   padding: "12px 14px", fontSize: 14, fontFamily: FONT, color: FC.textPrimary,
   outline: "none", caretColor: WF.accent, width: "100%", boxSizing: "border-box",
   boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08), 0 2px 6px rgba(0,0,0,0.06)",
