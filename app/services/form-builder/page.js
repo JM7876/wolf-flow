@@ -12,7 +12,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { WF, FC, FONT, MONO, CLICK, GLASS, glassPill, inputBase } from "../../lib/tokens";
-import { GlassCard, SectionLabel, FormField, PageNav, PortalBackground, Footer } from "../../lib/components";
+import { GlassCard, SectionLabel, FormField, PageNav, PortalBackground, Footer, useNightMode, SettingsDropdown } from "../../lib/components";
 import { generateQR } from "../../lib/qr-encoder";
 
 /* ═══ CONSTANTS ═══ */
@@ -538,6 +538,7 @@ function QuestionCard({ question, index, total, onUpdate, onDelete, onMoveUp, on
    ═══════════════════════════════════════════════════════════ */
 export default function DIYFormBuilder() {
   const router = useRouter();
+  const { nightMode, toggleNight } = useNightMode();
   const [view, setView] = useState("welcome");
   const [step, setStep] = useState(BUILDER_STEPS.TITLE);
   const [formTitle, setFormTitle] = useState("");
@@ -958,7 +959,8 @@ export default function DIYFormBuilder() {
   /* ═══ MAIN RENDER ═══ */
   return (
     <div style={{ minHeight: "100vh", fontFamily: FONT, color: FC.textPrimary, position: "relative", overflowX: "hidden" }}>
-      <PortalBackground nightMode={false} />
+      <PortalBackground nightMode={nightMode} />
+      <SettingsDropdown nightMode={nightMode} onToggleNight={toggleNight} />
 
       <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
         <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center" }}>

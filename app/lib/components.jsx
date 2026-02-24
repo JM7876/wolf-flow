@@ -2,10 +2,11 @@
    WOLF FLOW SOLUTIONS — Shared UI Components
    ─────────────────────────────────────────────────────────
    GlassCard, FormField, TripleToggle, SectionLabel, MiniTrack,
-   PageNav, PortalBackground — shared across all services.
+   PageNav, PortalBackground, SettingsDropdown — shared across all services.
    Created and Authored by Johnathon Moulds © 2026
    ═══════════════════════════════════════════════════════════ */
 "use client";
+import { useState, useEffect, useRef } from "react";
 import { WF, FC, FONT, MONO, CLICK, GLASS, glassPill, inputBase, WORKFLOW_STEPS, STEP_DESC } from "./tokens";
 
 /* ═══ LIQUID SHINE — specular highlight + edge glow (iOS 26 inspired) ═══ */
@@ -240,6 +241,163 @@ export function PageNav({ onBack, onHome, onNext, backLabel = "Back", nextLabel 
       ) : (
         <div style={{ minWidth: 80 }} />
       )}
+    </div>
+  );
+}
+
+/* ═══ NIGHT MODE HOOK — persists across page navigations via localStorage ═══ */
+const NIGHT_KEY = "wf-night-mode";
+export function useNightMode() {
+  const [nightMode, setNightMode] = useState(false);
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    try { setNightMode(localStorage.getItem(NIGHT_KEY) === "true"); } catch {}
+    setReady(true);
+  }, []);
+  const toggle = () => {
+    setNightMode(prev => {
+      const next = !prev;
+      try { localStorage.setItem(NIGHT_KEY, String(next)); } catch {}
+      return next;
+    });
+  };
+  return { nightMode, toggleNight: toggle, ready };
+}
+
+/* ═══ GLASS PRESETS & SLIDERS — used by SettingsDropdown ═══ */
+const GLASS_PRESETS = {
+  frost:  { label: "Soft Frost",   values: { displacement: 0, blur: 22, opacity: 0.22, brightness: 1.08, saturation: 1.05, bezel: 20 } },
+  dream:  { label: "Dream Glass",  values: { displacement: 2, blur: 28, opacity: 0.28, brightness: 1.1, saturation: 1.25, bezel: 26 } },
+  studio: { label: "Studio Glass", values: { displacement: 0, blur: 14, opacity: 0.14, brightness: 1, saturation: 1, bezel: 12 } },
+};
+const GLASS_SLIDERS = [
+  { key: "displacement", label: "Displacement", cssVar: "--glass-displacement", unit: "px", min: 0, max: 10, step: 0.5, def: 0 },
+  { key: "blur",         label: "Blur",         cssVar: "--glass-blur",         unit: "px", min: 0, max: 50, step: 1,   def: 18 },
+  { key: "opacity",      label: "Opacity",      cssVar: "--glass-opacity",      unit: "",   min: 0, max: 0.5, step: 0.01, def: 0.18 },
+  { key: "brightness",   label: "Brightness",   cssVar: "--glass-brightness",   unit: "",   min: 0.8, max: 1.4, step: 0.01, def: 1.05 },
+  { key: "saturation",   label: "Saturation",   cssVar: "--glass-saturation",   unit: "",   min: 0.5, max: 2,   step: 0.05, def: 1.1 },
+  { key: "bezel",        label: "Bezel Depth",  cssVar: "--glass-bezel-depth",  unit: "px", min: 0, max: 40, step: 1,   def: 18 },
+];
+const setGlassVar = (cssVar, v, unit) => document.documentElement.style.setProperty(cssVar, v + unit);
+
+/* ═══ SETTINGS DROPDOWN — Night mode toggle + Glass Engine sliders ═══ */
+export function SettingsDropdown({ nightMode, onToggleNight }) {
+  const [open, setOpen] = useState(false);
+  const [glassVals, setGlassVals] = useState(() => {
+    const init = {};
+    GLASS_SLIDERS.forEach(s => { init[s.key] = s.def; });
+    return init;
+  });
+  const [activePreset, setActivePreset] = useState(null);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const close = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, [open]);
+
+  const updateSlider = (key, val) => {
+    const s = GLASS_SLIDERS.find(x => x.key === key);
+    const num = parseFloat(val);
+    setGlassVals(prev => ({ ...prev, [key]: num }));
+    setActivePreset(null);
+    setGlassVar(s.cssVar, num, s.unit);
+  };
+
+  const applyPreset = (pk) => {
+    const p = GLASS_PRESETS[pk];
+    const nv = {};
+    GLASS_SLIDERS.forEach(s => { nv[s.key] = p.values[s.key]; setGlassVar(s.cssVar, p.values[s.key], s.unit); });
+    setGlassVals(nv);
+    setActivePreset(pk);
+  };
+
+  return (
+    <div ref={ref} style={{ position: "relative", zIndex: 300 }}>
+      {/* Gear button */}
+      <button onClick={() => setOpen(o => !o)} style={{
+        position: "fixed", top: 18, right: 18, zIndex: 300,
+        background: open ? "rgba(149,131,233,0.15)" : FC.glass,
+        border: `1px solid ${open ? "rgba(149,131,233,0.4)" : FC.border}`, borderRadius: 12,
+        padding: "8px 12px", cursor: "pointer", fontSize: 18, lineHeight: 1,
+        backdropFilter: "blur(var(--glass-blur,18px))", WebkitBackdropFilter: "blur(var(--glass-blur,18px))",
+        transition: `all ${CLICK.duration}`, transform: "scale(1)",
+      }}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; e.currentTarget.style.transform = "scale(1.05)"; }}
+        onMouseLeave={e => { if (!open) { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.boxShadow = "none"; } e.currentTarget.style.transform = "scale(1)"; }}
+        title="Settings" aria-label="Open settings"
+      >{"⚙️"}</button>
+
+      {/* Dropdown panel */}
+      <div style={{
+        position: "fixed", top: 58, right: 16, zIndex: 300, width: 290, borderRadius: 20,
+        padding: open ? 20 : 0, maxHeight: open ? "min(520px, calc(100vh - 80px))" : 0, overflowY: open ? "auto" : "hidden", overflowX: "hidden",
+        background: "rgba(34,28,53,0.92)",
+        backdropFilter: "blur(calc(var(--glass-blur,18px) + 6px)) brightness(var(--glass-brightness,1.05)) saturate(var(--glass-saturation,1.1))",
+        WebkitBackdropFilter: "blur(calc(var(--glass-blur,18px) + 6px)) brightness(var(--glass-brightness,1.05)) saturate(var(--glass-saturation,1.1))",
+        border: open ? "1px solid rgba(149,131,233,0.2)" : "1px solid transparent",
+        boxShadow: open ? "0 8px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06)" : "none",
+        opacity: open ? 1 : 0, transform: open ? "translateY(0)" : "translateY(-8px)",
+        pointerEvents: open ? "auto" : "none",
+        transition: "opacity 0.25s ease, transform 0.25s ease, max-height 0.3s ease, padding 0.25s ease",
+        fontFamily: FONT,
+      }}>
+        {/* Day / Night */}
+        <div style={{ marginBottom: 18 }}>
+          <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(255,255,255,0.6)", marginBottom: 10 }}>{"Appearance"}</div>
+          <button onClick={onToggleNight} style={{
+            width: "100%", padding: "10px 14px", borderRadius: 10, cursor: "pointer",
+            background: FC.glass, border: `1px solid ${FC.border}`,
+            color: FC.textSecondary, fontSize: 12, fontWeight: 500, fontFamily: FONT,
+            display: "flex", alignItems: "center", gap: 10, transition: `all ${CLICK.duration}`,
+          }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.color = FC.textPrimary; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.color = FC.textSecondary; }}
+          >
+            <span style={{ fontSize: 16 }}>{nightMode ? "\u2600\uFE0F" : "\uD83C\uDF19"}</span>
+            <span>{nightMode ? "Switch to Day Mode" : "Switch to Night Mode"}</span>
+          </button>
+        </div>
+
+        <div style={{ height: 1, background: FC.border, marginBottom: 18 }} />
+
+        {/* Glass Engine */}
+        <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(255,255,255,0.6)", marginBottom: 10 }}>{"Glass Engine"}</div>
+        <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
+          {Object.entries(GLASS_PRESETS).map(([key, preset]) => (
+            <button key={key} onClick={() => applyPreset(key)} style={{
+              flex: 1, padding: "7px 4px", fontSize: 9, fontWeight: 600, fontFamily: FONT,
+              letterSpacing: "0.04em",
+              border: `1px solid ${activePreset === key ? "rgba(149,131,233,0.5)" : "rgba(149,131,233,0.15)"}`,
+              borderRadius: 10,
+              background: activePreset === key ? "rgba(149,131,233,0.15)" : "rgba(255,255,255,0.04)",
+              color: activePreset === key ? "#BD95EE" : "rgba(255,255,255,0.6)",
+              cursor: "pointer", transition: "all 0.2s ease",
+            }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(149,131,233,0.4)"; e.currentTarget.style.color = "#BD95EE"; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = activePreset === key ? "rgba(149,131,233,0.5)" : "rgba(149,131,233,0.15)"; e.currentTarget.style.color = activePreset === key ? "#BD95EE" : "rgba(255,255,255,0.6)"; }}
+            >{preset.label}</button>
+          ))}
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {GLASS_SLIDERS.map(s => (
+            <div key={s.key}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                <span style={{ fontSize: 10, fontWeight: 500, color: "rgba(255,255,255,0.7)" }}>{s.label}</span>
+                <span style={{ fontSize: 10, fontFamily: FONT, color: "rgba(189,149,238,0.7)" }}>
+                  {s.unit === "px" ? `${glassVals[s.key]}px` : glassVals[s.key].toFixed(2)}
+                </span>
+              </div>
+              <input type="range" min={s.min} max={s.max} step={s.step} value={glassVals[s.key]}
+                onChange={e => updateSlider(s.key, e.target.value)}
+                style={{ width: "100%", cursor: "pointer" }}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

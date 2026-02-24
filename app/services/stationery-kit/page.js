@@ -9,7 +9,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { WF, FC, FONT, CLICK, GLASS, inputBase } from "../../lib/tokens";
-import { GlassCard, TopShine, PortalBackground, PageNav, Footer } from "../../lib/components";
+import { GlassCard, TopShine, PortalBackground, PageNav, Footer, useNightMode, SettingsDropdown } from "../../lib/components";
 
 /* --- CONSTANTS (inlined from old portal) --- */
 const ENTERPRISES = [
@@ -116,6 +116,7 @@ function validateEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
    ================================================================= */
 export default function StationeryKitPage() {
   const router = useRouter();
+  const { nightMode, toggleNight } = useNightMode();
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [fading, setFading] = useState(false);
@@ -197,7 +198,8 @@ export default function StationeryKitPage() {
     const ent = ENTERPRISES.find(e => e.id === form.enterprise);
     return (
       <div dir="ltr" style={{ minHeight: "100vh", color: FC.textPrimary, fontFamily: FONT, position: "relative", overflow: "hidden" }}>
-        <PortalBackground />
+        <PortalBackground nightMode={nightMode} />
+        <SettingsDropdown nightMode={nightMode} onToggleNight={toggleNight} />
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", padding: "40px 24px", position: "relative", zIndex: 1 }}>
           <div style={{
             width: 80, height: 80, borderRadius: "50%", marginBottom: 28,
@@ -423,7 +425,8 @@ export default function StationeryKitPage() {
   /* ========= MAIN RENDER ========= */
   return (
     <div dir="ltr" style={{ minHeight: "100vh", color: FC.textPrimary, fontFamily: FONT, position: "relative", overflow: "hidden" }}>
-      <PortalBackground />
+      <PortalBackground nightMode={nightMode} />
+      <SettingsDropdown nightMode={nightMode} onToggleNight={toggleNight} />
       <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", minHeight: "100vh" }}>
         {/* Header */}
         <div style={{ textAlign: "center", padding: "28px 24px 0" }}>

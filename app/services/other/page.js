@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { WF, FC, FONT, GLASS, glassPill, CLICK, inputBase, DEPARTMENTS } from "../../lib/tokens";
-import { GlassCard, PortalBackground, PageNav, SectionLabel, Footer } from "../../lib/components";
+import { GlassCard, PortalBackground, PageNav, SectionLabel, Footer, useNightMode, SettingsDropdown } from "../../lib/components";
 
 /* ═══════════════════════════════════════════════════════════
    OTHER / GENERAL REQUEST — Catch-all for miscellaneous needs
@@ -16,6 +16,7 @@ const PRIORITY_OPTS = [
 
 export default function OtherPage() {
   const router = useRouter();
+  const { nightMode, toggleNight } = useNightMode();
   const [submitted, setSubmitted] = useState(false);
   const [ticketNumber, setTicketNumber] = useState(null);
   const [form, setForm] = useState({
@@ -37,7 +38,8 @@ export default function OtherPage() {
   if (submitted) {
     return (
       <div style={{ minHeight: "100vh", color: FC.textPrimary, fontFamily: FONT, position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" }}>
-        <PortalBackground />
+        <PortalBackground nightMode={nightMode} />
+        <SettingsDropdown nightMode={nightMode} onToggleNight={toggleNight} />
         <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "20px 24px 20px", zIndex: 1 }}>
           <div style={{ textAlign: "center", maxWidth: 480, width: "100%", paddingTop: 24 }}>
             <div style={{ fontSize: 64, marginBottom: 24 }}>{"💡"}</div>
@@ -76,7 +78,8 @@ export default function OtherPage() {
 
   return (
     <div style={{ minHeight: "100vh", color: FC.textPrimary, fontFamily: FONT, position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" }}>
-      <PortalBackground />
+      <PortalBackground nightMode={nightMode} />
+      <SettingsDropdown nightMode={nightMode} onToggleNight={toggleNight} />
       <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "20px 24px 20px", zIndex: 1 }}>
         <div style={{ maxWidth: 480, width: "100%" }}>
           <div style={{ textAlign: "center", marginBottom: 28 }}>
