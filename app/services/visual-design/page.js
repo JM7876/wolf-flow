@@ -457,7 +457,7 @@ export default function VisualDesignPage() {
       <div style={{ minHeight: "100vh", color: FC.textPrimary, fontFamily: FONT, position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" }}>
         <BG />
         <SettingsDropdown nightMode={nightMode} onToggleNight={toggleNight} />
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px", textAlign: "center", zIndex: 1 }}>
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px", textAlign: "center", zIndex: 5, position: "relative" }}>
           <div style={{ width: 76, height: 76, borderRadius: "50%", background: `linear-gradient(135deg, ${WF.accent}, ${WF.accentDark})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 34, color: "#fff", marginBottom: 24, boxShadow: `0 0 50px ${WF.accentGlow}` }}>{"✓"}</div>
           <h1 style={{ fontSize: 30, fontWeight: 300, margin: "0 0 16px", fontFamily: FONT }}>{"Request submitted!"}</h1>
           <Glass style={{ padding: "12px 28px", marginBottom: 20 }}>
@@ -520,11 +520,13 @@ export default function VisualDesignPage() {
             {"The Communications team will review your request and follow up within 24 hours."}
           </p>
         </div>
-        <PageNav
-          onBack={undefined}
-          onHome={() => { setIsNavigatingAway(true); setPreviewGradient(null); router.push("/?page=services"); }}
-        />
-        <Footer />
+        <div style={{ position: "relative", zIndex: 10 }}>
+          <PageNav
+            onBack={undefined}
+            onHome={() => { setIsNavigatingAway(true); setPreviewGradient(null); router.push("/?page=services"); }}
+          />
+          <Footer />
+        </div>
       </div>
     );
   }
@@ -1327,23 +1329,25 @@ export default function VisualDesignPage() {
       <SettingsDropdown nightMode={nightMode} onToggleNight={toggleNight} />
       
       {/* Content */}
-      <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "32px 24px 24px", zIndex: 1, position: "relative", overflowY: "auto" }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "32px 24px 24px", zIndex: 5, position: "relative", overflowY: "auto" }}>
         {renderStep()}
       </div>
       {/* Nav — hidden on step 4 (style direction) which has its own inline nav */}
-      {step !== 4 && (
-        <PageNav
-          onBack={step > 0 ? goBack : undefined}
-          onHome={() => { setIsNavigatingAway(true); setPreviewGradient(null); router.push("/?page=services"); }}
-          onNext={canAdvance() ? goNext : undefined}
-          backLabel="Back"
-          nextLabel={step === totalSteps - 1 ? "Submit" : "Next"}
-          showDisabledNext={!canAdvance()}
-          currentStep={step}
-          totalSteps={totalSteps}
-        />
-      )}
-      <Footer />
+      <div style={{ position: "relative", zIndex: 10 }}>
+        {step !== 4 && (
+          <PageNav
+            onBack={step > 0 ? goBack : undefined}
+            onHome={() => { setIsNavigatingAway(true); setPreviewGradient(null); router.push("/?page=services"); }}
+            onNext={canAdvance() ? goNext : undefined}
+            backLabel="Back"
+            nextLabel={step === totalSteps - 1 ? "Submit" : "Next"}
+            showDisabledNext={!canAdvance()}
+            currentStep={step}
+            totalSteps={totalSteps}
+          />
+        )}
+        <Footer />
+      </div>
     </div>
   );
 }
