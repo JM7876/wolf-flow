@@ -30,11 +30,26 @@
   font-display: swap;
 }
 
-/* ═══ Per-role font CSS custom properties ═══ */
+/* ═══ Per-role typography CSS custom properties ═══ */
 :root {
+  /* Heading */
   --wf-font-heading: 'Montserrat Alternates', -apple-system, BlinkMacSystemFont, sans-serif;
+  --wf-heading-size: 36px;
+  --wf-heading-weight: 200;
+  --wf-heading-spacing: -0.01em;
+  --wf-heading-height: 1.2;
+  /* Body */
   --wf-font-body: 'Montserrat Alternates', -apple-system, BlinkMacSystemFont, sans-serif;
+  --wf-font-size: 14px;
+  --wf-font-weight: 400;
+  --wf-letter-spacing: 0em;
+  --wf-line-height: 1.6;
+  /* Sub-body */
   --wf-font-sub: 'Montserrat Alternates', -apple-system, BlinkMacSystemFont, sans-serif;
+  --wf-sub-size: 11px;
+  --wf-sub-weight: 400;
+  --wf-sub-spacing: 0.02em;
+  --wf-sub-height: 1.4;
 }
 
 /* ═══ 1. UNIVERSAL COLOR SYSTEM ═══ */
