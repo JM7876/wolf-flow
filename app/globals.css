@@ -223,21 +223,28 @@ body {
 /* ═══ GPU COMPOSITING HINTS — prevent flash on page transitions ═══ */
 
 /* Pre-promote elements with backdrop-filter to their own GPU layers.
-   This avoids the expensive recomposite that causes a white flash
-   on older hardware when new glass elements mount. */
+   `contain` isolates layout/paint so the browser doesn't have to
+   recalc the entire tree on interaction — the #1 cause of high INP
+   with backdrop-filter-heavy UIs. */
 .glass,
 .lg-glass-panel {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   transform: translateZ(0);
+  contain: layout style paint;
 }
 
 /* ═══ IMAGE DECODE OPTIMIZATION ═══ */
-/* Hint the browser to decode images asynchronously to avoid
-   blocking the main thread (fixes high INP from image decode). */
+/* Force async decode on all images so PNG / WebP decode
+   never blocks the main thread during interactions. */
 img {
   image-rendering: auto;
-  decoding: async;
+}
+
+/* When an image receives a click/tap, ensure it doesn't
+   trigger a synchronous re-layout of the backdrop-filter tree. */
+img[decoding="async"] {
+  contain: layout style paint;
 }
 
 /* Smooth out page-level transitions by keeping the background

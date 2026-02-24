@@ -26,8 +26,8 @@ function WelcomePage({ onEnter }) {
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{ textAlign: "center", maxWidth: 520, padding: "0 24px" }}>
-          <div style={{ width: 350, height: 350, margin: "0 auto 24px", display: "flex", alignItems: "center", justifyContent: "center", filter: `drop-shadow(0 4px 20px ${WF.accentGlow})` }}>
-            <img src={WOLF_LOGO} alt="Wolf Flow" decoding="async" fetchPriority="high" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+          <div style={{ width: 350, height: 350, margin: "0 auto 24px", display: "flex", alignItems: "center", justifyContent: "center", contain: "layout style paint" }}>
+            <img src={WOLF_LOGO} alt="Wolf Flow" decoding="async" fetchPriority="high" width={350} height={350} style={{ width: "100%", height: "100%", objectFit: "contain", filter: `drop-shadow(0 4px 20px ${WF.accentGlow})` }} />
           </div>
           <h1 style={{ fontFamily: FONT, fontWeight: 200, fontSize: 36, color: FC.textPrimary, marginBottom: 4, letterSpacing: "-0.01em" }}>
             <span style={{ color: WF.accent }}>{"Communications"}</span>{" Portal"}
@@ -67,8 +67,8 @@ function ServiceGrid({ onSelect, onTracker }) {
         <div style={{ maxWidth: 640, width: "100%", padding: "20px 24px 20px" }}>
           {/* Header with logo */}
           <div style={{ textAlign: "center", marginBottom: 28 }}>
-            <div style={{ width: 68, height: 68, margin: "0 auto 8px", filter: `drop-shadow(0 2px 12px ${WF.accentGlow})` }}>
-              <img src={WOLF_LOGO} alt="Wolf Flow" decoding="async" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+            <div style={{ width: 68, height: 68, margin: "0 auto 8px", contain: "layout style paint" }}>
+              <img src={WOLF_LOGO} alt="Wolf Flow" decoding="async" loading="lazy" fetchPriority="low" width={68} height={68} style={{ width: "100%", height: "100%", objectFit: "contain", filter: `drop-shadow(0 2px 12px ${WF.accentGlow})` }} />
             </div>
             <h2 style={{ fontFamily: FONT, fontWeight: 200, fontSize: 26, color: FC.textPrimary, marginBottom: 4 }}>
               {"What can we "}<span style={{ color: WF.accent }}>{"help you"}</span>{" create?"}

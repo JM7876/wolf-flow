@@ -36,7 +36,8 @@ export function GlassCard({ children, style: s = {}, hover = false, onClick }) {
   return (
     <div
       onClick={onClick}
-      style={{ ...GLASS.default, position: "relative", overflow: "hidden", ...s, transition: `all ${CLICK.duration}` }}
+      className="lg-glass-panel"
+      style={{ ...GLASS.default, position: "relative", overflow: "hidden", contain: "layout style paint", ...s, transition: `all ${CLICK.duration}` }}
       onMouseEnter={hover ? e => {
         e.currentTarget.style.borderColor = CLICK.hover.borderColor;
         e.currentTarget.style.transform = "translateY(-2px) scale(1.005)";
