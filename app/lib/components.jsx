@@ -284,6 +284,7 @@ const setGlassVar = (cssVar, v, unit) => document.documentElement.style.setPrope
 /* ═══ FONT + COLOR TOKENS for Style Panel ═══ */
 const FONT_OPTIONS = [
   { label: "Montserrat Alt", value: "'Montserrat Alternates', sans-serif" },
+  { label: "Clean",          value: "'Clean', sans-serif" },
   { label: "DM Sans",        value: "'DM Sans', sans-serif" },
   { label: "Josefin Sans",   value: "'Josefin Sans', sans-serif" },
   { label: "Inter",          value: "'Inter', sans-serif" },

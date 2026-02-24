@@ -7,12 +7,13 @@
    Created and Authored by Johnathon Moulds © 2026
    ═══════════════════════════════════════════════════════════ */
 "use client";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 const FONT = "'Montserrat Alternates', -apple-system, BlinkMacSystemFont, sans-serif";
 
 const FONT_OPTIONS = [
   { label: "Montserrat Alternates", value: "'Montserrat Alternates', sans-serif" },
+  { label: "Clean",                  value: "'Clean', sans-serif" },
   { label: "DM Sans",               value: "'DM Sans', sans-serif" },
   { label: "Josefin Sans",          value: "'Josefin Sans', sans-serif" },
   { label: "Inter",                 value: "'Inter', sans-serif" },
@@ -32,8 +33,11 @@ const DEFAULTS = {
   textSecondary:"rgba(255,255,255,0.82)",
   textDim:      "rgba(255,255,255,0.52)",
   border:       "rgba(149,131,233,0.20)",
-  /* Typography */
+  /* Typography — per-role fonts */
   fontFamily:   "'Montserrat Alternates', sans-serif",
+  fontHeading:  "'Montserrat Alternates', sans-serif",
+  fontBody:     "'Montserrat Alternates', sans-serif",
+  fontSub:      "'Montserrat Alternates', sans-serif",
   fontSize:     14,
   fontWeight:   400,
   letterSpacing:0,
@@ -73,6 +77,9 @@ function applyAll(vals) {
   set("--text-dim",            vals.textDim);
   set("--border-soft",         vals.border);
   set("--wf-font",             vals.fontFamily);
+  set("--wf-font-heading",     vals.fontHeading);
+  set("--wf-font-body",        vals.fontBody);
+  set("--wf-font-sub",         vals.fontSub);
   set("--wf-font-size",        vals.fontSize + "px");
   set("--wf-font-weight",      vals.fontWeight);
   set("--wf-letter-spacing",   vals.letterSpacing + "em");
@@ -89,10 +96,14 @@ function applyAll(vals) {
   set("--glass-brightness",    vals.glassBrightness);
   set("--glass-saturation",    vals.glassSaturation);
   set("--glass-bezel-depth",   vals.glassBezel + "px");
-  // Font override so inline styles also update
+  // Font override so inline styles also update — per-role overrides
   let tag = document.getElementById("wf-style-override");
   if (!tag) { tag = document.createElement("style"); tag.id = "wf-style-override"; document.head.appendChild(tag); }
-  tag.textContent = `*, *::before, *::after { font-family: ${vals.fontFamily} !important; font-size: ${vals.fontSize}px; }`;
+  tag.textContent = [
+    `*, *::before, *::after { font-family: ${vals.fontBody}; font-size: ${vals.fontSize}px; }`,
+    `h1, h2, h3, h4, h5, h6, [data-role="heading"] { font-family: ${vals.fontHeading} !important; }`,
+    `small, figcaption, .text-dim, [data-role="sub"] { font-family: ${vals.fontSub} !important; }`,
+  ].join("\n");
 }
 
 function hexToRgba(hex, alpha) {
@@ -125,6 +136,9 @@ export const FC = {
   border: "${vals.border}",
 };
 export const FONT = "${vals.fontFamily}";
+export const FONT_HEADING = "${vals.fontHeading}";
+export const FONT_BODY = "${vals.fontBody}";
+export const FONT_SUB = "${vals.fontSub}";
 `;
 }
 
@@ -189,11 +203,11 @@ function Preview({ vals }) {
 
       {/* Card preview */}
       <div style={{ borderRadius: vals.borderRadius, padding: vals.cardPadding, background: cardBg, border: `1px solid ${vals.border}`, backdropFilter: `blur(${vals.glassBlur}px) brightness(${vals.glassBrightness}) saturate(${vals.glassSaturation})`, WebkitBackdropFilter: `blur(${vals.glassBlur}px) brightness(${vals.glassBrightness}) saturate(${vals.glassSaturation})`, boxShadow: `0 8px 32px rgba(0,0,0,0.2), 0 0 ${vals.glassBezel}px ${hexToRgba(accent, 0.08)}, inset 0 1px 0 rgba(255,255,255,0.22)` }}>
-        <div style={{ fontSize: vals.headingSize * 0.5, fontWeight: vals.headingWeight, color: vals.textPrimary, fontFamily: vals.fontFamily, marginBottom: 8, letterSpacing: vals.letterSpacing + "em" }}>Sample Heading</div>
-        <div style={{ fontSize: vals.fontSize, fontWeight: vals.fontWeight, color: vals.textSecondary, fontFamily: vals.fontFamily, lineHeight: vals.lineHeight, marginBottom: 16, letterSpacing: vals.letterSpacing + "em" }}>
-          This is how your body text will look across the portal. Adjust the controls to see live changes.
+        <div style={{ fontSize: vals.headingSize * 0.5, fontWeight: vals.headingWeight, color: vals.textPrimary, fontFamily: vals.fontHeading, marginBottom: 8, letterSpacing: vals.letterSpacing + "em" }} data-role="heading">{"Sample Heading"}</div>
+        <div style={{ fontSize: vals.fontSize, fontWeight: vals.fontWeight, color: vals.textSecondary, fontFamily: vals.fontBody, lineHeight: vals.lineHeight, marginBottom: 16, letterSpacing: vals.letterSpacing + "em" }}>
+          {"This is how your body text will look across the portal. Adjust the controls to see live changes."}
         </div>
-        <div style={{ fontSize: vals.fontSize - 1, color: vals.textDim, fontFamily: vals.fontFamily, marginBottom: 16 }}>Dimmed label text · Secondary info</div>
+        <div style={{ fontSize: vals.fontSize - 2, color: vals.textDim, fontFamily: vals.fontSub, marginBottom: 16 }} data-role="sub">{"Caption or footnote text \u00B7 Sub-body role"}</div>
         <div style={{ display: "flex", gap: vals.gap * 0.5 }}>
           <button style={{ padding: `${vals.buttonPadding}px ${vals.buttonPadding * 2.5}px`, borderRadius: vals.buttonRadius, border: `1px solid ${hexToRgba(accent, 0.4)}`, background: hexToRgba(accent, 0.15), color: vals.accentLight, fontSize: vals.fontSize - 1, fontFamily: vals.fontFamily, fontWeight: 500, cursor: "pointer" }}>Primary</button>
           <button style={{ padding: `${vals.buttonPadding}px ${vals.buttonPadding * 2.5}px`, borderRadius: vals.buttonRadius, border: "1px solid rgba(255,255,255,0.12)", background: "rgba(255,255,255,0.05)", color: vals.textSecondary, fontSize: vals.fontSize - 1, fontFamily: vals.fontFamily, cursor: "pointer" }}>Secondary</button>
@@ -215,6 +229,17 @@ function Preview({ vals }) {
 export default function StyleEditor() {
   const [vals, setVals] = useState(DEFAULTS);
   const [copied, setCopied] = useState(false);
+
+  /* Load alternate Google Fonts only when style editor mounts */
+  useEffect(() => {
+    if (!document.getElementById("wf-extra-fonts")) {
+      const link = document.createElement("link");
+      link.id = "wf-extra-fonts";
+      link.rel = "stylesheet";
+      link.href = "https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Josefin+Sans:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600&display=swap";
+      document.head.appendChild(link);
+    }
+  }, []);
 
   const update = useCallback((key, value) => {
     setVals(prev => {
@@ -271,9 +296,44 @@ export default function StyleEditor() {
           </Section>
 
           <Section title="Typography">
-            <Row label="Typeface">
+            {/* ── Font Role Selectors ── */}
+            <div style={{ marginBottom: 18 }}>
+              <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", marginBottom: 12, fontFamily: FONT }}>{"Font by Content Role"}</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {[
+                  { key: "fontHeading", label: "Heading", desc: "Page titles, section headers" },
+                  { key: "fontBody",    label: "Body",    desc: "Paragraphs, form labels, buttons" },
+                  { key: "fontSub",     label: "Sub-body", desc: "Captions, dimmed labels, footnotes" },
+                ].map(role => (
+                  <div key={role.key} style={{
+                    padding: "12px 14px", borderRadius: 12,
+                    background: "rgba(255,255,255,0.03)", border: "1px solid rgba(149,131,233,0.12)",
+                  }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+                      <div>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: "rgba(189,149,238,0.85)", fontFamily: FONT }}>{role.label}</div>
+                        <div style={{ fontSize: 9, color: "rgba(255,255,255,0.35)", fontFamily: FONT, marginTop: 2 }}>{role.desc}</div>
+                      </div>
+                    </div>
+                    <SelectInput value={vals[role.key]} onChange={v => {
+                      update(role.key, v);
+                      update("fontFamily", v);
+                    }} options={FONT_OPTIONS}/>
+                    {/* Live preview of the selected font */}
+                    <div style={{ marginTop: 8, fontSize: role.key === "fontHeading" ? 18 : role.key === "fontBody" ? 14 : 11, fontFamily: vals[role.key], color: "rgba(255,255,255,0.6)", lineHeight: 1.5 }}>
+                      {"The quick brown fox jumps over the lazy dog"}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ── Global fallback typeface ── */}
+            <Row label="Global Fallback">
               <SelectInput value={vals.fontFamily} onChange={v => update("fontFamily", v)} options={FONT_OPTIONS}/>
             </Row>
+
+            {/* ── Size & Weight controls ── */}
             <Row label="Body Size"><SliderInput value={vals.fontSize} onChange={v => update("fontSize", v)} min={10} max={22} unit="px"/></Row>
             <Row label="Body Weight"><SliderInput value={vals.fontWeight} onChange={v => update("fontWeight", v)} min={100} max={900} step={100}/></Row>
             <Row label="Letter Spacing"><SliderInput value={vals.letterSpacing} onChange={v => update("letterSpacing", v)} min={-0.05} max={0.3} step={0.01} unit="em"/></Row>
