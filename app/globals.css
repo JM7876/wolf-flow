@@ -5,7 +5,7 @@
    ═══════════════════════════════════════════════════════════════════ */
 
 @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,500&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Josefin+Sans:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600&display=swap');
+/* Style-editor fonts loaded on-demand via the /style page only */
 
 /* ═══ 1. UNIVERSAL COLOR SYSTEM ═══ */
 :root {
@@ -230,6 +230,13 @@ body {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   transform: translateZ(0);
+}
+
+/* ═══ IMAGE DECODE OPTIMIZATION ═══ */
+/* Tell the browser to decode images asynchronously to avoid
+   blocking the main thread (fixes high INP from image decode). */
+img {
+  content-visibility: auto;
 }
 
 /* Smooth out page-level transitions by keeping the background

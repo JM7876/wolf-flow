@@ -7,7 +7,11 @@
    Created and Authored by Johnathon Moulds © 2026
    ═══════════════════════════════════════════════════════════ */
 "use client";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+
+/* Lazily inject the optional typeface stylesheet the first time the style editor mounts */
+const EXTRA_FONTS_URL =
+  "https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Josefin+Sans:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600&display=swap";
 
 const FONT = "'Montserrat Alternates', -apple-system, BlinkMacSystemFont, sans-serif";
 
@@ -234,6 +238,17 @@ export default function StyleEditor() {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  /* Load extra typefaces only when the style editor is open */
+  useEffect(() => {
+    if (!document.getElementById("wf-extra-fonts")) {
+      const link = document.createElement("link");
+      link.id = "wf-extra-fonts";
+      link.rel = "stylesheet";
+      link.href = EXTRA_FONTS_URL;
+      document.head.appendChild(link);
+    }
+  }, []);
 
   return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(160deg, #1A1628 0%, #0f0d1a 100%)", color: "#fff", fontFamily: FONT }}>

@@ -27,7 +27,7 @@ function WelcomePage({ onEnter }) {
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{ textAlign: "center", maxWidth: 520, padding: "0 24px" }}>
           <div style={{ width: 350, height: 350, margin: "0 auto 24px", display: "flex", alignItems: "center", justifyContent: "center", filter: `drop-shadow(0 4px 20px ${WF.accentGlow})` }}>
-            <img src={WOLF_LOGO} alt="Wolf Flow" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+            <img src={WOLF_LOGO} alt="Wolf Flow" decoding="async" fetchPriority="high" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
           </div>
           <h1 style={{ fontFamily: FONT, fontWeight: 200, fontSize: 36, color: FC.textPrimary, marginBottom: 4, letterSpacing: "-0.01em" }}>
             <span style={{ color: WF.accent }}>{"Communications"}</span>{" Portal"}
@@ -68,7 +68,7 @@ function ServiceGrid({ onSelect, onTracker }) {
           {/* Header with logo */}
           <div style={{ textAlign: "center", marginBottom: 28 }}>
             <div style={{ width: 68, height: 68, margin: "0 auto 8px", filter: `drop-shadow(0 2px 12px ${WF.accentGlow})` }}>
-              <img src={WOLF_LOGO} alt="Wolf Flow" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+              <img src={WOLF_LOGO} alt="Wolf Flow" decoding="async" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
             </div>
             <h2 style={{ fontFamily: FONT, fontWeight: 200, fontSize: 26, color: FC.textPrimary, marginBottom: 4 }}>
               {"What can we "}<span style={{ color: WF.accent }}>{"help you"}</span>{" create?"}
@@ -249,7 +249,7 @@ function GenericServiceForm({ service, onSubmit, onBack }) {
 
 /* ═══════════════════════════════════════════════════════════
    PAGE: SUBMISSION CONFIRMATION
-   ═════════════�������═══════════════════���═════════════════════════ */
+   ══��══════════�������═══════════════════���═════════════════════════ */
 function ConfirmationPage({ submission, onHome, onTracker }) {
   const [copied, setCopied] = useState(false);
 
@@ -756,8 +756,6 @@ function FadeTransition({ pageKey, children }) {
 
   return (
     <div style={{ minHeight: "100vh", fontFamily: FONT, color: FC.textPrimary, position: "relative", overflowX: "hidden" }}>
-      <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,500&display=swap" rel="stylesheet" />
-
       <PortalBackground nightMode={nightMode} />
       <SettingsDropdown nightMode={nightMode} onToggleNight={toggleNight} />
 
