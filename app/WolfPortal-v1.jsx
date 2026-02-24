@@ -59,7 +59,7 @@ function ServiceGrid({ onSelect, onTracker }) {
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
       <style>{`
-        .wf-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .wf-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
         @media (max-width: 600px) { .wf-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 380px) { .wf-grid { grid-template-columns: 1fr; } }
       `}</style>
@@ -87,16 +87,12 @@ function ServiceGrid({ onSelect, onTracker }) {
                   onClick={isSoon ? undefined : () => onSelect(svc)}
                   style={{
                     cursor: isSoon ? "default" : "pointer",
-                    padding: "18px 16px",
-                    opacity: isSoon ? 0.6 : 1,
-                    aspectRatio: "1 / 1",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
+                    padding: "16px 14px",
+                    opacity: isSoon ? 0.55 : 1,
                   }}
                 >
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                    <span style={{ fontSize: 22, opacity: isSoon ? 0.5 : 1 }}>{svc.icon}</span>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
+                    <span style={{ fontSize: 18, opacity: isSoon ? 0.5 : 1, color: WF.accent }}>{svc.icon}</span>
                     <span style={{
                       fontSize: 8, fontWeight: 700, fontFamily: FONT, letterSpacing: "0.08em",
                       padding: "2px 8px", borderRadius: 10,
@@ -108,8 +104,8 @@ function ServiceGrid({ onSelect, onTracker }) {
                     </span>
                   </div>
                   <div>
-                    <div style={{ fontSize: 12, fontWeight: 600, fontFamily: FONT, color: FC.textPrimary, marginBottom: 3 }}>{svc.name}</div>
-                    <div style={{ fontSize: 9, fontWeight: 400, fontFamily: FONT, color: FC.textDim, lineHeight: 1.4 }}>{svc.description}</div>
+                    <div style={{ fontSize: 13, fontWeight: 600, fontFamily: FONT, color: FC.textPrimary, marginBottom: 3 }}>{svc.name}</div>
+                    <div style={{ fontSize: 10, fontWeight: 400, fontFamily: FONT, color: FC.textDim, lineHeight: 1.5 }}>{svc.description}</div>
                   </div>
                 </GlassCard>
               );
@@ -121,16 +117,12 @@ function ServiceGrid({ onSelect, onTracker }) {
               onClick={onTracker}
               style={{
                 cursor: "pointer",
-                padding: "18px 16px",
-                aspectRatio: "1 / 1",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
+                padding: "16px 14px",
                 border: `1px solid ${FC.gold}25`,
               }}
             >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                <span style={{ fontSize: 22 }}>{"📊"}</span>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
+                <span style={{ fontSize: 18, color: FC.gold }}>{"\u25A3"}</span>
                 <span style={{
                   fontSize: 8, fontWeight: 700, fontFamily: FONT, letterSpacing: "0.08em",
                   padding: "2px 8px", borderRadius: 10,
@@ -142,8 +134,8 @@ function ServiceGrid({ onSelect, onTracker }) {
                 </span>
               </div>
               <div>
-                <div style={{ fontSize: 12, fontWeight: 600, fontFamily: FONT, color: FC.gold, marginBottom: 3 }}>{"Check Your Stats"}</div>
-                <div style={{ fontSize: 9, fontWeight: 400, fontFamily: FONT, color: FC.textDim, lineHeight: 1.4 }}>{"Track the progress of an existing request"}</div>
+                <div style={{ fontSize: 13, fontWeight: 600, fontFamily: FONT, color: FC.gold, marginBottom: 3 }}>{"Check Your Stats"}</div>
+                <div style={{ fontSize: 10, fontWeight: 400, fontFamily: FONT, color: FC.textDim, lineHeight: 1.5 }}>{"Track the progress of an existing request"}</div>
               </div>
             </GlassCard>
           </div>
@@ -186,7 +178,7 @@ function GenericServiceForm({ service, onSubmit, onBack }) {
       <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center" }}>
         <div style={{ maxWidth: 480, width: "100%", padding: "20px 24px 20px" }}>
           <div style={{ textAlign: "center", marginBottom: 28 }}>
-            <span style={{ fontSize: 36 }}>{service.icon}</span>
+            <span style={{ fontSize: 24, color: WF.accent }}>{service.icon}</span>
             <h2 style={{ fontFamily: FONT, fontWeight: 300, fontSize: 22, color: FC.textPrimary, marginTop: 8, marginBottom: 4 }}>{service.name}</h2>
             <p style={{ fontFamily: FONT, fontSize: 11, fontWeight: 400, color: FC.textDim }}>{"Estimated turnaround: "}{service.est}</p>
           </div>
@@ -194,17 +186,17 @@ function GenericServiceForm({ service, onSubmit, onBack }) {
           <GlassCard style={{ padding: "22px 18px" }}>
             <TripleToggle label="Priority" value={priority} onChange={setPriority}
               options={[
-                { value: "rush", label: "Rush", icon: "⚡" },
-                { value: "standard", label: "Standard", icon: "📋" },
-                { value: "low", label: "Low", icon: "📅" },
+                { value: "rush", label: "Rush", icon: "\u25C9" },
+                { value: "standard", label: "Standard", icon: "\u25CB" },
+                { value: "low", label: "Low", icon: "\u25C7" },
               ]}
               colors={[FC.gold, WF.accent, FC.turquoiseLight]}
             />
             <TripleToggle label="Media Type" value={mediaType} onChange={setMediaType}
               options={[
-                { value: "digital", label: "Digital", icon: "💻" },
-                { value: "print", label: "Print", icon: "🖨️" },
-                { value: "both", label: "Both", icon: "📦" },
+                { value: "digital", label: "Digital", icon: "\u25A0" },
+                { value: "print", label: "Print", icon: "\u25A1" },
+                { value: "both", label: "Both", icon: "\u25CE" },
               ]}
               colors={[FC.turquoiseLight, FC.maroonLight, FC.greenLight]}
             />
@@ -271,9 +263,9 @@ function ConfirmationPage({ submission, onHome, onTracker }) {
               width: 72, height: 72, borderRadius: 18, margin: "0 auto 16px",
               background: `linear-gradient(135deg, ${FC.greenLight}30, ${FC.greenLight}10)`,
               border: `2px solid ${FC.greenLight}40`,
-              display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32,
+              display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24,
               boxShadow: `0 0 40px ${FC.greenLight}20`,
-            }}>{"✅"}</div>
+            }}>{"\u2714"}</div>
             <h2 style={{ fontFamily: FONT, fontWeight: 300, fontSize: 24, color: FC.textPrimary, marginBottom: 4 }}>
               {"Request "}<span style={{ color: FC.greenLight }}>{"Submitted"}</span>
             </h2>
@@ -312,8 +304,8 @@ function ConfirmationPage({ submission, onHome, onTracker }) {
               {[
                 { label: "Service", value: `${submission.serviceIcon} ${submission.service}` },
                 { label: "Department", value: submission.dept },
-                { label: "Priority", value: isRush ? "⚡ Rush" : isUrgent ? "🔥 Urgent" : "📋 Standard", color: isRush ? FC.gold : isUrgent ? FC.redLight : FC.textSecondary },
-                { label: "Media Type", value: submission.mediaType === "digital" ? "💻 Digital" : submission.mediaType === "print" ? "🖨️ Print" : "📦 Both" },
+              { label: "Priority", value: isRush ? "Rush" : isUrgent ? "Urgent" : "Standard", color: isRush ? FC.gold : isUrgent ? FC.redLight : FC.textSecondary },
+              { label: "Media Type", value: submission.mediaType === "digital" ? "Digital" : submission.mediaType === "print" ? "Print" : "Both" },
                 { label: "Submitted", value: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" }) },
                 { label: "Est. Turnaround", value: submission.est },
               ].map((item, i) => (
@@ -331,7 +323,7 @@ function ConfirmationPage({ submission, onHome, onTracker }) {
               background: `${WF.accent}08`, border: `1px solid ${WF.accent}20`,
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-                <span style={{ fontSize: 16 }}>{"📥"}</span>
+                <span style={{ fontSize: 16, color: WF.accent }}>{"\u25CB"}</span>
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 600, fontFamily: FONT, color: WF.accent }}>{"Request Received"}</div>
                   <div style={{ fontSize: 10, fontFamily: FONT, color: FC.textDim }}>{"Step 1 of 10 \u2014 Your request is in the queue"}</div>
@@ -344,9 +336,9 @@ function ConfirmationPage({ submission, onHome, onTracker }) {
             <SectionLabel>{"What Happens Next"}</SectionLabel>
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
               {[
-                { icon: "🔍", text: "Our team will verify your submission", time: isRush ? "Within 1 hour" : "Within 1 business day" },
-                { icon: "👤", text: "A team member will be assigned to your project", time: "After verification" },
-                { icon: "📧", text: "You\u2019ll receive updates at your provided email", time: "Ongoing" },
+                { icon: "\u25CE", text: "Our team will verify your submission", time: isRush ? "Within 1 hour" : "Within 1 business day" },
+                { icon: "\u25C7", text: "A team member will be assigned to your project", time: "After verification" },
+                { icon: "\u25A0", text: "You\u2019ll receive updates at your provided email", time: "Ongoing" },
               ].map((step, i) => (
                 <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "8px 10px", borderRadius: 8, background: FC.glass }}>
                   <span style={{ fontSize: 14, flexShrink: 0, marginTop: 1 }}>{step.icon}</span>
@@ -367,7 +359,7 @@ function ConfirmationPage({ submission, onHome, onTracker }) {
               onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = `${FC.gold}30`; e.currentTarget.style.boxShadow = glassPill.boxShadow; }}
             >
-              {"📊 Check Your Stats"}
+              {"Check Your Stats"}
             </button>
             <button onClick={onHome} style={{
               ...glassPill, flex: 1, padding: "14px", fontSize: 12, textAlign: "center",
@@ -438,7 +430,7 @@ function CheckYourStats({ onBack, prefillId }) {
               border: `1px solid ${FC.gold}35`,
               display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26,
               boxShadow: `0 4px 24px ${FC.gold}15`,
-            }}>{"📊"}</div>
+            }}>{"\u25A3"}</div>
             <h2 style={{ fontFamily: FONT, fontWeight: 200, fontSize: 24, color: FC.textPrimary, marginBottom: 4 }}>
               {"Check Your "}<span style={{ color: FC.gold }}>{"Stats"}</span>
             </h2>
@@ -467,7 +459,7 @@ function CheckYourStats({ onBack, prefillId }) {
                 onMouseEnter={!searching ? e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; } : undefined}
                 onMouseLeave={!searching ? e => { e.currentTarget.style.borderColor = `${FC.gold}35`; e.currentTarget.style.boxShadow = GLASS.default.boxShadow; } : undefined}
               >
-                {searching ? "..." : "🔍 Track"}
+                {searching ? "..." : "Track"}
               </button>
             </div>
             <div style={{ fontSize: 10, fontFamily: FONT, color: FC.textDim, textAlign: "center", marginTop: 8 }}>
@@ -517,7 +509,7 @@ function CheckYourStats({ onBack, prefillId }) {
                       <div style={{ fontSize: 10, fontFamily: MONO, color: FC.textDim, marginBottom: 4 }}>{inputId}</div>
                       <div style={{ fontSize: 18, fontWeight: 700, fontFamily: FONT, color: FC.textPrimary, lineHeight: 1.3, marginBottom: 4 }}>{result.title}</div>
                       <div style={{ fontSize: 11, fontFamily: FONT, color: FC.textDim }}>
-                        {"🏢 "}{result.dept}{" \u00b7 "}{result.requester}
+                        {result.dept}{" \u00b7 "}{result.requester}
                       </div>
                     </div>
                     <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
@@ -527,7 +519,7 @@ function CheckYourStats({ onBack, prefillId }) {
                         color: isRush ? FC.gold : isUrgent ? FC.redLight : WF.accent,
                         border: `1px solid ${isRush ? `${FC.gold}25` : isUrgent ? `${FC.red}25` : `${WF.accent}25`}`,
                       }}>
-                        {isUrgent ? "🔥 URGENT" : isRush ? "⚡ RUSH" : "📋 STANDARD"}
+                        {isUrgent ? "URGENT" : isRush ? "RUSH" : "STANDARD"}
                       </span>
                       <span style={{ fontSize: 8, fontWeight: 700, fontFamily: FONT, color: FC.textDim, background: FC.glass, padding: "2px 8px", borderRadius: 6 }}>{result.size}</span>
                     </div>
@@ -556,7 +548,7 @@ function CheckYourStats({ onBack, prefillId }) {
                     </div>
                     <div>
                       <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
-                        <span style={{ fontSize: 16 }}>{STEP_ICONS[result.step] || "📥"}</span>
+                        <span style={{ fontSize: 16, color: isComplete ? FC.greenLight : WF.accent }}>{STEP_ICONS[result.step] || "\u25CB"}</span>
                         <span style={{ fontSize: 14, fontWeight: 600, fontFamily: FONT, color: isComplete ? FC.greenLight : WF.accent }}>
                           {WORKFLOW_STEPS[result.step] || "REQUEST"}
                         </span>
@@ -574,9 +566,9 @@ function CheckYourStats({ onBack, prefillId }) {
               {/* Tabs */}
               <div style={{ display: "flex", gap: 4, marginBottom: 10 }}>
                 {[
-                  { id: "status", label: "Status", icon: "📋" },
-                  { id: "activity", label: "Activity", icon: "📊", count: result.activity?.length },
-                  { id: "details", label: "Details", icon: "🔖" },
+              { id: "status", label: "Status", icon: "\u25A1" },
+              { id: "activity", label: "Activity", icon: "\u25A3", count: result.activity?.length },
+                  { id: "details", label: "Details", icon: "\u25C6" },
                 ].map(t => {
                   const isActive = activeTab === t.id;
                   return (
@@ -616,9 +608,9 @@ function CheckYourStats({ onBack, prefillId }) {
                     <SectionLabel>{"Timeline"}</SectionLabel>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
                       {[
-                        { label: "Submitted", value: result.created, icon: "📥" },
-                        { label: "Last Update", value: result.updated, icon: "🔄" },
-                        { label: "Due Date", value: result.due, icon: isComplete ? "✅" : "📅", color: isComplete ? FC.greenLight : FC.textSecondary },
+                        { label: "Submitted", value: result.created, icon: "\u25CB" },
+              { label: "Last Update", value: result.updated, icon: "\u27F3" },
+              { label: "Due Date", value: result.due, icon: isComplete ? "\u2714" : "\u25C7", color: isComplete ? FC.greenLight : FC.textSecondary },
                       ].map((d, i) => (
                         <div key={i} style={{ padding: "10px 10px", ...GLASS.default, borderRadius: 10, textAlign: "center" }}>
                           <div style={{ fontSize: 14, marginBottom: 4 }}>{d.icon}</div>
