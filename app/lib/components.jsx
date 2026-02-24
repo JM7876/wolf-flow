@@ -134,33 +134,67 @@ export function FormField({ label, type = "text", value, onChange, placeholder, 
 
 /* ═══ THREE-BUTTON SELECTOR (Priority / Media Type) ═══ */
 export function TripleToggle({ label, options, value, onChange, colors }) {
+  const [hovered, setHovered] = useState(null);
+  const activeIdx = options.findIndex(o => o.value === value);
+
   return (
     <div style={{ marginBottom: 14 }}>
       <label style={{
         fontSize: 11, fontWeight: 500, fontFamily: FONT, color: FC.textSecondary,
         letterSpacing: "0.04em", display: "block", marginBottom: 8,
       }}>{label}</label>
-      <div style={{ display: "flex", gap: 6 }}>
+      <div style={{
+        display: "flex", gap: 0, position: "relative",
+        background: "linear-gradient(168deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%)",
+        border: "1px solid rgba(255,255,255,0.10)",
+        borderRadius: 16, padding: 3,
+        backdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4))",
+        WebkitBackdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4))",
+      }}>
+        {/* Sliding indicator */}
+        {activeIdx >= 0 && (
+          <div style={{
+            position: "absolute", top: 3, bottom: 3,
+            left: `calc(${(activeIdx / options.length) * 100}% + 3px)`,
+            width: `calc(${100 / options.length}% - ${6 / options.length}px)`,
+            borderRadius: 13,
+            background: `linear-gradient(168deg, ${(colors?.[activeIdx] || WF.accent)}22 0%, ${(colors?.[activeIdx] || WF.accent)}12 100%)`,
+            border: `1px solid ${(colors?.[activeIdx] || WF.accent)}45`,
+            boxShadow: `0 4px 16px ${(colors?.[activeIdx] || WF.accent)}18, inset 0 1px 0 rgba(255,255,255,0.10)`,
+            transition: "all 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
+            pointerEvents: "none", zIndex: 0,
+          }} />
+        )}
         {options.map((opt, i) => {
           const active = value === opt.value;
+          const isHovered = hovered === i;
           const c = colors?.[i] || WF.accent;
           return (
-            <button key={opt.value} onClick={() => onChange(opt.value)} style={{
-              flex: 1, padding: "10px 8px", borderRadius: 14, cursor: "pointer",
-              background: active ? `linear-gradient(168deg, ${c}1A 0%, ${c}0D 100%)` : "linear-gradient(168deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)",
-              border: `1px solid ${active ? `${c}50` : "rgba(255,255,255,0.1)"}`,
-              color: active ? c : FC.textDim,
-              fontSize: 12, fontWeight: active ? 600 : 400, fontFamily: FONT,
-              transition: `all ${CLICK.duration}`,
-              boxShadow: active ? `0 4px 16px ${c}18, inset 0 1px 0 rgba(255,255,255,0.12)` : "inset 0 1px 0 rgba(255,255,255,0.06)",
-              backdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4))", WebkitBackdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4))",
-              display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
-            }}
-              onMouseEnter={!active ? e => { e.currentTarget.style.borderColor = `${c}35`; e.currentTarget.style.color = FC.textSecondary; e.currentTarget.style.boxShadow = `0 0 10px ${c}10`; } : undefined}
-              onMouseLeave={!active ? e => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.color = FC.textDim; e.currentTarget.style.boxShadow = "none"; } : undefined}
+            <button key={opt.value}
+              onClick={() => onChange(opt.value)}
+              onMouseEnter={() => setHovered(i)}
+              onMouseLeave={() => setHovered(null)}
+              style={{
+                flex: 1, padding: "10px 8px", borderRadius: 13, cursor: "pointer",
+                background: "transparent",
+                border: "1px solid transparent",
+                color: active ? c : isHovered ? FC.textSecondary : FC.textDim,
+                fontSize: 12, fontWeight: active ? 600 : 400, fontFamily: FONT,
+                transition: "all 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
+                boxShadow: "none",
+                display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
+                position: "relative", zIndex: 1,
+                transform: active ? "scale(1.02)" : isHovered ? "scale(1.01)" : "scale(1)",
+                WebkitAppearance: "none",
+              }}
             >
-              <span style={{ fontSize: 16 }}>{opt.icon}</span>
-              <span>{opt.label}</span>
+              <span style={{
+                fontSize: 16,
+                transition: "all 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
+                filter: active ? `drop-shadow(0 0 6px ${c}60)` : "none",
+                transform: active ? "scale(1.1)" : "scale(1)",
+              }}>{opt.icon}</span>
+              <span style={{ transition: "color 0.35s ease" }}>{opt.label}</span>
             </button>
           );
         })}
@@ -201,46 +235,121 @@ export function MiniTrack({ step, showLabels = false }) {
 }
 
 /* ═══ PAGE NAV — Back | Home | Next ═══ */
-export function PageNav({ onBack, onHome, onNext, backLabel = "Back", nextLabel = "Next", showDisabledNext = false }) {
-  const navBtn = {
-    background: "linear-gradient(168deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.06) 100%)",
-    border: "1px solid rgba(255,255,255,0.16)", borderRadius: 14,
-    padding: "10px 22px", cursor: "pointer", fontSize: 12, fontWeight: 500, fontFamily: FONT,
-    color: FC.textSecondary,
+export function PageNav({ onBack, onHome, onNext, backLabel = "Back", nextLabel = "Next", showDisabledNext = false, currentStep, totalSteps }) {
+  const [hoveredBtn, setHoveredBtn] = useState(null);
+
+  const baseBtn = {
+    display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6,
+    borderRadius: 14, cursor: "pointer", fontSize: 13, fontWeight: 500, fontFamily: FONT,
     backdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4))",
     WebkitBackdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4))",
-    boxShadow: "0 4px 16px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -1px 0 rgba(255,255,255,0.03)",
-    transition: `all ${CLICK.duration}`, minWidth: 80, textAlign: "center",
+    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+    minWidth: 0, textAlign: "center", WebkitAppearance: "none", border: "none",
   };
-  const nextBtn = {
-    ...navBtn,
-    background: `linear-gradient(135deg, ${WF.accent}55, ${WF.accent}38)`,
-    border: `1px solid ${WF.accent}60`,
-    color: "#fff",
-    fontWeight: 600,
-    boxShadow: `0 4px 20px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.18)`,
+
+  const backBtnStyle = {
+    ...baseBtn,
+    background: hoveredBtn === "back"
+      ? "linear-gradient(168deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.10) 100%)"
+      : "linear-gradient(168deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.05) 100%)",
+    border: `1px solid ${hoveredBtn === "back" ? "rgba(255,255,255,0.28)" : "rgba(255,255,255,0.14)"}`,
+    padding: "11px 20px",
+    color: hoveredBtn === "back" ? FC.textPrimary : FC.textSecondary,
+    boxShadow: hoveredBtn === "back"
+      ? "0 6px 24px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.16)"
+      : "0 2px 10px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.10)",
+    transform: hoveredBtn === "back" ? "translateY(-1px)" : "translateY(0)",
   };
-  const disabledBtn = {
-    ...nextBtn,
-    opacity: 0.35,
-    cursor: "not-allowed",
+
+  const homeBtnStyle = {
+    ...baseBtn,
+    background: hoveredBtn === "home"
+      ? "linear-gradient(168deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.08) 100%)"
+      : "linear-gradient(168deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.03) 100%)",
+    border: `1px solid ${hoveredBtn === "home" ? "rgba(255,255,255,0.22)" : "rgba(255,255,255,0.10)"}`,
+    padding: "11px 16px",
+    color: hoveredBtn === "home" ? FC.textSecondary : FC.textDim,
+    boxShadow: hoveredBtn === "home"
+      ? "0 4px 16px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.12)"
+      : "0 1px 6px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.06)",
+    transform: hoveredBtn === "home" ? "translateY(-1px)" : "translateY(0)",
   };
-  const hoverIn = (e) => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; e.currentTarget.style.color = FC.textPrimary; e.currentTarget.style.transform = "translateY(-1px)"; };
-  const hoverOut = (e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; e.currentTarget.style.boxShadow = navBtn.boxShadow; e.currentTarget.style.color = FC.textSecondary; e.currentTarget.style.transform = "none"; };
-  const nextHoverIn = (e) => { e.currentTarget.style.background = `linear-gradient(135deg, ${WF.accent}70, ${WF.accent}50)`; e.currentTarget.style.boxShadow = `0 6px 28px ${WF.accent}40`; e.currentTarget.style.transform = "translateY(-1px)"; };
-  const nextHoverOut = (e) => { e.currentTarget.style.background = `linear-gradient(135deg, ${WF.accent}55, ${WF.accent}38)`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.18)`; e.currentTarget.style.transform = "none"; };
+
+  const nextBtnStyle = {
+    ...baseBtn,
+    background: hoveredBtn === "next"
+      ? `linear-gradient(135deg, ${WF.accent}80, ${WF.accent}58)`
+      : `linear-gradient(135deg, ${WF.accent}60, ${WF.accent}40)`,
+    border: `1px solid ${hoveredBtn === "next" ? WF.accent + "80" : WF.accent + "55"}`,
+    padding: "11px 24px",
+    color: "#fff", fontWeight: 600,
+    boxShadow: hoveredBtn === "next"
+      ? `0 6px 28px ${WF.accent}40, inset 0 1px 0 rgba(255,255,255,0.20)`
+      : `0 4px 20px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.15)`,
+    transform: hoveredBtn === "next" ? "translateY(-1px)" : "translateY(0)",
+  };
+
+  const disabledStyle = {
+    ...nextBtnStyle,
+    opacity: 0.3, cursor: "not-allowed",
+    transform: "none",
+  };
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, padding: "24px 24px 32px" }}>
-      {onBack ? <button onClick={onBack} style={navBtn} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>{backLabel}</button> : <div style={{ minWidth: 80 }} />}
-      {onHome ? <button onClick={onHome} style={navBtn} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>{"Home"}</button> : <div style={{ minWidth: 80 }} />}
-      {onNext ? (
-        <button onClick={onNext} style={nextBtn} onMouseEnter={nextHoverIn} onMouseLeave={nextHoverOut}>{nextLabel}</button>
-      ) : showDisabledNext ? (
-        <button disabled style={disabledBtn}>{nextLabel}</button>
-      ) : (
-        <div style={{ minWidth: 80 }} />
+    <div style={{
+      padding: "16px 24px 24px",
+      position: "relative", zIndex: 10,
+    }}>
+      {/* Step progress dots */}
+      {typeof currentStep === "number" && typeof totalSteps === "number" && (
+        <div style={{ display: "flex", justifyContent: "center", gap: 6, marginBottom: 14 }}>
+          {Array.from({ length: totalSteps }, (_, i) => (
+            <div key={i} style={{
+              width: i === currentStep ? 22 : 6, height: 6, borderRadius: 3,
+              background: i < currentStep
+                ? `linear-gradient(90deg, ${WF.pink}, ${WF.accent})`
+                : i === currentStep
+                  ? WF.accent
+                  : "rgba(255,255,255,0.10)",
+              boxShadow: i === currentStep ? `0 0 10px ${WF.accentGlow}` : "none",
+              transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+            }} />
+          ))}
+        </div>
       )}
+      {/* Navigation buttons */}
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 10 }}>
+        {onBack ? (
+          <button onClick={onBack} style={backBtnStyle}
+            onMouseEnter={() => setHoveredBtn("back")} onMouseLeave={() => setHoveredBtn(null)}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+            {backLabel}
+          </button>
+        ) : <div style={{ minWidth: 72 }} />}
+
+        {onHome && (
+          <button onClick={onHome} style={homeBtnStyle}
+            onMouseEnter={() => setHoveredBtn("home")} onMouseLeave={() => setHoveredBtn(null)}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            {"Home"}
+          </button>
+        )}
+
+        {onNext ? (
+          <button onClick={onNext} style={nextBtnStyle}
+            onMouseEnter={() => setHoveredBtn("next")} onMouseLeave={() => setHoveredBtn(null)}>
+            {nextLabel}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        ) : showDisabledNext ? (
+          <button disabled style={disabledStyle}>
+            {nextLabel}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }}><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        ) : (
+          <div style={{ minWidth: 72 }} />
+        )}
+      </div>
     </div>
   );
 }
