@@ -279,6 +279,20 @@ body {
   contain: layout style paint;
 }
 
+/* Make .lg-glass-panel opacity reactive to the --glass-opacity slider.
+   The inline `background` from GLASS.default is overridden here so the
+   slider in SettingsDropdown drives the card opacity in real time. */
+.lg-glass-panel {
+  background:
+    linear-gradient(
+      168deg,
+      rgba(255, 255, 255, calc(var(--glass-opacity) * 1.75)) 0%,
+      rgba(255, 255, 255, var(--glass-opacity)) 40%,
+      rgba(255, 255, 255, calc(var(--glass-opacity) * 0.5)) 100%
+    ) !important;
+  transition: background 0.35s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
 /* ═══ IMAGE DECODE OPTIMIZATION ═══ */
 /* Force async decode on all images so PNG / WebP decode
    never blocks the main thread during interactions. */
@@ -346,31 +360,54 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
 input[type="range"] {
   appearance: none;
   -webkit-appearance: none;
-  height: 10px;
+  height: 6px;
   border-radius: 999px;
-  background: linear-gradient(90deg, #9583E9, #DDACEF);
+  background: linear-gradient(90deg, rgba(149,131,233,0.35), rgba(189,149,238,0.2));
   outline: none;
+  transition: background 0.2s ease;
+}
+
+input[type="range"]:hover {
+  background: linear-gradient(90deg, rgba(149,131,233,0.5), rgba(189,149,238,0.3));
 }
 
 input[type="range"]::-webkit-slider-thumb {
   appearance: none;
   -webkit-appearance: none;
-  width: 22px;
-  height: 22px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  background: #FFFFFF;
-  box-shadow: 0 0 8px #BD95EE;
+  background: linear-gradient(135deg, #FFFFFF 0%, #e8e0f8 100%);
+  box-shadow: 0 0 8px rgba(189,149,238,0.4), 0 2px 6px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.9);
   cursor: pointer;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  border: 1px solid rgba(149,131,233,0.25);
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 14px rgba(189,149,238,0.6), 0 2px 8px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.9);
+  transform: scale(1.15);
+}
+
+input[type="range"]::-webkit-slider-thumb:active {
+  transform: scale(0.95);
+  box-shadow: 0 0 18px rgba(189,149,238,0.7), 0 1px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.9);
 }
 
 input[type="range"]::-moz-range-thumb {
-  width: 22px;
-  height: 22px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  background: #FFFFFF;
-  box-shadow: 0 0 8px #BD95EE;
+  background: linear-gradient(135deg, #FFFFFF 0%, #e8e0f8 100%);
+  box-shadow: 0 0 8px rgba(189,149,238,0.4), 0 2px 6px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.9);
   cursor: pointer;
-  border: none;
+  border: 1px solid rgba(149,131,233,0.25);
+}
+
+input[type="range"]::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(149,131,233,0.35), rgba(189,149,238,0.2));
 }
 
 /* ═══ SCROLLBAR ═══ */
