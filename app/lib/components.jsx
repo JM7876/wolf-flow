@@ -135,32 +135,68 @@ export function FormField({ label, type = "text", value, onChange, placeholder, 
 
 /* ═══ THREE-BUTTON SELECTOR (Priority / Media Type) ═══ */
 export function TripleToggle({ label, options, value, onChange, colors }) {
+  const containerRef = useRef(null);
+  const [pillStyle, setPillStyle] = useState({ left: 0, width: 0, opacity: 0 });
+  const activeIdx = options.findIndex(o => o.value === value);
+  const activeColor = colors?.[activeIdx] || WF.accent;
+
+  /* Animate the pill to the active button */
+  useEffect(() => {
+    if (!containerRef.current || activeIdx < 0) return;
+    const btns = containerRef.current.querySelectorAll("[data-toggle-btn]");
+    const btn = btns[activeIdx];
+    if (!btn) return;
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const btnRect = btn.getBoundingClientRect();
+    setPillStyle({
+      left: btnRect.left - containerRect.left,
+      width: btnRect.width,
+      opacity: 1,
+    });
+  }, [activeIdx]);
+
   return (
     <div style={{ marginBottom: 14 }}>
       <label style={{
         fontSize: 11, fontWeight: 500, fontFamily: FONT, color: FC.textSecondary,
         letterSpacing: "0.04em", display: "block", marginBottom: 8,
       }}>{label}</label>
-      <div style={{ display: "flex", gap: 6 }}>
+      <div ref={containerRef} style={{
+        display: "flex", gap: 6, position: "relative",
+        background: "linear-gradient(168deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)",
+        borderRadius: 16, padding: 3,
+        border: "1px solid rgba(255,255,255,0.08)",
+      }}>
+        {/* Sliding pill indicator */}
+        <div style={{
+          position: "absolute", top: 3, height: "calc(100% - 6px)",
+          left: pillStyle.left, width: pillStyle.width,
+          borderRadius: 14,
+          background: `linear-gradient(168deg, ${activeColor}1A 0%, ${activeColor}0D 100%)`,
+          border: `1px solid ${activeColor}40`,
+          boxShadow: `0 4px 16px ${activeColor}18, inset 0 1px 0 rgba(255,255,255,0.10)`,
+          transition: "left 0.35s cubic-bezier(0.4, 0, 0.2, 1), width 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease",
+          opacity: pillStyle.opacity,
+          pointerEvents: "none", zIndex: 1,
+        }} />
         {options.map((opt, i) => {
           const active = value === opt.value;
           const c = colors?.[i] || WF.accent;
           return (
-            <button key={opt.value} onClick={() => onChange(opt.value)} style={{
+            <button key={opt.value} data-toggle-btn onClick={() => onChange(opt.value)} style={{
               flex: 1, padding: "10px 8px", borderRadius: 14, cursor: "pointer",
-              background: active ? `linear-gradient(168deg, ${c}1A 0%, ${c}0D 100%)` : "linear-gradient(168deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)",
-              border: `1px solid ${active ? `${c}50` : "rgba(255,255,255,0.1)"}`,
+              background: "transparent",
+              border: "1px solid transparent",
               color: active ? c : FC.textDim,
               fontSize: 12, fontWeight: active ? 600 : 400, fontFamily: FONT,
-              transition: `all ${CLICK.duration}`,
-              boxShadow: active ? `0 4px 16px ${c}18, inset 0 1px 0 rgba(255,255,255,0.12)` : "inset 0 1px 0 rgba(255,255,255,0.06)",
-              backdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4))", WebkitBackdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4))",
-              display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
+              transition: "color 0.3s ease, font-weight 0.3s ease",
+              display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
+              position: "relative", zIndex: 2,
             }}
-              onMouseEnter={!active ? e => { e.currentTarget.style.borderColor = `${c}35`; e.currentTarget.style.color = FC.textSecondary; e.currentTarget.style.boxShadow = `0 0 10px ${c}10`; } : undefined}
-              onMouseLeave={!active ? e => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.color = FC.textDim; e.currentTarget.style.boxShadow = "none"; } : undefined}
+              onMouseEnter={!active ? e => { e.currentTarget.style.color = FC.textSecondary; } : undefined}
+              onMouseLeave={!active ? e => { e.currentTarget.style.color = FC.textDim; } : undefined}
             >
-              <span style={{ fontSize: 16 }}>{opt.icon}</span>
+              <span style={{ fontSize: 14, transition: "color 0.3s ease" }}>{opt.icon}</span>
               <span>{opt.label}</span>
             </button>
           );
@@ -400,16 +436,32 @@ export function SettingsDropdown({ nightMode, onToggleNight }) {
         <div style={{ marginBottom: 18 }}>
           <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(255,255,255,0.6)", marginBottom: 10 }}>{"Appearance"}</div>
           <button onClick={onToggleNight} style={{
-            width: "100%", padding: "10px 14px", borderRadius: 10, cursor: "pointer",
-            background: FC.glass, border: `1px solid ${FC.border}`,
+            width: "100%", padding: "10px 14px", borderRadius: 12, cursor: "pointer",
+            background: nightMode ? "rgba(189,149,238,0.08)" : FC.glass,
+            border: `1px solid ${nightMode ? "rgba(189,149,238,0.25)" : FC.border}`,
             color: FC.textSecondary, fontSize: 12, fontWeight: 500, fontFamily: FONT,
-            display: "flex", alignItems: "center", gap: 10, transition: `all ${CLICK.duration}`,
+            display: "flex", alignItems: "center", gap: 10,
+            transition: "all 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
           }}
             onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.color = FC.textPrimary; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.color = FC.textSecondary; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = nightMode ? "rgba(189,149,238,0.25)" : FC.border; e.currentTarget.style.color = FC.textSecondary; }}
           >
-            <span style={{ fontSize: 16 }}>{nightMode ? "\u2600\uFE0F" : "\uD83C\uDF19"}</span>
-            <span>{nightMode ? "Switch to Day Mode" : "Switch to Night Mode"}</span>
+            {/* Mini toggle track */}
+            <div style={{
+              width: 32, height: 18, borderRadius: 9, position: "relative", flexShrink: 0,
+              background: nightMode ? "rgba(189,149,238,0.3)" : "rgba(255,255,255,0.12)",
+              border: `1px solid ${nightMode ? "rgba(189,149,238,0.4)" : "rgba(255,255,255,0.15)"}`,
+              transition: "all 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
+            }}>
+              <div style={{
+                position: "absolute", top: 2, width: 12, height: 12, borderRadius: "50%",
+                left: nightMode ? 16 : 2,
+                background: nightMode ? "#BD95EE" : "rgba(255,255,255,0.6)",
+                boxShadow: nightMode ? "0 0 8px rgba(189,149,238,0.5)" : "0 1px 3px rgba(0,0,0,0.2)",
+                transition: "all 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
+              }} />
+            </div>
+            <span style={{ transition: "color 0.3s ease" }}>{nightMode ? "Night Mode" : "Day Mode"}</span>
           </button>
         </div>
 
@@ -420,34 +472,46 @@ export function SettingsDropdown({ nightMode, onToggleNight }) {
         <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
           {Object.entries(GLASS_PRESETS).map(([key, preset]) => (
             <button key={key} onClick={() => applyPreset(key)} style={{
-              flex: 1, padding: "7px 4px", fontSize: 9, fontWeight: 600, fontFamily: FONT,
+              flex: 1, padding: "8px 4px", fontSize: 9, fontWeight: 600, fontFamily: FONT,
               letterSpacing: "0.04em",
               border: `1px solid ${activePreset === key ? "rgba(149,131,233,0.5)" : "rgba(149,131,233,0.15)"}`,
               borderRadius: 10,
-              background: activePreset === key ? "rgba(149,131,233,0.15)" : "rgba(255,255,255,0.04)",
+              background: activePreset === key ? "rgba(149,131,233,0.18)" : "rgba(255,255,255,0.04)",
               color: activePreset === key ? "#BD95EE" : "rgba(255,255,255,0.6)",
-              cursor: "pointer", transition: "all 0.2s ease",
+              cursor: "pointer",
+              transition: "all 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
+              boxShadow: activePreset === key ? "0 2px 12px rgba(149,131,233,0.15), inset 0 1px 0 rgba(255,255,255,0.08)" : "none",
+              transform: activePreset === key ? "scale(1.02)" : "scale(1)",
             }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(149,131,233,0.4)"; e.currentTarget.style.color = "#BD95EE"; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = activePreset === key ? "rgba(149,131,233,0.5)" : "rgba(149,131,233,0.15)"; e.currentTarget.style.color = activePreset === key ? "#BD95EE" : "rgba(255,255,255,0.6)"; }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(149,131,233,0.4)"; e.currentTarget.style.color = "#BD95EE"; e.currentTarget.style.background = "rgba(149,131,233,0.12)"; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = activePreset === key ? "rgba(149,131,233,0.5)" : "rgba(149,131,233,0.15)"; e.currentTarget.style.color = activePreset === key ? "#BD95EE" : "rgba(255,255,255,0.6)"; e.currentTarget.style.background = activePreset === key ? "rgba(149,131,233,0.18)" : "rgba(255,255,255,0.04)"; }}
             >{preset.label}</button>
           ))}
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {GLASS_SLIDERS.map(s => (
-            <div key={s.key}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-                <span style={{ fontSize: 10, fontWeight: 500, color: "rgba(255,255,255,0.7)" }}>{s.label}</span>
-                <span style={{ fontSize: 10, fontFamily: FONT, color: "rgba(189,149,238,0.7)" }}>
-                  {s.unit === "px" ? `${glassVals[s.key]}px` : glassVals[s.key].toFixed(2)}
-                </span>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          {GLASS_SLIDERS.map(s => {
+            const pct = ((glassVals[s.key] - s.min) / (s.max - s.min)) * 100;
+            return (
+              <div key={s.key}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
+                  <span style={{ fontSize: 10, fontWeight: 500, color: "rgba(255,255,255,0.65)", fontFamily: FONT }}>{s.label}</span>
+                  <span style={{
+                    fontSize: 10, fontFamily: MONO, color: "rgba(189,149,238,0.8)", fontWeight: 600,
+                    background: "rgba(149,131,233,0.1)", padding: "1px 6px", borderRadius: 4,
+                  }}>
+                    {s.unit === "px" ? `${glassVals[s.key]}px` : glassVals[s.key].toFixed(2)}
+                  </span>
+                </div>
+                <input type="range" min={s.min} max={s.max} step={s.step} value={glassVals[s.key]}
+                  onChange={e => updateSlider(s.key, e.target.value)}
+                  style={{
+                    width: "100%", cursor: "pointer",
+                    background: `linear-gradient(90deg, rgba(149,131,233,0.5) 0%, rgba(189,149,238,0.4) ${pct}%, rgba(255,255,255,0.06) ${pct}%)`,
+                  }}
+                />
               </div>
-              <input type="range" min={s.min} max={s.max} step={s.step} value={glassVals[s.key]}
-                onChange={e => updateSlider(s.key, e.target.value)}
-                style={{ width: "100%", cursor: "pointer" }}
-              />
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div style={{ height: 1, background: FC.border, margin: "18px 0" }} />
@@ -511,7 +575,7 @@ export function SettingsDropdown({ nightMode, onToggleNight }) {
           onMouseEnter={e => { e.currentTarget.style.background = "rgba(149,131,233,0.18)"; e.currentTarget.style.borderColor = "rgba(149,131,233,0.45)"; }}
           onMouseLeave={e => { e.currentTarget.style.background = "rgba(149,131,233,0.1)"; e.currentTarget.style.borderColor = "rgba(149,131,233,0.25)"; }}
         >
-          <span style={{ fontSize: 14 }}>{"\u2728"}</span>
+          <span style={{ fontSize: 12, color: "#BD95EE" }}>{"\u2726"}</span>
           <span>{"Open Style Editor"}</span>
         </a>
 

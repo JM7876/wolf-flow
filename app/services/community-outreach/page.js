@@ -419,7 +419,7 @@ export default function CommunityOutreachPage() {
       /* ── Step 0: Path Select ─────────────────────────────── */
       case 0: return (
         <div style={{ textAlign: "center" }}>
-          <span style={S.hero}>{"\uD83D\uDCE3"}</span>
+          <span style={S.hero}>{"\u25C7"}</span>
           <h1 style={S.h1}>{"Community Outreach"}</h1>
           <p style={{ fontSize: 15, color: WF.accentLight, fontWeight: 500, marginBottom: 6 }}>{"Social Media & Instant Alerts"}</p>
           <p style={{ ...S.sub, maxWidth: 360, margin: "12px auto 28px" }}>
@@ -431,7 +431,7 @@ export default function CommunityOutreachPage() {
               onClick={() => { setPath("social"); setTimeout(() => goTo(1), 240); }}
               style={{ display: "flex", alignItems: "center", gap: 14 }}
             >
-              <span style={{ fontSize: 28, filter: path === "social" ? `drop-shadow(0 0 8px ${WF.accentGlow})` : "none", transition: `filter ${CLICK.duration}` }}>{"\uD83D\uDCF1"}</span>
+              <span style={{ fontSize: 20, color: path === "social" ? WF.accentLight : FC.textDim, filter: path === "social" ? `drop-shadow(0 0 8px ${WF.accentGlow})` : "none", transition: `all ${CLICK.duration}` }}>{"\u25C9"}</span>
               <div style={{ textAlign: "left" }}>
                 <div style={{ fontSize: 15, fontWeight: 600, color: path === "social" ? WF.accentLight : FC.textPrimary }}>{"Submit a Post Request"}</div>
                 <div style={{ fontSize: 12, color: FC.textDim }}>{"Social media posts \u2014 Facebook, Instagram, Website"}</div>
@@ -443,7 +443,7 @@ export default function CommunityOutreachPage() {
               onClick={() => { setPath("alert"); setTimeout(() => goTo(1), 240); }}
               style={{ display: "flex", alignItems: "center", gap: 14 }}
             >
-              <span style={{ fontSize: 28, filter: path === "alert" ? `drop-shadow(0 0 8px ${WF.redGlow})` : "none", transition: `filter ${CLICK.duration}` }}>{"\u26A1"}</span>
+              <span style={{ fontSize: 20, color: path === "alert" ? WF.red : FC.textDim, filter: path === "alert" ? `drop-shadow(0 0 8px ${WF.redGlow})` : "none", transition: `all ${CLICK.duration}` }}>{"\u25CE"}</span>
               <div style={{ textAlign: "left" }}>
                 <div style={{ fontSize: 15, fontWeight: 600, color: path === "alert" ? WF.red : FC.textPrimary }}>{"Instant Alert"}</div>
                 <div style={{ fontSize: 12, color: FC.textDim }}>{"Urgent communications & emergency notices"}</div>
@@ -456,7 +456,7 @@ export default function CommunityOutreachPage() {
       /* ── Step 1: Requester (shared) ──────────────────────── */
       case 1: return (
         <div style={{ textAlign: "center" }}>
-          <span style={S.hero}>{"\uD83D\uDC64"}</span>
+          <span style={S.hero}>{"\u25C9"}</span>
           <h2 style={S.h2}>{"Who\u2019s requesting?"}</h2>
           <p style={S.sub}>{"We need to know who to follow up with."}</p>
           <div style={{ textAlign: "left" }}>
@@ -485,7 +485,7 @@ export default function CommunityOutreachPage() {
       /* ── Step 2: Platform & Schedule ─────────────────────── */
       case 2: return (
         <div style={{ textAlign: "center" }}>
-          <span style={S.hero}>{"\uD83D\uDCC5"}</span>
+          <span style={S.hero}>{"\u25C7"}</span>
           <h2 style={S.h2}>{"Platform & Schedule"}</h2>
           <p style={S.sub}>{"Where should this be posted, and when?"}</p>
           <div style={{ textAlign: "left" }}>
@@ -544,7 +544,7 @@ export default function CommunityOutreachPage() {
       /* ── Step 3: Content ─────────────────────────────────── */
       case 3: return (
         <div style={{ textAlign: "center" }}>
-          <span style={S.hero}>{"\u270D\uFE0F"}</span>
+          <span style={S.hero}>{"\u25A0"}</span>
           <h2 style={S.h2}>{"Content"}</h2>
           <p style={S.sub}>{"Tell us what you\u2019d like posted and attach your files."}</p>
           <div style={{ textAlign: "left" }}>
@@ -583,7 +583,7 @@ export default function CommunityOutreachPage() {
               onDragOver={e => e.preventDefault()}
               onDrop={handleDrop}
             >
-              <div style={{ fontSize: 32, marginBottom: 10 }}>{"\uD83D\uDCCE"}</div>
+              <div style={{ fontSize: 20, marginBottom: 10, color: WF.accent }}>{"\u25B3"}</div>
               <div style={{ fontSize: 14, fontWeight: 600, color: FC.textSecondary, marginBottom: 4 }}>{"Drop files here or browse"}</div>
               <div style={{ fontSize: 12, color: FC.textDim, marginBottom: 12 }}>{"Images, PDFs, Word docs \u2014 all formats accepted"}</div>
               <span onClick={e => { e.stopPropagation(); fileInputRef.current?.click(); }}
@@ -653,7 +653,7 @@ export default function CommunityOutreachPage() {
 
         return (
           <div style={{ textAlign: "center" }}>
-            <span style={S.hero}>{"\uD83D\uDCCB"}</span>
+            <span style={S.hero}>{"\u25CE"}</span>
             <h2 style={S.h2}>{"Review Request"}</h2>
             <p style={S.sub}>{"Confirm everything before submitting."}</p>
             <GlassCard style={{ marginBottom: 16, padding: "20px 18px" }}>
@@ -680,7 +680,7 @@ export default function CommunityOutreachPage() {
       /* ── Step 6: Urgency ─────────────────────────────────── */
       case 6: return (
         <div style={{ textAlign: "center" }}>
-          <span style={S.hero}>{"\u26A0\uFE0F"}</span>
+          <span style={S.hero}>{"\u25C9"}</span>
           <h2 style={S.h2}>{"How urgent is this?"}</h2>
           <p style={S.sub}>{"This determines how quickly we respond and act."}</p>
           <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
@@ -726,7 +726,7 @@ export default function CommunityOutreachPage() {
       /* ── Step 8: Distribution Channels ───────────────────── */
       case 8: return (
         <div style={{ textAlign: "center" }}>
-          <span style={S.hero}>{"\uD83D\uDCE1"}</span>
+          <span style={S.hero}>{"\u25B3"}</span>
           <h2 style={S.h2}>{"Distribution Channels"}</h2>
           <p style={S.sub}>{"How should this alert go out? Select all that apply."}</p>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 24 }}>
