@@ -375,9 +375,9 @@ export function useNightMode() {
 
 /* ═══ GLASS PRESETS & SLIDERS — used by SettingsDropdown ═══ */
 const GLASS_PRESETS = {
-  frost:  { label: "Soft Frost",   values: { displacement: 0, blur: 22, opacity: 0.22, brightness: 1.08, saturation: 1.05, bezel: 20 } },
-  dream:  { label: "Dream Glass",  values: { displacement: 2, blur: 28, opacity: 0.28, brightness: 1.1, saturation: 1.25, bezel: 26 } },
-  studio: { label: "Studio Glass", values: { displacement: 0, blur: 14, opacity: 0.14, brightness: 1, saturation: 1, bezel: 12 } },
+  frost:  { label: "Soft Frost",   values: { displacement: 0, blur: 22, opacity: 0.22, brightness: 1.08, saturation: 1.05, contrast: 1.02, bezel: 20 } },
+  dream:  { label: "Dream Glass",  values: { displacement: 2, blur: 28, opacity: 0.28, brightness: 1.1, saturation: 1.25, contrast: 1.05, bezel: 26 } },
+  studio: { label: "Studio Glass", values: { displacement: 0, blur: 14, opacity: 0.14, brightness: 1, saturation: 1, contrast: 1, bezel: 12 } },
 };
 const GLASS_SLIDERS = [
   { key: "displacement", label: "Displacement", cssVar: "--glass-displacement", unit: "px", min: 0, max: 10, step: 0.5, def: 0 },
@@ -385,6 +385,7 @@ const GLASS_SLIDERS = [
   { key: "opacity",      label: "Opacity",      cssVar: "--glass-opacity",      unit: "",   min: 0, max: 0.5, step: 0.01, def: 0.18 },
   { key: "brightness",   label: "Brightness",   cssVar: "--glass-brightness",   unit: "",   min: 0.8, max: 1.4, step: 0.01, def: 1.05 },
   { key: "saturation",   label: "Saturation",   cssVar: "--glass-saturation",   unit: "",   min: 0.5, max: 2,   step: 0.05, def: 1.1 },
+  { key: "contrast",     label: "Contrast",     cssVar: "--glass-contrast",     unit: "",   min: 0.8, max: 1.3, step: 0.01, def: 1.05 },
   { key: "bezel",        label: "Bezel Depth",  cssVar: "--glass-bezel-depth",  unit: "px", min: 0, max: 40, step: 1,   def: 18 },
 ];
 const setGlassVar = (cssVar, v, unit) => document.documentElement.style.setProperty(cssVar, v + unit);
@@ -399,13 +400,25 @@ export function SettingsDropdown({ nightMode, onToggleNight }) {
   });
   const [activePreset, setActivePreset] = useState(null);
   const ref = useRef(null);
+  const gearRef = useRef(null);
 
   useEffect(() => {
     if (!open) return;
-    const close = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const close = (e) => {
+      if (ref.current && ref.current.contains(e.target)) return;
+      if (gearRef.current && gearRef.current.contains(e.target)) return;
+      setOpen(false);
+    };
     document.addEventListener("mousedown", close);
     return () => document.removeEventListener("mousedown", close);
   }, [open]);
+
+  const resetToDefaults = () => {
+    const nv = {};
+    GLASS_SLIDERS.forEach(s => { nv[s.key] = s.def; setGlassVar(s.cssVar, s.def, s.unit); });
+    setGlassVals(nv);
+    setActivePreset(null);
+  };
 
   const updateSlider = (key, val) => {
     const s = GLASS_SLIDERS.find(x => x.key === key);
@@ -424,9 +437,9 @@ export function SettingsDropdown({ nightMode, onToggleNight }) {
   };
 
   return (
-    <div ref={ref} style={{ position: "relative", zIndex: 300 }}>
+    <div style={{ position: "relative", zIndex: 300 }}>
       {/* Gear button */}
-      <button onClick={() => setOpen(o => !o)} style={{
+      <button ref={gearRef} onClick={() => setOpen(o => !o)} style={{
         position: "fixed", top: 18, right: 18, zIndex: 300,
         background: open ? "rgba(149,131,233,0.15)" : FC.glass,
         border: `1px solid ${open ? "rgba(149,131,233,0.4)" : FC.border}`, borderRadius: 12,
@@ -440,9 +453,9 @@ export function SettingsDropdown({ nightMode, onToggleNight }) {
       >{"⚙️"}</button>
 
       {/* Dropdown panel */}
-      <div style={{
+      <div ref={ref} style={{
         position: "fixed", top: 58, right: 16, zIndex: 300, width: 290, borderRadius: 20,
-        padding: open ? 20 : 0, maxHeight: open ? "min(520px, calc(100vh - 80px))" : 0, overflowY: open ? "auto" : "hidden", overflowX: "hidden",
+        padding: open ? 20 : 0, maxHeight: open ? "min(580px, calc(100vh - 80px))" : 0, overflowY: open ? "auto" : "hidden", overflowX: "hidden",
         background: "rgba(34,28,53,0.92)",
         backdropFilter: "blur(calc(var(--glass-blur,18px) + 6px)) brightness(var(--glass-brightness,1.05)) saturate(var(--glass-saturation,1.1))",
         WebkitBackdropFilter: "blur(calc(var(--glass-blur,18px) + 6px)) brightness(var(--glass-brightness,1.05)) saturate(var(--glass-saturation,1.1))",
@@ -490,22 +503,93 @@ export function SettingsDropdown({ nightMode, onToggleNight }) {
             >{preset.label}</button>
           ))}
         </div>
+        {/* Slider custom styles */}
+        <style>{`
+          .wf-glass-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, rgba(149,131,233,0.5), rgba(189,149,238,0.35));
+            outline: none;
+            cursor: pointer;
+            transition: background 0.2s ease;
+          }
+          .wf-glass-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid rgba(149,131,233,0.4);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25), 0 0 12px rgba(149,131,233,0.2);
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+          }
+          .wf-glass-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.3), 0 0 18px rgba(149,131,233,0.35);
+          }
+          .wf-glass-slider::-webkit-slider-thumb:active {
+            transform: scale(1.05);
+          }
+          .wf-glass-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid rgba(149,131,233,0.4);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25), 0 0 12px rgba(149,131,233,0.2);
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+          }
+          .wf-glass-slider::-moz-range-track {
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, rgba(149,131,233,0.5), rgba(189,149,238,0.35));
+          }
+        `}</style>
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {GLASS_SLIDERS.map(s => (
-            <div key={s.key}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-                <span style={{ fontSize: 10, fontWeight: 500, color: "rgba(255,255,255,0.7)" }}>{s.label}</span>
-                <span style={{ fontSize: 10, fontFamily: FONT, color: "rgba(189,149,238,0.7)" }}>
-                  {s.unit === "px" ? `${glassVals[s.key]}px` : glassVals[s.key].toFixed(2)}
-                </span>
+          {GLASS_SLIDERS.map(s => {
+            const pct = ((glassVals[s.key] - s.min) / (s.max - s.min)) * 100;
+            return (
+              <div key={s.key}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                  <span style={{ fontSize: 10, fontWeight: 500, color: "rgba(255,255,255,0.7)" }}>{s.label}</span>
+                  <span style={{ fontSize: 10, fontFamily: FONT, color: "rgba(189,149,238,0.7)" }}>
+                    {s.unit === "px" ? `${glassVals[s.key]}px` : glassVals[s.key].toFixed(2)}
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  className="wf-glass-slider"
+                  min={s.min}
+                  max={s.max}
+                  step={s.step}
+                  value={glassVals[s.key]}
+                  onChange={e => updateSlider(s.key, e.target.value)}
+                  onInput={e => updateSlider(s.key, e.target.value)}
+                  style={{
+                    background: `linear-gradient(90deg, rgba(149,131,233,0.6) 0%, rgba(189,149,238,0.5) ${pct}%, rgba(255,255,255,0.08) ${pct}%, rgba(255,255,255,0.05) 100%)`,
+                  }}
+                />
               </div>
-              <input type="range" min={s.min} max={s.max} step={s.step} value={glassVals[s.key]}
-                onChange={e => updateSlider(s.key, e.target.value)}
-                style={{ width: "100%", cursor: "pointer" }}
-              />
-            </div>
-          ))}
+            );
+          })}
         </div>
+        {/* Reset button */}
+        <button onClick={resetToDefaults} style={{
+          marginTop: 14, width: "100%", padding: "8px 12px", fontSize: 9, fontWeight: 600, fontFamily: FONT,
+          letterSpacing: "0.06em", textTransform: "uppercase",
+          border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10,
+          background: "rgba(255,255,255,0.03)", color: "rgba(255,255,255,0.4)",
+          cursor: "pointer", transition: "all 0.2s ease",
+        }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(149,131,233,0.3)"; e.currentTarget.style.color = "rgba(255,255,255,0.65)"; e.currentTarget.style.background = "rgba(149,131,233,0.08)"; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; e.currentTarget.style.color = "rgba(255,255,255,0.4)"; e.currentTarget.style.background = "rgba(255,255,255,0.03)"; }}
+        >{"Reset to Defaults"}</button>
       </div>
     </div>
   );

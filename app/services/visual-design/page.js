@@ -526,7 +526,7 @@ export default function VisualDesignPage() {
     );
   }
 
-  // ══��� STEP RENDERER ═��═
+  // ══��� STEP RENDERER ═���═
   const renderStep = () => {
     switch (step) {
 
@@ -890,6 +890,21 @@ export default function VisualDesignPage() {
               marginTop: 28, padding: "20px 0 4px",
               borderTop: `1px solid rgba(255,255,255,0.06)`,
             }}>
+              {/* Step progress dots */}
+              <div style={{ display: "flex", justifyContent: "center", gap: 6, marginBottom: 14 }}>
+                {Array.from({ length: totalSteps }, (_, i) => (
+                  <div key={i} style={{
+                    width: i === step ? 22 : 6, height: 6, borderRadius: 3,
+                    background: i < step
+                      ? `linear-gradient(90deg, ${WF.pink}, ${WF.accent})`
+                      : i === step
+                        ? WF.accent
+                        : "rgba(255,255,255,0.10)",
+                    boxShadow: i === step ? `0 0 10px ${WF.accentGlow}` : "none",
+                    transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                  }} />
+                ))}
+              </div>
               <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
                 <button onClick={goBack} style={{
                   display: "inline-flex", alignItems: "center", gap: 6,
@@ -1294,17 +1309,19 @@ export default function VisualDesignPage() {
       <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "32px 24px 24px", zIndex: 1, position: "relative", overflowY: "auto" }}>
         {renderStep()}
       </div>
-      {/* Nav */}
-      <PageNav
-        onBack={step > 0 ? goBack : undefined}
-        onHome={() => { setIsNavigatingAway(true); setPreviewGradient(null); router.push("/?page=services"); }}
-        onNext={canAdvance() ? goNext : undefined}
-        backLabel="Back"
-        nextLabel={step === totalSteps - 1 ? "Submit" : "Next"}
-        showDisabledNext={!canAdvance()}
-        currentStep={step}
-        totalSteps={totalSteps}
-      />
+      {/* Nav — hidden on step 4 (style direction) which has its own inline nav */}
+      {step !== 4 && (
+        <PageNav
+          onBack={step > 0 ? goBack : undefined}
+          onHome={() => { setIsNavigatingAway(true); setPreviewGradient(null); router.push("/?page=services"); }}
+          onNext={canAdvance() ? goNext : undefined}
+          backLabel="Back"
+          nextLabel={step === totalSteps - 1 ? "Submit" : "Next"}
+          showDisabledNext={!canAdvance()}
+          currentStep={step}
+          totalSteps={totalSteps}
+        />
+      )}
       <Footer />
     </div>
   );
