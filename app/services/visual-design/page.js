@@ -324,7 +324,10 @@ export default function VisualDesignPage() {
         : !!form.size;
       case 3: return !!form.purpose;
       case 4: return !!form.styleDir || form.designerChoice;
-      case 5: return !!form.headline.trim();
+      case 5: {
+        const hasSomeContent = !!form.headline.trim() || !!form.bodyText.trim() || form.verbiageKeywords.length > 0 || !!(form.eventDate || form.eventTime || form.eventLocation) || !!(form.contactTitle || form.contactName || form.contactPhone || form.contactEmail);
+        return hasSomeContent;
+      }
       case 6: return true;
       case 7: return !!form.priority;
       case 8: return true;
@@ -1139,10 +1142,28 @@ export default function VisualDesignPage() {
               </SectionCard>
 
               {doneCount === 4 && (
-                <div style={{ textAlign: "center", padding: "14px", animation: "fadeSlide 0.5s ease" }}>
-                  <span style={{ fontSize: 24, display: "block", marginBottom: 6 }}>{"\u{1F389}"}</span>
-                  <span style={{ fontSize: 13, color: WF.pink, fontWeight: 600, fontFamily: FONT }}>{"All sections complete!"}</span>
-                  <span style={{ fontSize: 11, color: FC.textDim, display: "block", marginTop: 2, fontFamily: FONT }}>{"Hit Next to continue"}</span>
+                <div style={{ textAlign: "center", padding: "20px 14px", animation: "fadeSlide 0.5s ease" }}>
+                  <span style={{ fontSize: 18, display: "block", marginBottom: 8, color: WF.pink }}>{"\u2726"}</span>
+                  <span style={{ fontSize: 13, color: WF.pink, fontWeight: 600, fontFamily: FONT, display: "block", marginBottom: 4 }}>{"All sections complete!"}</span>
+                  <span style={{ fontSize: 11, color: FC.textDim, display: "block", marginBottom: 16, fontFamily: FONT }}>{"Your creative brief is ready"}</span>
+                  <button
+                    onClick={goNext}
+                    style={{
+                      display: "inline-flex", alignItems: "center", gap: 8,
+                      padding: "12px 32px", borderRadius: 14, cursor: "pointer",
+                      background: `linear-gradient(135deg, ${WF.accent}60, ${WF.accent}40)`,
+                      border: `1px solid ${WF.accent}55`,
+                      color: "#fff", fontSize: 14, fontWeight: 600, fontFamily: FONT,
+                      backdropFilter: "blur(var(--glass-blur,24px))", WebkitBackdropFilter: "blur(var(--glass-blur,24px))",
+                      boxShadow: `0 4px 20px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.15)`,
+                      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)", WebkitAppearance: "none",
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = `linear-gradient(135deg, ${WF.accent}80, ${WF.accent}58)`; e.currentTarget.style.boxShadow = `0 6px 28px ${WF.accent}40`; e.currentTarget.style.transform = "translateY(-1px)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = `linear-gradient(135deg, ${WF.accent}60, ${WF.accent}40)`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accentGlow}`; e.currentTarget.style.transform = "none"; }}
+                  >
+                    {"Continue"}
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg>
+                  </button>
                 </div>
               )}
             </div>
@@ -1158,7 +1179,7 @@ export default function VisualDesignPage() {
             <Q>{"Any inspiration or references?"}</Q>
             <Hint>{"Screenshots, links, examples \u2014 anything that helps us understand your vision"}</Hint>
             <Glass style={{ padding: "32px 24px", textAlign: "center", borderStyle: "dashed", maxWidth: 480, marginBottom: 16 }}>
-              <span style={{ fontSize: 32, display: "block", marginBottom: 8 }}>{"\u{1F4CE}"}</span>
+              <span style={{ fontSize: 20, display: "block", marginBottom: 8, color: WF.accent }}>{"\u25B3"}</span>
               <span style={{ fontSize: 13, color: FC.textDim, fontFamily: FONT }}>{"Drop images or screenshots here"}</span>
               <br />
               <span style={{ fontSize: 11, color: FC.textDim, fontFamily: FONT }}>{"PNG, JPG, PDF up to 10MB each"}</span>
