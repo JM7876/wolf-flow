@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { WF, FC, FONT, CLICK, GLASS, glassPill, inputBase, DEPARTMENTS } from "../../lib/tokens";
-import { GlassCard, TopShine, SectionLabel, PageNav, PortalBackground, Footer } from "../../lib/components";
+import { GlassCard, TopShine, SectionLabel, PageNav, PortalBackground, Footer, useNightMode, SettingsDropdown } from "../../lib/components";
 
 /* ═══════════════════════════════════════════════════════════
    COMMUNITY OUTREACH — Social Media & Instant Alerts (Merged)
@@ -152,6 +152,7 @@ function WFBadge({ label, color }) {
 
 export default function CommunityOutreachPage() {
   const router = useRouter();
+  const { nightMode, toggleNight } = useNightMode();
 
   /* ─── State ──────────────────────────────────────────────── */
   const [step, setStep]               = useState(0);
@@ -329,7 +330,8 @@ export default function CommunityOutreachPage() {
 
     return (
       <div style={{ minHeight: "100vh", color: FC.textPrimary, fontFamily: FONT, position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" }}>
-        <PortalBackground />
+        <PortalBackground nightMode={nightMode} />
+        <SettingsDropdown nightMode={nightMode} onToggleNight={toggleNight} />
         <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 24px", zIndex: 1 }}>
           <div style={{ textAlign: "center", maxWidth: 520 }}>
             <div style={{ fontSize: 64, marginBottom: 22 }}>{isSocial ? "\uD83D\uDCE3" : (urgencyObj?.icon || "\u26A1")}</div>
@@ -791,7 +793,8 @@ export default function CommunityOutreachPage() {
 
   return (
     <div style={{ minHeight: "100vh", color: FC.textPrimary, fontFamily: FONT, position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" }}>
-      <PortalBackground />
+      <PortalBackground nightMode={nightMode} />
+      <SettingsDropdown nightMode={nightMode} onToggleNight={toggleNight} />
       <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "32px 24px 24px", zIndex: 1, position: "relative", overflowY: "auto" }}>
         <div style={{ maxWidth: 520, width: "100%", opacity: animating ? 0 : 1, transform: animating ? "translateY(12px)" : "translateY(0)", transition: "opacity 0.24s ease, transform 0.24s ease" }}>
           {renderStep()}

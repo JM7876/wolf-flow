@@ -12,7 +12,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { WF, FC, FONT, GLASS, CLICK, glassPill, inputBase } from "../../lib/tokens";
-import { GlassCard, FormField, SectionLabel, PageNav, PortalBackground, Footer } from "../../lib/components";
+import { GlassCard, FormField, SectionLabel, PageNav, PortalBackground, Footer, useNightMode, SettingsDropdown } from "../../lib/components";
 import { DEPARTMENTS } from "../../lib/tokens";
 
 /* ─────────────────────────────────────────────
@@ -37,10 +37,12 @@ function TopShine({ r = 18 }) {
 /* ─────────────────────────────────────────────
    SHARED: SECTION WRAPPER
 ───────────────────────────────────────────── */
-function PageWrap({ children, nightMode }) {
+function PageWrap({ children }) {
+  const { nightMode, toggleNight } = useNightMode();
   return (
     <div style={{ minHeight: "100vh", fontFamily: FONT, position: "relative", overflow: "hidden", display: "flex", flexDirection: "column", alignItems: "center" }}>
       <PortalBackground nightMode={nightMode} />
+      <SettingsDropdown nightMode={nightMode} onToggleNight={toggleNight} />
       <div style={{ position: "relative", zIndex: 2, width: "100%", maxWidth: 600, padding: "40px 24px 0", flex: 1 }}>
         {children}
       </div>

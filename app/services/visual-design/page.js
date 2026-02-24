@@ -10,7 +10,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { WF, FC, FONT, CLICK, inputBase } from "../../lib/tokens";
-import { PortalBackground, Footer, PageNav } from "../../lib/components";
+import { PortalBackground, Footer, PageNav, useNightMode, SettingsDropdown } from "../../lib/components";
 
 // ═══════════════════════════════════════════════════════════
 //  VISUAL DESIGNS FORM — DATA
@@ -261,6 +261,7 @@ const SectionCard = ({ icon, title, subtitle, children, isDone }) => {
 // ═══════════════════════════════════════════════════════════
 export default function VisualDesignPage() {
   const router = useRouter();
+  const { nightMode, toggleNight } = useNightMode();
   const [step, setStep] = useState(0);
   const [anim, setAnim] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
@@ -384,7 +385,7 @@ export default function VisualDesignPage() {
   // ═══ WOLF FLOW BACKGROUND ═══
   const BG = () => (
     <>
-      <PortalBackground nightMode={false} />
+      <PortalBackground nightMode={nightMode} />
       {/* Full palette background — completely replaces the image when a style is chosen */}
       <div style={{
         position: "fixed", inset: 0, zIndex: 1, pointerEvents: "none",
@@ -452,6 +453,7 @@ export default function VisualDesignPage() {
     return (
       <div style={{ minHeight: "100vh", color: FC.textPrimary, fontFamily: FONT, position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" }}>
         <BG />
+        <SettingsDropdown nightMode={nightMode} onToggleNight={toggleNight} />
         <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px", textAlign: "center", zIndex: 1 }}>
           <div style={{ width: 76, height: 76, borderRadius: "50%", background: `linear-gradient(135deg, ${WF.accent}, ${WF.accentDark})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 34, color: "#fff", marginBottom: 24, boxShadow: `0 0 50px ${WF.accentGlow}` }}>{"✓"}</div>
           <h1 style={{ fontSize: 30, fontWeight: 300, margin: "0 0 16px", fontFamily: FONT }}>{"Request submitted!"}</h1>
@@ -1214,6 +1216,7 @@ export default function VisualDesignPage() {
     <div style={{ minHeight: "100vh", color: FC.textPrimary, fontFamily: FONT, position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" }}>
       <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,500&display=swap" rel="stylesheet" />
       <BG />
+      <SettingsDropdown nightMode={nightMode} onToggleNight={toggleNight} />
       
       {/* Content */}
       <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "32px 24px 24px", zIndex: 1, position: "relative", overflowY: "auto" }}>
