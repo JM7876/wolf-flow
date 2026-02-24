@@ -268,16 +268,18 @@ export function PageNav({ onBack, onHome, onNext, backLabel = "Back", nextLabel 
   const nextHoverOut = (e) => { e.currentTarget.style.background = `linear-gradient(135deg, ${WF.accent}55, ${WF.accent}38)`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.18)`; e.currentTarget.style.transform = "none"; };
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, padding: "24px 24px 32px" }}>
-      {onBack ? <button onClick={onBack} style={navBtn} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>{backLabel}</button> : <div style={{ minWidth: 80 }} />}
-      {onHome ? <button onClick={onHome} style={navBtn} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>{"Home"}</button> : <div style={{ minWidth: 80 }} />}
-      {onNext ? (
-        <button onClick={onNext} style={nextBtn} onMouseEnter={nextHoverIn} onMouseLeave={nextHoverOut}>{nextLabel}</button>
-      ) : showDisabledNext ? (
-        <button disabled style={disabledBtn}>{nextLabel}</button>
-      ) : (
-        <div style={{ minWidth: 80 }} />
-      )}
+    <div style={{ flexShrink: 0, position: "sticky", bottom: 0, zIndex: 10, background: "linear-gradient(180deg, transparent 0%, rgba(15,12,20,0.85) 30%, rgba(15,12,20,0.98) 100%)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, padding: "24px 24px 32px" }}>
+        {onBack ? <button onClick={onBack} style={navBtn} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>{backLabel}</button> : <div style={{ minWidth: 80 }} />}
+        {onHome ? <button onClick={onHome} style={navBtn} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>{"Home"}</button> : <div style={{ minWidth: 80 }} />}
+        {onNext ? (
+          <button onClick={onNext} style={nextBtn} onMouseEnter={nextHoverIn} onMouseLeave={nextHoverOut}>{nextLabel}</button>
+        ) : showDisabledNext ? (
+          <button disabled style={disabledBtn}>{nextLabel}</button>
+        ) : (
+          <div style={{ minWidth: 80 }} />
+        )}
+      </div>
     </div>
   );
 }
@@ -317,7 +319,7 @@ const GLASS_SLIDERS = [
 ];
 const setGlassVar = (cssVar, v, unit) => document.documentElement.style.setProperty(cssVar, v + unit);
 
-/* ═══ FONT + COLOR TOKENS for Style Panel ═══ */
+/* ���══ FONT + COLOR TOKENS for Style Panel ═══ */
 const FONT_OPTIONS = [
   { label: "Montserrat Alt", value: "'Montserrat Alternates', sans-serif" },
   { label: "Clean",          value: "'Clean', sans-serif" },
@@ -587,7 +589,7 @@ export function SettingsDropdown({ nightMode, onToggleNight }) {
   );
 }
 
-/* ═══ PORTAL BACKGROUND — day/night image swap (optimised WebP) ═══ */
+/* ��══ PORTAL BACKGROUND — day/night image swap (optimised WebP) ═══ */
 export function PortalBackground({ nightMode }) {
   const dayImg = "/images/WW-Website-BG-Day-V1.webp";
   const nightImg = "/images/WW-Website-BG-Night-V1.webp";
