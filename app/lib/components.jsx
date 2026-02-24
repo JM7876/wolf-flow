@@ -356,13 +356,14 @@ export function PageNav({ onBack, onHome, onNext, backLabel = "Back", nextLabel 
 
 /* ═══ NIGHT MODE HOOK — persists across page navigations via localStorage ═══ */
 const NIGHT_KEY = "wf-night-mode";
+
+function readNightPref() {
+  if (typeof window === "undefined") return false;
+  try { return localStorage.getItem(NIGHT_KEY) === "true"; } catch { return false; }
+}
+
 export function useNightMode() {
-  const [nightMode, setNightMode] = useState(false);
-  const [ready, setReady] = useState(false);
-  useEffect(() => {
-    try { setNightMode(localStorage.getItem(NIGHT_KEY) === "true"); } catch {}
-    setReady(true);
-  }, []);
+  const [nightMode, setNightMode] = useState(readNightPref);
   const toggle = () => {
     setNightMode(prev => {
       const next = !prev;
@@ -370,7 +371,7 @@ export function useNightMode() {
       return next;
     });
   };
-  return { nightMode, toggleNight: toggle, ready };
+  return { nightMode, toggleNight: toggle };
 }
 
 /* ═══ GLASS PRESETS & SLIDERS — used by SettingsDropdown ═══ */
