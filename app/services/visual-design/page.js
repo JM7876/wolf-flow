@@ -457,7 +457,7 @@ export default function VisualDesignPage() {
       <div style={{ minHeight: "100vh", color: FC.textPrimary, fontFamily: FONT, position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" }}>
         <BG />
         <SettingsDropdown nightMode={nightMode} onToggleNight={toggleNight} />
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px", textAlign: "center", zIndex: 5, position: "relative" }}>
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px 100px", textAlign: "center", zIndex: 5, position: "relative" }}>
           <div style={{ width: 76, height: 76, borderRadius: "50%", background: `linear-gradient(135deg, ${WF.accent}, ${WF.accentDark})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 34, color: "#fff", marginBottom: 24, boxShadow: `0 0 50px ${WF.accentGlow}` }}>{"✓"}</div>
           <h1 style={{ fontSize: 30, fontWeight: 300, margin: "0 0 16px", fontFamily: FONT }}>{"Request submitted!"}</h1>
           <Glass style={{ padding: "12px 28px", marginBottom: 20 }}>
@@ -520,13 +520,10 @@ export default function VisualDesignPage() {
             {"The Communications team will review your request and follow up within 24 hours."}
           </p>
         </div>
-        <div style={{ position: "relative", zIndex: 10 }}>
-          <PageNav
-            onBack={undefined}
-            onHome={() => { setIsNavigatingAway(true); setPreviewGradient(null); router.push("/?page=services"); }}
-          />
-          <Footer />
-        </div>
+        <PageNav
+          onBack={undefined}
+          onHome={() => { setIsNavigatingAway(true); setPreviewGradient(null); router.push("/?page=services"); }}
+        />
       </div>
     );
   }
@@ -623,7 +620,7 @@ export default function VisualDesignPage() {
                 ))}
                 <div style={{ marginBottom: 18 }}>
                   <Glass active={form.size === "custom"} onClick={() => { set("size", "custom"); set("multiPage", false); set("specialRequest", false); }} style={{ padding: "12px 16px", display: "inline-flex", alignItems: "center", gap: 8 }}>
-                    <span style={{ fontSize: 16 }}>{"\u{1F4D0}"}</span>
+                    <span style={{ fontSize: 16 }}>{"\u25A0"}</span>
                     <span style={{ fontSize: 12, fontWeight: 600, color: FC.textSecondary, fontFamily: FONT }}>{"Custom Size"}</span>
                   </Glass>
                   {form.size === "custom" && (
@@ -645,7 +642,7 @@ export default function VisualDesignPage() {
                       {form.multiPage && <span style={{ color: FC.dark, fontSize: 11, fontWeight: 700 }}>{"✓"}</span>}
                     </div>
                     <div>
-                      <span style={{ fontSize: 13, fontWeight: 600, color: form.multiPage ? WF.accentLight : FC.textSecondary, display: "block" }}>{"\u{1F4DA} Multi-Page Material"}</span>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: form.multiPage ? WF.accentLight : FC.textSecondary, display: "block" }}>{"\u25A1 Multi-Page Material"}</span>
                       <span style={{ fontSize: 10, color: FC.textDim }}>{"Books, pamphlets, booklets, programs, etc."}</span>
                     </div>
                   </button>
@@ -698,7 +695,7 @@ export default function VisualDesignPage() {
               <Hint>{"We'll follow up to discuss the details"}</Hint>
               <div style={{ maxWidth: 500 }}>
                 <div style={{ marginBottom: 18 }}>
-                  <label style={{ fontSize: 11, color: FC.textDim, display: "block", marginBottom: 6, fontWeight: 600, fontFamily: FONT }}>{"\u{1F4DD} Brief Description"}</label>
+                  <label style={{ fontSize: 11, color: FC.textDim, display: "block", marginBottom: 6, fontWeight: 600, fontFamily: FONT }}>{"Brief Brief Description"}</label>
                   <textarea placeholder="Describe what you're looking for \u2014 the more detail, the faster we can help." value={form.gsrDescription} onChange={e => set("gsrDescription", e.target.value)} style={{ ...localInput, fontSize: 16, minHeight: 120, resize: "vertical", lineHeight: 1.7, borderRadius: 12 }} />
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "22px 0 18px" }}>
@@ -707,15 +704,15 @@ export default function VisualDesignPage() {
                   <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.06)" }} />
                 </div>
                 <div style={{ marginBottom: 12 }}>
-                  <label style={{ fontSize: 11, color: FC.textDim, display: "block", marginBottom: 6, fontWeight: 600, fontFamily: FONT }}>{"\u{1F464} Name"}</label>
+                  <label style={{ fontSize: 11, color: FC.textDim, display: "block", marginBottom: 6, fontWeight: 600, fontFamily: FONT }}>{" Name"}</label>
                   <input placeholder="Your full name" value={form.gsrName} onChange={e => set("gsrName", e.target.value)} style={{ ...localInput, fontSize: 16 }} />
                 </div>
                 <div style={{ marginBottom: 12 }}>
-                  <label style={{ fontSize: 11, color: FC.textDim, display: "block", marginBottom: 6, fontWeight: 600, fontFamily: FONT }}>{"\u{1F3E2} Department"}</label>
+                  <label style={{ fontSize: 11, color: FC.textDim, display: "block", marginBottom: 6, fontWeight: 600, fontFamily: FONT }}>{" Department"}</label>
                   <input placeholder="Your department" value={form.gsrDepartment} onChange={e => set("gsrDepartment", e.target.value)} style={{ ...localInput, fontSize: 16 }} />
                 </div>
                 <div style={{ marginBottom: 12 }}>
-                  <label style={{ fontSize: 11, color: FC.textDim, display: "block", marginBottom: 6, fontWeight: 600, fontFamily: FONT }}>{"\u{1F4E7} Email"}</label>
+                  <label style={{ fontSize: 11, color: FC.textDim, display: "block", marginBottom: 6, fontWeight: 600, fontFamily: FONT }}>{" Email"}</label>
                   <input type="email" placeholder="your.email@nhbp-nsn.gov" value={form.gsrEmail} onChange={e => set("gsrEmail", e.target.value)} style={{ ...localInput, fontSize: 16 }} />
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "22px 0 18px" }}>
@@ -724,7 +721,7 @@ export default function VisualDesignPage() {
                   <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.06)" }} />
                 </div>
                 <div style={{ marginBottom: 22 }}>
-                  <label style={{ fontSize: 11, color: FC.textDim, display: "block", marginBottom: 6, fontWeight: 600, fontFamily: FONT }}>{"\u{1F4C5} Completed By"}</label>
+                  <label style={{ fontSize: 11, color: FC.textDim, display: "block", marginBottom: 6, fontWeight: 600, fontFamily: FONT }}>{" Completed By"}</label>
                   <input type="date" value={form.gsrDeadline} onChange={e => set("gsrDeadline", e.target.value)} style={{ ...localInput, colorScheme: "dark", fontSize: 16 }} />
                 </div>
                 {form.gsrDescription.trim() && form.gsrName.trim() && form.gsrEmail.trim() && form.gsrDeadline && (
@@ -837,7 +834,7 @@ export default function VisualDesignPage() {
             })}
             <div style={{ marginTop: 8, marginBottom: 24 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-                <span style={{ fontSize: 14 }}>{"\u{1F3A8}"}</span>
+                <span style={{ fontSize: 14 }}>{"\u2726"}</span>
                 <span style={{ fontSize: 12, fontWeight: 600, color: FC.textDim, textTransform: "uppercase", letterSpacing: "0.1em", fontFamily: FONT }}>{"Or..."}</span>
                 <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.06)" }} />
               </div>
@@ -1038,7 +1035,7 @@ export default function VisualDesignPage() {
                         </div>
                       )}
                       <div style={{ position: "relative", marginBottom: 12 }}>
-                        <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", fontSize: 14, opacity: 0.3, pointerEvents: "none" }}>{"\u{1F50D}"}</span>
+                        <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", fontSize: 14, opacity: 0.3, pointerEvents: "none" }}>{"\u25CE"}</span>
                         <input placeholder="Search keywords..." value={form.keywordSearch} onChange={e => set("keywordSearch", e.target.value)} style={{ ...localInput, fontSize: 14, paddingLeft: 34 }} />
                       </div>
                       <div style={{ maxHeight: 260, overflowY: "auto", paddingRight: 4 }}>
@@ -1095,15 +1092,15 @@ export default function VisualDesignPage() {
 
               <SectionCard icon={"\u25C7"} title="Date / Time / Location" subtitle="When and where is it happening?" isDone={done.event}>
                 <div style={{ marginBottom: 12 }}>
-                  <label style={{ fontSize: 11, color: FC.textDim, display: "block", marginBottom: 6, fontWeight: 600, fontFamily: FONT }}>{"\u{1F4C6} Date"}</label>
+                  <label style={{ fontSize: 11, color: FC.textDim, display: "block", marginBottom: 6, fontWeight: 600, fontFamily: FONT }}>{" Date"}</label>
                   <input type="date" value={form.eventDate} onChange={e => set("eventDate", e.target.value)} style={{ ...localInput, colorScheme: "dark", fontSize: 18 }} />
                 </div>
                 <div style={{ marginBottom: 12 }}>
-                  <label style={{ fontSize: 11, color: FC.textDim, display: "block", marginBottom: 6, fontWeight: 600, fontFamily: FONT }}>{"\u{1F550} Time"}</label>
+                  <label style={{ fontSize: 11, color: FC.textDim, display: "block", marginBottom: 6, fontWeight: 600, fontFamily: FONT }}>{" Time"}</label>
                   <input type="time" value={form.eventTime} onChange={e => set("eventTime", e.target.value)} style={{ ...localInput, colorScheme: "dark", fontSize: 18 }} />
                 </div>
                 <div>
-                  <label style={{ fontSize: 11, color: FC.textDim, display: "block", marginBottom: 6, fontWeight: 600, fontFamily: FONT }}>{"\u{1F4CD} Location"}</label>
+                  <label style={{ fontSize: 11, color: FC.textDim, display: "block", marginBottom: 6, fontWeight: 600, fontFamily: FONT }}>{" Location"}</label>
                   <input placeholder="Building name, room, address..." value={form.eventLocation} onChange={e => set("eventLocation", e.target.value)} style={{ ...localInput, fontSize: 18 }} />
                 </div>
               </SectionCard>
@@ -1246,7 +1243,7 @@ export default function VisualDesignPage() {
                   <div style={{ fontSize: 12, color: FC.textSecondary, fontFamily: FONT }}>{FORMAT_OPTIONS.find(f => f.id === form.format)?.label}</div>
                   <div style={{ fontSize: 12, color: FC.textDim, fontFamily: FONT }}>
                     {form.pieceType === "printed-media" ? (
-                      form.multiPage ? `\u{1F4DA} ${[{id:"booklet",l:"Booklet"},{id:"pamphlet",l:"Pamphlet"},{id:"book",l:"Book"},{id:"program",l:"Program"},{id:"newsletter",l:"Newsletter"},{id:"catalog",l:"Catalog"},{id:"other-mp",l:"Other"}].find(t=>t.id===form.multiPageType)?.l || "Multi-Page"}${form.pageCount ? ` (${form.pageCount} pages)` : ""}`
+                      form.multiPage ? `\u25A1 ${[{id:"booklet",l:"Booklet"},{id:"pamphlet",l:"Pamphlet"},{id:"book",l:"Book"},{id:"program",l:"Program"},{id:"newsletter",l:"Newsletter"},{id:"catalog",l:"Catalog"},{id:"other-mp",l:"Other"}].find(t=>t.id===form.multiPageType)?.l || "Multi-Page"}${form.pageCount ? ` (${form.pageCount} pages)` : ""}`
                       : form.specialRequest ? "\u2B50 Special Request \u2014 follow-up needed"
                       : form.size === "custom" ? form.customSize
                       : PRINTED_MEDIA_SIZES.flatMap(c => c.sizes).find(s => s.id === form.size)?.label || form.size
@@ -1274,7 +1271,7 @@ export default function VisualDesignPage() {
               )}
               {form.designerChoice && (
                 <div style={{ display: "flex", gap: 14, marginBottom: 14, paddingBottom: 14, borderBottom: "1px solid rgba(255,255,255,0.05)", alignItems: "center" }}>
-                  <div style={{ width: 56, height: 42, borderRadius: 6, background: "linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.08))", flexShrink: 0, border: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>{"\u{1F3A8}"}</div>
+                  <div style={{ width: 56, height: 42, borderRadius: 6, background: "linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.08))", flexShrink: 0, border: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>{"\u2726"}</div>
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 600, color: FC.textPrimary, fontFamily: FONT }}>{"Complete Designer Control"}</div>
                     <div style={{ fontSize: 10, color: FC.textDim, marginTop: 2, fontFamily: FONT }}>{"Style, fonts, and colors at designer's discretion"}</div>
@@ -1329,25 +1326,22 @@ export default function VisualDesignPage() {
       <SettingsDropdown nightMode={nightMode} onToggleNight={toggleNight} />
       
       {/* Content */}
-      <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "32px 24px 24px", zIndex: 5, position: "relative", overflowY: "auto" }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "32px 24px 100px", zIndex: 5, position: "relative", overflowY: "auto", minHeight: 0 }}>
         {renderStep()}
       </div>
-      {/* Nav — hidden on step 4 (style direction) which has its own inline nav */}
-      <div style={{ position: "relative", zIndex: 10 }}>
-        {step !== 4 && (
-          <PageNav
-            onBack={step > 0 ? goBack : undefined}
-            onHome={() => { setIsNavigatingAway(true); setPreviewGradient(null); router.push("/?page=services"); }}
-            onNext={canAdvance() ? goNext : undefined}
-            backLabel="Back"
-            nextLabel={step === totalSteps - 1 ? "Submit" : "Next"}
-            showDisabledNext={!canAdvance()}
-            currentStep={step}
-            totalSteps={totalSteps}
-          />
-        )}
-        <Footer />
-      </div>
+      {/* Nav — fixed to bottom; step 4 has its own inline nav */}
+      {step !== 4 && (
+        <PageNav
+          onBack={step > 0 ? goBack : undefined}
+          onHome={() => { setIsNavigatingAway(true); setPreviewGradient(null); router.push("/?page=services"); }}
+          onNext={canAdvance() ? goNext : undefined}
+          backLabel="Back"
+          nextLabel={step === totalSteps - 1 ? "Submit" : "Next"}
+          showDisabledNext={!canAdvance()}
+          currentStep={step}
+          totalSteps={totalSteps}
+        />
+      )}
     </div>
   );
 }

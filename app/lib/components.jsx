@@ -268,8 +268,8 @@ export function PageNav({ onBack, onHome, onNext, backLabel = "Back", nextLabel 
   const nextHoverOut = (e) => { e.currentTarget.style.background = `linear-gradient(135deg, ${WF.accent}55, ${WF.accent}38)`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.18)`; e.currentTarget.style.transform = "none"; };
 
   return (
-    <div style={{ flexShrink: 0, position: "sticky", bottom: 0, zIndex: 10, background: "linear-gradient(180deg, transparent 0%, rgba(15,12,20,0.85) 30%, rgba(15,12,20,0.98) 100%)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, padding: "24px 24px 32px" }}>
+    <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 50, background: "linear-gradient(180deg, transparent 0%, rgba(15,12,20,0.85) 30%, rgba(15,12,20,0.98) 100%)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", pointerEvents: "none" }}>
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, padding: "24px 24px 32px", pointerEvents: "auto" }}>
         {onBack ? <button onClick={onBack} style={navBtn} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>{backLabel}</button> : <div style={{ minWidth: 80 }} />}
         {onHome ? <button onClick={onHome} style={navBtn} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>{"Home"}</button> : <div style={{ minWidth: 80 }} />}
         {onNext ? (

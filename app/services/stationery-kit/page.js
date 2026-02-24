@@ -446,7 +446,7 @@ export default function StationeryKitPage() {
         </div>
 
         {/* Content */}
-        <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "24px 24px 24px" }}>
+        <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "24px 24px 100px" }}>
           {renderStep()}
         </div>
 

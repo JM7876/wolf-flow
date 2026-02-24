@@ -964,7 +964,7 @@ export default function DIYFormBuilder() {
 
       <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
         <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center" }}>
-          <div style={{ maxWidth: 640, width: "100%", padding: "24px 24px 20px" }}>
+          <div style={{ maxWidth: 640, width: "100%", padding: "24px 24px 100px" }}>
             {/* Header */}
             <div style={{ textAlign: "center", marginBottom: 24 }}>
               <div style={{

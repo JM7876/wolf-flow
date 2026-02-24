@@ -795,7 +795,7 @@ export default function CommunityOutreachPage() {
     <div style={{ minHeight: "100vh", color: FC.textPrimary, fontFamily: FONT, position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" }}>
       <PortalBackground nightMode={nightMode} />
       <SettingsDropdown nightMode={nightMode} onToggleNight={toggleNight} />
-      <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "32px 24px 24px", zIndex: 1, position: "relative", overflowY: "auto" }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "32px 24px 100px", zIndex: 1, position: "relative", overflowY: "auto" }}>
         <div style={{ maxWidth: 520, width: "100%", opacity: animating ? 0 : 1, transform: animating ? "translateY(12px)" : "translateY(0)", transition: "opacity 0.24s ease, transform 0.24s ease" }}>
           {renderStep()}
         </div>
