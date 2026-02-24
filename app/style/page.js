@@ -7,12 +7,13 @@
    Created and Authored by Johnathon Moulds © 2026
    ═══════════════════════════════════════════════════════════ */
 "use client";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 const FONT = "'Montserrat Alternates', -apple-system, BlinkMacSystemFont, sans-serif";
 
 const FONT_OPTIONS = [
   { label: "Montserrat Alternates", value: "'Montserrat Alternates', sans-serif" },
+  { label: "Clean",                  value: "'Clean', sans-serif" },
   { label: "DM Sans",               value: "'DM Sans', sans-serif" },
   { label: "Josefin Sans",          value: "'Josefin Sans', sans-serif" },
   { label: "Inter",                 value: "'Inter', sans-serif" },
@@ -32,14 +33,23 @@ const DEFAULTS = {
   textSecondary:"rgba(255,255,255,0.82)",
   textDim:      "rgba(255,255,255,0.52)",
   border:       "rgba(149,131,233,0.20)",
-  /* Typography */
-  fontFamily:   "'Montserrat Alternates', sans-serif",
-  fontSize:     14,
-  fontWeight:   400,
-  letterSpacing:0,
-  lineHeight:   1.6,
-  headingSize:  36,
-  headingWeight:200,
+  /* Typography — per-role */
+  fontFamily:     "'Montserrat Alternates', sans-serif",
+  fontHeading:    "'Montserrat Alternates', sans-serif",
+  headingSize:    36,
+  headingWeight:  200,
+  headingSpacing: -0.01,
+  headingHeight:  1.2,
+  fontBody:       "'Montserrat Alternates', sans-serif",
+  fontSize:       14,
+  fontWeight:     400,
+  letterSpacing:  0,
+  lineHeight:     1.6,
+  fontSub:        "'Montserrat Alternates', sans-serif",
+  subSize:        11,
+  subWeight:      400,
+  subSpacing:     0.02,
+  subHeight:      1.4,
   /* Spacing */
   borderRadius: 18,
   cardPadding:  24,
@@ -73,12 +83,24 @@ function applyAll(vals) {
   set("--text-dim",            vals.textDim);
   set("--border-soft",         vals.border);
   set("--wf-font",             vals.fontFamily);
+  /* Heading role */
+  set("--wf-font-heading",     vals.fontHeading);
+  set("--wf-heading-size",     vals.headingSize + "px");
+  set("--wf-heading-weight",   vals.headingWeight);
+  set("--wf-heading-spacing",  vals.headingSpacing + "em");
+  set("--wf-heading-height",   vals.headingHeight);
+  /* Body role */
+  set("--wf-font-body",        vals.fontBody);
   set("--wf-font-size",        vals.fontSize + "px");
   set("--wf-font-weight",      vals.fontWeight);
   set("--wf-letter-spacing",   vals.letterSpacing + "em");
   set("--wf-line-height",      vals.lineHeight);
-  set("--wf-heading-size",     vals.headingSize + "px");
-  set("--wf-heading-weight",   vals.headingWeight);
+  /* Sub-body role */
+  set("--wf-font-sub",         vals.fontSub);
+  set("--wf-sub-size",         vals.subSize + "px");
+  set("--wf-sub-weight",       vals.subWeight);
+  set("--wf-sub-spacing",      vals.subSpacing + "em");
+  set("--wf-sub-height",       vals.subHeight);
   set("--radius",              vals.borderRadius + "px");
   set("--wf-card-padding",     vals.cardPadding + "px");
   set("--wf-btn-radius",       vals.buttonRadius + "px");
@@ -89,10 +111,14 @@ function applyAll(vals) {
   set("--glass-brightness",    vals.glassBrightness);
   set("--glass-saturation",    vals.glassSaturation);
   set("--glass-bezel-depth",   vals.glassBezel + "px");
-  // Font override so inline styles also update
+  // Font override so inline styles also update — per-role overrides
   let tag = document.getElementById("wf-style-override");
   if (!tag) { tag = document.createElement("style"); tag.id = "wf-style-override"; document.head.appendChild(tag); }
-  tag.textContent = `*, *::before, *::after { font-family: ${vals.fontFamily} !important; font-size: ${vals.fontSize}px; }`;
+  tag.textContent = [
+    `*, *::before, *::after { font-family: ${vals.fontBody}; font-size: ${vals.fontSize}px; font-weight: ${vals.fontWeight}; letter-spacing: ${vals.letterSpacing}em; line-height: ${vals.lineHeight}; }`,
+    `h1, h2, h3, h4, h5, h6, [data-role="heading"] { font-family: ${vals.fontHeading} !important; font-size: ${vals.headingSize}px !important; font-weight: ${vals.headingWeight} !important; letter-spacing: ${vals.headingSpacing}em !important; line-height: ${vals.headingHeight} !important; }`,
+    `small, figcaption, .text-dim, [data-role="sub"] { font-family: ${vals.fontSub} !important; font-size: ${vals.subSize}px !important; font-weight: ${vals.subWeight} !important; letter-spacing: ${vals.subSpacing}em !important; line-height: ${vals.subHeight} !important; }`,
+  ].join("\n");
 }
 
 function hexToRgba(hex, alpha) {
@@ -125,6 +151,11 @@ export const FC = {
   border: "${vals.border}",
 };
 export const FONT = "${vals.fontFamily}";
+export const TYPO = {
+  heading: { font: "${vals.fontHeading}", size: ${vals.headingSize}, weight: ${vals.headingWeight}, spacing: "${vals.headingSpacing}em", height: ${vals.headingHeight} },
+  body:    { font: "${vals.fontBody}", size: ${vals.fontSize}, weight: ${vals.fontWeight}, spacing: "${vals.letterSpacing}em", height: ${vals.lineHeight} },
+  sub:     { font: "${vals.fontSub}", size: ${vals.subSize}, weight: ${vals.subWeight}, spacing: "${vals.subSpacing}em", height: ${vals.subHeight} },
+};
 `;
 }
 
@@ -179,6 +210,73 @@ function SelectInput({ value, onChange, options }) {
   );
 }
 
+/* ═══ TYPE ROLE CARD — self-contained controls per content role ═══ */
+function TypeRoleCard({
+  label, desc, accentColor, borderColor,
+  fontValue, onFontChange,
+  size, onSizeChange, sizeMin = 8, sizeMax = 72,
+  weight, onWeightChange,
+  spacing, onSpacingChange,
+  height, onHeightChange,
+  previewSize, previewWeight,
+}) {
+  return (
+    <div style={{
+      padding: "16px 18px", borderRadius: 14, marginBottom: 4,
+      background: "rgba(255,255,255,0.02)",
+      border: `1px solid ${borderColor}`,
+      transition: "border-color 0.2s ease",
+    }}>
+      {/* Role header */}
+      <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 14 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: accentColor, fontFamily: FONT, letterSpacing: "0.02em" }}>{label}</div>
+        <div style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", fontFamily: FONT }}>{desc}</div>
+      </div>
+
+      {/* Font family selector */}
+      <div style={{ marginBottom: 14 }}>
+        <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", marginBottom: 6, fontFamily: FONT }}>{"Font Family"}</div>
+        <SelectInput value={fontValue} onChange={onFontChange} options={FONT_OPTIONS}/>
+      </div>
+
+      {/* Controls grid — 2 columns */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 16px" }}>
+        <div>
+          <div style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", fontFamily: FONT, marginBottom: 4 }}>{"Size"}</div>
+          <SliderInput value={size} onChange={onSizeChange} min={sizeMin} max={sizeMax} unit="px"/>
+        </div>
+        <div>
+          <div style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", fontFamily: FONT, marginBottom: 4 }}>{"Weight"}</div>
+          <SliderInput value={weight} onChange={onWeightChange} min={100} max={900} step={100}/>
+        </div>
+        <div>
+          <div style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", fontFamily: FONT, marginBottom: 4 }}>{"Letter Spacing"}</div>
+          <SliderInput value={spacing} onChange={onSpacingChange} min={-0.05} max={0.3} step={0.01} unit="em"/>
+        </div>
+        <div>
+          <div style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", fontFamily: FONT, marginBottom: 4 }}>{"Line Height"}</div>
+          <SliderInput value={height} onChange={onHeightChange} min={1} max={2.5} step={0.05}/>
+        </div>
+      </div>
+
+      {/* Live inline preview */}
+      <div style={{
+        marginTop: 14, padding: "10px 14px", borderRadius: 10,
+        background: "rgba(0,0,0,0.15)", border: "1px solid rgba(255,255,255,0.04)",
+      }}>
+        <div style={{
+          fontSize: previewSize, fontWeight: previewWeight,
+          fontFamily: fontValue, color: accentColor,
+          letterSpacing: spacing + "em", lineHeight: height,
+          transition: "all 0.15s ease",
+        }}>
+          {"The quick brown fox jumps over the lazy dog"}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ═══ PREVIEW PANEL ═══ */
 function Preview({ vals }) {
   const accent = vals.accent;
@@ -189,11 +287,12 @@ function Preview({ vals }) {
 
       {/* Card preview */}
       <div style={{ borderRadius: vals.borderRadius, padding: vals.cardPadding, background: cardBg, border: `1px solid ${vals.border}`, backdropFilter: `blur(${vals.glassBlur}px) brightness(${vals.glassBrightness}) saturate(${vals.glassSaturation})`, WebkitBackdropFilter: `blur(${vals.glassBlur}px) brightness(${vals.glassBrightness}) saturate(${vals.glassSaturation})`, boxShadow: `0 8px 32px rgba(0,0,0,0.2), 0 0 ${vals.glassBezel}px ${hexToRgba(accent, 0.08)}, inset 0 1px 0 rgba(255,255,255,0.22)` }}>
-        <div style={{ fontSize: vals.headingSize * 0.5, fontWeight: vals.headingWeight, color: vals.textPrimary, fontFamily: vals.fontFamily, marginBottom: 8, letterSpacing: vals.letterSpacing + "em" }}>Sample Heading</div>
-        <div style={{ fontSize: vals.fontSize, fontWeight: vals.fontWeight, color: vals.textSecondary, fontFamily: vals.fontFamily, lineHeight: vals.lineHeight, marginBottom: 16, letterSpacing: vals.letterSpacing + "em" }}>
-          This is how your body text will look across the portal. Adjust the controls to see live changes.
+        <div style={{ fontSize: vals.headingSize * 0.55, fontWeight: vals.headingWeight, color: vals.textPrimary, fontFamily: vals.fontHeading, marginBottom: 4, letterSpacing: vals.headingSpacing + "em", lineHeight: vals.headingHeight }} data-role="heading">{"Sample Heading"}</div>
+        <div style={{ fontSize: vals.subSize, fontWeight: vals.subWeight, color: vals.textDim, fontFamily: vals.fontSub, marginBottom: 14, letterSpacing: vals.subSpacing + "em", lineHeight: vals.subHeight }} data-role="sub">{"Section subtitle or caption text"}</div>
+        <div style={{ fontSize: vals.fontSize, fontWeight: vals.fontWeight, color: vals.textSecondary, fontFamily: vals.fontBody, lineHeight: vals.lineHeight, marginBottom: 16, letterSpacing: vals.letterSpacing + "em" }}>
+          {"This is how your body text will look across the portal. Adjust the controls on the left to see live changes."}
         </div>
-        <div style={{ fontSize: vals.fontSize - 1, color: vals.textDim, fontFamily: vals.fontFamily, marginBottom: 16 }}>Dimmed label text · Secondary info</div>
+        <div style={{ fontSize: vals.subSize, fontWeight: vals.subWeight, color: vals.textDim, fontFamily: vals.fontSub, letterSpacing: vals.subSpacing + "em", lineHeight: vals.subHeight, marginBottom: 16 }} data-role="sub">{"Footnote \u00B7 Last updated 2 hours ago"}</div>
         <div style={{ display: "flex", gap: vals.gap * 0.5 }}>
           <button style={{ padding: `${vals.buttonPadding}px ${vals.buttonPadding * 2.5}px`, borderRadius: vals.buttonRadius, border: `1px solid ${hexToRgba(accent, 0.4)}`, background: hexToRgba(accent, 0.15), color: vals.accentLight, fontSize: vals.fontSize - 1, fontFamily: vals.fontFamily, fontWeight: 500, cursor: "pointer" }}>Primary</button>
           <button style={{ padding: `${vals.buttonPadding}px ${vals.buttonPadding * 2.5}px`, borderRadius: vals.buttonRadius, border: "1px solid rgba(255,255,255,0.12)", background: "rgba(255,255,255,0.05)", color: vals.textSecondary, fontSize: vals.fontSize - 1, fontFamily: vals.fontFamily, cursor: "pointer" }}>Secondary</button>
@@ -215,6 +314,17 @@ function Preview({ vals }) {
 export default function StyleEditor() {
   const [vals, setVals] = useState(DEFAULTS);
   const [copied, setCopied] = useState(false);
+
+  /* Load alternate Google Fonts only when style editor mounts */
+  useEffect(() => {
+    if (!document.getElementById("wf-extra-fonts")) {
+      const link = document.createElement("link");
+      link.id = "wf-extra-fonts";
+      link.rel = "stylesheet";
+      link.href = "https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Josefin+Sans:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600&display=swap";
+      document.head.appendChild(link);
+    }
+  }, []);
 
   const update = useCallback((key, value) => {
     setVals(prev => {
@@ -271,15 +381,58 @@ export default function StyleEditor() {
           </Section>
 
           <Section title="Typography">
-            <Row label="Typeface">
-              <SelectInput value={vals.fontFamily} onChange={v => update("fontFamily", v)} options={FONT_OPTIONS}/>
-            </Row>
-            <Row label="Body Size"><SliderInput value={vals.fontSize} onChange={v => update("fontSize", v)} min={10} max={22} unit="px"/></Row>
-            <Row label="Body Weight"><SliderInput value={vals.fontWeight} onChange={v => update("fontWeight", v)} min={100} max={900} step={100}/></Row>
-            <Row label="Letter Spacing"><SliderInput value={vals.letterSpacing} onChange={v => update("letterSpacing", v)} min={-0.05} max={0.3} step={0.01} unit="em"/></Row>
-            <Row label="Line Height"><SliderInput value={vals.lineHeight} onChange={v => update("lineHeight", v)} min={1} max={2.5} step={0.05}/></Row>
-            <Row label="Heading Size"><SliderInput value={vals.headingSize} onChange={v => update("headingSize", v)} min={18} max={72} unit="px"/></Row>
-            <Row label="Heading Weight"><SliderInput value={vals.headingWeight} onChange={v => update("headingWeight", v)} min={100} max={900} step={100}/></Row>
+
+            {/* ── 1. HEADING ── */}
+            <TypeRoleCard
+              label="Heading"
+              desc="Page titles, section headers, card titles"
+              accentColor="rgba(189,149,238,0.9)"
+              borderColor="rgba(149,131,233,0.2)"
+              fontKey="fontHeading"
+              fontValue={vals.fontHeading}
+              onFontChange={v => update("fontHeading", v)}
+              size={vals.headingSize}   onSizeChange={v => update("headingSize", v)}   sizeMin={18} sizeMax={72}
+              weight={vals.headingWeight} onWeightChange={v => update("headingWeight", v)}
+              spacing={vals.headingSpacing} onSpacingChange={v => update("headingSpacing", v)}
+              height={vals.headingHeight} onHeightChange={v => update("headingHeight", v)}
+              previewSize={vals.headingSize * 0.6}
+              previewWeight={vals.headingWeight}
+            />
+
+            {/* ── 2. BODY ── */}
+            <TypeRoleCard
+              label="Body"
+              desc="Paragraphs, form labels, button text, descriptions"
+              accentColor="rgba(255,255,255,0.7)"
+              borderColor="rgba(255,255,255,0.1)"
+              fontKey="fontBody"
+              fontValue={vals.fontBody}
+              onFontChange={v => update("fontBody", v)}
+              size={vals.fontSize}   onSizeChange={v => update("fontSize", v)}   sizeMin={10} sizeMax={22}
+              weight={vals.fontWeight} onWeightChange={v => update("fontWeight", v)}
+              spacing={vals.letterSpacing} onSpacingChange={v => update("letterSpacing", v)}
+              height={vals.lineHeight} onHeightChange={v => update("lineHeight", v)}
+              previewSize={vals.fontSize}
+              previewWeight={vals.fontWeight}
+            />
+
+            {/* ── 3. SUB-BODY ── */}
+            <TypeRoleCard
+              label="Sub-body"
+              desc="Captions, footnotes, dimmed labels, timestamps"
+              accentColor="rgba(255,255,255,0.45)"
+              borderColor="rgba(255,255,255,0.06)"
+              fontKey="fontSub"
+              fontValue={vals.fontSub}
+              onFontChange={v => update("fontSub", v)}
+              size={vals.subSize}   onSizeChange={v => update("subSize", v)}   sizeMin={8} sizeMax={16}
+              weight={vals.subWeight} onWeightChange={v => update("subWeight", v)}
+              spacing={vals.subSpacing} onSpacingChange={v => update("subSpacing", v)}
+              height={vals.subHeight} onHeightChange={v => update("subHeight", v)}
+              previewSize={vals.subSize}
+              previewWeight={vals.subWeight}
+            />
+
           </Section>
 
           <Section title="Spacing & Shape">
