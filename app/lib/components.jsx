@@ -1,11 +1,11 @@
-//* ═══════════════════════════════════════════════════════════
+"use client";
+/* ═══════════════════════════════════════════════════════════
    WOLF FLOW SOLUTIONS — Shared UI Components
    ─────────────────────────────────────────────────────────
    GlassCard, FormField, TripleToggle, SectionLabel, MiniTrack,
    PageNav, PortalBackground, SettingsDropdown — shared across all services.
    Created and Authored by Johnathon Moulds © 2026
    ═══════════════════════════════════════════════════════════ */
-"use client";
 import { useState, useEffect, useRef } from "react";
 import { WF, FC, FONT, MONO, CLICK, GLASS, glassPill, inputBase, WORKFLOW_STEPS, STEP_DESC } from "./tokens";
 
