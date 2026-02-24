@@ -17,15 +17,15 @@ import { GlassCard, TopShine, SectionLabel, PageNav, PortalBackground, Footer, u
 const CO_DEPTS = DEPARTMENTS;
 
 const PLATFORMS = [
-  { id: "website",   icon: "\uD83C\uDF10", label: "Website" },
-  { id: "facebook",  icon: "\uD83D\uDCD8", label: "Facebook" },
-  { id: "instagram", icon: "\uD83D\uDCF8", label: "Instagram" },
+  { id: "website",   icon: "\u25CB", label: "Website" },
+  { id: "facebook",  icon: "\u25A0", label: "Facebook" },
+  { id: "instagram", icon: "\u25C9", label: "Instagram" },
 ];
 
 const SCHEDULE_OPTIONS = [
-  { id: "ready",     icon: "\u2705", label: "Ready to Post",       desc: "Post as soon as Communications reviews and approves" },
-  { id: "date",      icon: "\uD83D\uDCC5", label: "Specific Date",      desc: "You have a date in mind for this post" },
-  { id: "recurring", icon: "\uD83D\uDD04", label: "Recurring / Ongoing", desc: "Regular series or campaign content" },
+  { id: "ready",     icon: "\u2714", label: "Ready to Post",       desc: "Post as soon as Communications reviews and approves" },
+  { id: "date",      icon: "\u25C7", label: "Specific Date",      desc: "You have a date in mind for this post" },
+  { id: "recurring", icon: "\u27F3", label: "Recurring / Ongoing", desc: "Regular series or campaign content" },
 ];
 
 const FREQUENCY_OPTIONS = [
@@ -43,18 +43,18 @@ const FREQUENCY_OPTIONS = [
 const NEEDS_END_DATE = ["every-2-weeks", "every-week", "monthly", "campaign"];
 
 const URGENCY_LEVELS = [
-  { id: "emergency", icon: "\uD83D\uDEA8", label: "Emergency", desc: "Immediate \u2014 safety, closures, critical public notices",  color: WF.red,       glow: WF.redGlow },
-  { id: "urgent",    icon: "\u26A1",        label: "Urgent",    desc: "Same day \u2014 time-sensitive announcements",               color: FC.gold,      glow: "rgba(189,149,238,0.3)" },
-  { id: "priority",  icon: "\uD83D\uDCE2",  label: "Priority",  desc: "Within 24 hours \u2014 important but not a crisis",          color: WF.accent,    glow: WF.accentGlow },
+  { id: "emergency", icon: "\u25C9", label: "Emergency", desc: "Immediate \u2014 safety, closures, critical public notices",  color: WF.red,       glow: WF.redGlow },
+  { id: "urgent",    icon: "\u25CE", label: "Urgent",    desc: "Same day \u2014 time-sensitive announcements",               color: FC.gold,      glow: "rgba(189,149,238,0.3)" },
+  { id: "priority",  icon: "\u25C7", label: "Priority",  desc: "Within 24 hours \u2014 important but not a crisis",          color: WF.accent,    glow: WF.accentGlow },
 ];
 
 const CHANNELS = [
-  { id: "email",   icon: "\uD83D\uDCE7", label: "Email Blast" },
-  { id: "website", icon: "\uD83C\uDF10", label: "Website Banner" },
-  { id: "social",  icon: "\uD83D\uDCF1", label: "Social Media" },
-  { id: "text",    icon: "\uD83D\uDCAC", label: "Text / SMS" },
-  { id: "flyer",   icon: "\uD83D\uDCC4", label: "Printed Flyer" },
-  { id: "all",     icon: "\uD83D\uDD0A", label: "All Channels" },
+  { id: "email",   icon: "\u25A0", label: "Email Blast" },
+  { id: "website", icon: "\u25CB", label: "Website Banner" },
+  { id: "social",  icon: "\u25C9", label: "Social Media" },
+  { id: "text",    icon: "\u25A1", label: "Text / SMS" },
+  { id: "flyer",   icon: "\u25B3", label: "Printed Flyer" },
+  { id: "all",     icon: "\u2726", label: "All Channels" },
 ];
 
 /* ─── Interactive Glass Card ─────────────────────────────── */
@@ -67,7 +67,7 @@ function OutreachGlass({ children, active, onClick, glowColor, style: s = {} }) 
       style={{
         background: active
           ? `linear-gradient(168deg, ${gc}22 0%, ${gc}14 40%, ${gc}0A 100%)`
-          : "linear-gradient(168deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.03) 100%)",
+          : "linear-gradient(168deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.03) 100%)",
         backdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12)) contrast(var(--glass-contrast,1.05))",
         WebkitBackdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12)) contrast(var(--glass-contrast,1.05))",
         border: `1px solid ${active ? gc + "55" : h && onClick ? gc + "25" : "rgba(255,255,255,0.14)"}`,
@@ -236,10 +236,10 @@ export default function CommunityOutreachPage() {
   const removeFile = (index) => { setUploadedFiles(prev => prev.filter((_, i) => i !== index)); };
   const getFileIcon = (file) => {
     if (file.type.startsWith("image/")) return null;
-    if (file.name.endsWith(".pdf")) return "\uD83D\uDCC4";
-    if (file.name.match(/\.pptx?$/)) return "\uD83D\uDCCA";
-    if (file.name.match(/\.docx?$/)) return "\uD83D\uDCDD";
-    return "\uD83D\uDCCE";
+    if (file.name.endsWith(".pdf")) return "\u25A1";
+    if (file.name.match(/\.pptx?$/)) return "\u25CB";
+    if (file.name.match(/\.docx?$/)) return "\u25A0";
+    return "\u25C7";
   };
 
   /* ─── Submit ─────────────────────────────────────────────── */
@@ -274,8 +274,8 @@ export default function CommunityOutreachPage() {
   /* ─── Styles ─────────────────────────────────────────────── */
 
   const S = {
-    hero:     { fontSize: 56, marginBottom: 18, display: "block" },
-    h1:       { fontSize: 28, fontWeight: 300, color: FC.textPrimary, fontFamily: FONT, marginBottom: 8 },
+    hero:     { fontSize: 24, marginBottom: 18, display: "block", color: WF.accent },
+    h1:       { fontSize: 26, fontWeight: 300, color: FC.textPrimary, fontFamily: FONT, marginBottom: 8 },
     h2:       { fontSize: 22, fontWeight: 300, color: FC.textPrimary, fontFamily: FONT, marginBottom: 8 },
     sub:      { fontSize: 14, color: FC.textSecondary, marginBottom: 28, lineHeight: 1.7 },
     label:    { fontSize: 11, color: FC.textDim, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 10, fontFamily: FONT, textAlign: "left", display: "block" },
@@ -334,7 +334,7 @@ export default function CommunityOutreachPage() {
         <SettingsDropdown nightMode={nightMode} onToggleNight={toggleNight} />
         <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 24px", zIndex: 1 }}>
           <div style={{ textAlign: "center", maxWidth: 520 }}>
-            <div style={{ fontSize: 64, marginBottom: 22 }}>{isSocial ? "\uD83D\uDCE3" : (urgencyObj?.icon || "\u26A1")}</div>
+            <div style={{ fontSize: 28, marginBottom: 22, color: accentColor }}>{isSocial ? "\u25C7" : (urgencyObj?.icon || "\u25CE")}</div>
             <h2 style={{ fontSize: 26, fontWeight: 300, color: FC.textPrimary, marginBottom: 8, fontFamily: FONT }}>
               {isSocial ? "Request Submitted" : "Alert Submitted"}
             </h2>

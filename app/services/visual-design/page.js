@@ -17,18 +17,18 @@ import { PortalBackground, Footer, PageNav, useNightMode, SettingsDropdown } fro
 // ═══════════════════════════════════════════════════════════
 
 const PIECE_TYPES = [
-  { id: "digital-flyer", icon: "\u{1F4F1}", label: "Digital Media Flyer", desc: "Social media graphics, digital flyers, event promos" },
-  { id: "printed-media", icon: "\u{1F5A8}\uFE0F", label: "Printed Media Materials", desc: "Flyers, trifolds, postcards, posters, booklets" },
-  { id: "banner-sign", icon: "\u{1F3D7}\uFE0F", label: "Banner / Sign", desc: "Retractable banners, vinyl, yard signs, window signs" },
-  { id: "ad", icon: "\u{1F4F0}", label: "QTP Advertisements", desc: "Quarter page, half page, full page ads" },
-  { id: "presentation", icon: "\u{1F5A5}\uFE0F", label: "Presentation", desc: "PowerPoint, Google Slides, templates" },
-  { id: "special-request", icon: "\u2B50", label: "General Special Request", desc: "Something unique \u2014 tell us what you need" },
+  { id: "digital-flyer", icon: "\u25A0", label: "Digital Media Flyer", desc: "Social media graphics, digital flyers, event promos" },
+  { id: "printed-media", icon: "\u25A1", label: "Printed Media Materials", desc: "Flyers, trifolds, postcards, posters, booklets" },
+  { id: "banner-sign", icon: "\u25B3", label: "Banner / Sign", desc: "Retractable banners, vinyl, yard signs, window signs" },
+  { id: "ad", icon: "\u25C7", label: "QTP Advertisements", desc: "Quarter page, half page, full page ads" },
+  { id: "presentation", icon: "\u25CB", label: "Presentation", desc: "PowerPoint, Google Slides, templates" },
+  { id: "special-request", icon: "\u2726", label: "General Special Request", desc: "Something unique \u2014 tell us what you need" },
 ];
 
 const FORMAT_OPTIONS = [
-  { id: "digital", icon: "\u{1F4BB}", label: "Digital Only", desc: "Screen, email, social media" },
-  { id: "print", icon: "\u{1F5A8}\uFE0F", label: "Print Only", desc: "Will be physically printed" },
-  { id: "both", icon: "\u2728", label: "Both", desc: "Digital version + print-ready files" },
+  { id: "digital", icon: "\u25CB", label: "Digital Only", desc: "Screen, email, social media" },
+  { id: "print", icon: "\u25A0", label: "Print Only", desc: "Will be physically printed" },
+  { id: "both", icon: "\u25CE", label: "Both", desc: "Digital version + print-ready files" },
 ];
 
 const PRINTED_MEDIA_SIZES = [
@@ -100,19 +100,19 @@ const SIZES = {
 };
 
 const PURPOSES = [
-  { id: "event", icon: "\u{1F3AA}", label: "Promote an Event" },
-  { id: "announce", icon: "\u{1F4E2}", label: "Make an Announcement" },
-  { id: "recruit", icon: "\u{1F91D}", label: "Recruit / Hire" },
-  { id: "celebrate", icon: "\u{1F389}", label: "Celebrate / Recognize" },
-  { id: "inform", icon: "\u{1F4CB}", label: "Inform / Educate" },
-  { id: "community", icon: "\u{1F5E3}\uFE0F", label: "Community Input" },
-  { id: "elders", icon: "\u{1FAB6}", label: "Elders Gathering" },
-  { id: "itk", icon: "\u{1F4CC}", label: "In the Know" },
-  { id: "other", icon: "\u{1F4A1}", label: "Other" },
+  { id: "event", icon: "\u25C9", label: "Promote an Event" },
+  { id: "announce", icon: "\u25C7", label: "Make an Announcement" },
+  { id: "recruit", icon: "\u25CB", label: "Recruit / Hire" },
+  { id: "celebrate", icon: "\u2726", label: "Celebrate / Recognize" },
+  { id: "inform", icon: "\u25A1", label: "Inform / Educate" },
+  { id: "community", icon: "\u25CE", label: "Community Input" },
+  { id: "elders", icon: "\u25B3", label: "Elders Gathering" },
+  { id: "itk", icon: "\u25A0", label: "In the Know" },
+  { id: "other", icon: "\u25C6", label: "Other" },
 ];
 
 const STYLE_SECTIONS = [
-  { id: "cultural", label: "Cultural & Community", icon: "\u{1F422}" },
+  { id: "cultural", label: "Cultural & Community", icon: "\u25C9" },
   { id: "modern", label: "Modern & Classic", icon: "\u2726" },
   { id: "niche", label: "Niche & Specialty", icon: "\u25C6" },
 ];
@@ -133,14 +133,14 @@ const STYLES = [
 ];
 
 const PALETTE_MODIFIERS = [
-  { id: "default", label: "Style Default", desc: "Use this style's natural colors", colors: null, icon: "\u{1F3A8}" },
-  { id: "nhbp-brand", label: "NHBP Brand Standard", desc: "Official tribal branding", colors: ["#14A9A2", "#5F0C0E", "#094425", "#FAC6C7", "#BA0C2F"], icon: "\u{1F422}" },
-  { id: "spring", label: "Spring Fresh", desc: "Light greens, soft pastels, renewal", colors: ["#7ec8a0", "#f0c6d4", "#a8d8ea", "#fff9c4", "#c5e1a5"], icon: "\u{1F331}" },
-  { id: "summer", label: "Summer Bold", desc: "Warm brights, sunny energy, golden", colors: ["#ff6b35", "#f7c948", "#00b4d8", "#ff8fab", "#ffd60a"], icon: "\u2600\uFE0F" },
-  { id: "autumn", label: "Autumn Warm", desc: "Rich oranges, deep reds, harvest gold", colors: ["#bc4b21", "#e89b3f", "#5c3d2e", "#d4a574", "#8b2500"], icon: "\u{1F342}" },
-  { id: "winter", label: "Winter Cool", desc: "Icy blues, deep navy, silver accents", colors: ["#1a3a5c", "#87aec5", "#c0d6e4", "#f0f4f8", "#4a6fa5"], icon: "\u2744\uFE0F" },
-  { id: "trending-2026", label: "Trending 2026", desc: "Current design trend colors", colors: ["#6c5ce7", "#00cec9", "#fd79a8", "#ffeaa7", "#2d3436"], icon: "\u{1F525}" },
-  { id: "custom", label: "Custom Colors", desc: "Describe what you need", colors: null, icon: "\u270F\uFE0F" },
+  { id: "default", label: "Style Default", desc: "Use this style's natural colors", colors: null, icon: "\u25C6" },
+  { id: "nhbp-brand", label: "NHBP Brand Standard", desc: "Official tribal branding", colors: ["#14A9A2", "#5F0C0E", "#094425", "#FAC6C7", "#BA0C2F"], icon: "\u25C9" },
+  { id: "spring", label: "Spring Fresh", desc: "Light greens, soft pastels, renewal", colors: ["#7ec8a0", "#f0c6d4", "#a8d8ea", "#fff9c4", "#c5e1a5"], icon: "\u25CB" },
+  { id: "summer", label: "Summer Bold", desc: "Warm brights, sunny energy, golden", colors: ["#ff6b35", "#f7c948", "#00b4d8", "#ff8fab", "#ffd60a"], icon: "\u25A0" },
+  { id: "autumn", label: "Autumn Warm", desc: "Rich oranges, deep reds, harvest gold", colors: ["#bc4b21", "#e89b3f", "#5c3d2e", "#d4a574", "#8b2500"], icon: "\u25B3" },
+  { id: "winter", label: "Winter Cool", desc: "Icy blues, deep navy, silver accents", colors: ["#1a3a5c", "#87aec5", "#c0d6e4", "#f0f4f8", "#4a6fa5"], icon: "\u25C7" },
+  { id: "trending-2026", label: "Trending 2026", desc: "Current design trend colors", colors: ["#6c5ce7", "#00cec9", "#fd79a8", "#ffeaa7", "#2d3436"], icon: "\u2726" },
+  { id: "custom", label: "Custom Colors", desc: "Describe what you need", colors: null, icon: "\u25CE" },
 ];
 
 const VERBIAGE_KEYWORDS = {
@@ -170,7 +170,7 @@ const Glass = ({ children, active, onClick, style: s = {}, hoverGlow }) => {
       style={{
         background: active
           ? `linear-gradient(168deg, ${gc}22 0%, ${gc}14 40%, ${gc}0A 100%)`
-          : "linear-gradient(168deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.03) 100%)",
+          : "linear-gradient(168deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.03) 100%)",
         backdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12)) contrast(var(--glass-contrast,1.05))",
         WebkitBackdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12)) contrast(var(--glass-contrast,1.05))",
         border: `1px solid ${active ? gc + "55" : h && onClick ? "rgba(255,255,255,0.22)" : "rgba(255,255,255,0.14)"}`,

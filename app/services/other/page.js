@@ -9,9 +9,9 @@ import { GlassCard, PortalBackground, PageNav, SectionLabel, Footer, useNightMod
    ═══════════════════════════════════════════════════════════ */
 
 const PRIORITY_OPTS = [
-  { id: "standard", label: "Standard", desc: "2-3 weeks", icon: "📋" },
-  { id: "priority", label: "Priority", desc: "1-2 weeks", icon: "⚡" },
-  { id: "urgent", label: "Urgent", desc: "Within 5 days", icon: "🔥" },
+  { id: "standard", label: "Standard", desc: "2-3 weeks", icon: "\u25CB" },
+  { id: "priority", label: "Priority", desc: "1-2 weeks", icon: "\u25CE" },
+  { id: "urgent", label: "Urgent", desc: "Within 5 days", icon: "\u25C9" },
 ];
 
 export default function OtherPage() {
@@ -42,7 +42,7 @@ export default function OtherPage() {
         <SettingsDropdown nightMode={nightMode} onToggleNight={toggleNight} />
         <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "20px 24px 20px", zIndex: 1 }}>
           <div style={{ textAlign: "center", maxWidth: 480, width: "100%", paddingTop: 24 }}>
-            <div style={{ fontSize: 64, marginBottom: 24 }}>{"💡"}</div>
+            <div style={{ fontSize: 28, marginBottom: 24, color: WF.accent }}>{"\u2726"}</div>
             <h2 style={{ fontSize: 28, fontWeight: 300, color: FC.textPrimary, fontFamily: FONT, marginBottom: 8 }}>{"Request Submitted"}</h2>
             <p style={{ fontSize: 15, color: FC.textSecondary, marginBottom: 28, lineHeight: 1.7 }}>{"We've received your request and will follow up shortly."}</p>
             <GlassCard style={{ textAlign: "left", maxWidth: 340, margin: "0 auto 24px", padding: "20px 18px" }}>
@@ -83,7 +83,7 @@ export default function OtherPage() {
       <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "20px 24px 20px", zIndex: 1 }}>
         <div style={{ maxWidth: 480, width: "100%" }}>
           <div style={{ textAlign: "center", marginBottom: 28 }}>
-            <div style={{ fontSize: 48, marginBottom: 12 }}>{"💡"}</div>
+            <div style={{ fontSize: 24, marginBottom: 12, color: WF.accent }}>{"\u2726"}</div>
             <h2 style={{ fontSize: 24, fontWeight: 300, color: FC.textPrimary, fontFamily: FONT, marginBottom: 6 }}>{"General Request"}</h2>
             <p style={{ fontSize: 13, color: FC.textSecondary, lineHeight: 1.6 }}>{"Something that doesn't fit another category? Tell us what you need."}</p>
           </div>

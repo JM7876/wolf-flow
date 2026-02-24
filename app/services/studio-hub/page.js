@@ -65,7 +65,7 @@ function ConfirmPage({ icon, title, subtitle, ticket, rows, note, onAnother, onH
   return (
     <PageWrap>
       <div style={{ textAlign: "center", padding: "48px 0 32px" }}>
-        <div style={{ fontSize: 60, marginBottom: 20 }}>{icon}</div>
+        <div style={{ fontSize: 28, marginBottom: 20, color: WF.accent }}>{icon}</div>
         <h1 style={{ fontSize: 28, fontWeight: 700, color: FC.textPrimary, marginBottom: 8, fontFamily: FONT }}>{title}</h1>
         <p style={{ fontSize: 15, color: FC.textSecondary, lineHeight: 1.7, marginBottom: 28 }}>{subtitle}</p>
 
@@ -138,7 +138,7 @@ function ArchivesForm({ onHome }) {
 
   if (submitted) return (
     <ConfirmPage
-      icon="📂"
+      icon={"\u25A1"}
       title="Request Received!"
       subtitle={"Your digital archive request has been logged.\nThe team will locate and prepare your files."}
       ticket={ticket}
@@ -164,7 +164,7 @@ function ArchivesForm({ onHome }) {
       <div style={{ marginBottom: 32, paddingTop: 16, textAlign: "center" }}>
         <div style={{ fontSize: 13, color: FC.textDim, marginBottom: 8, letterSpacing: "0.04em" }}>The Studio Hub / Access Digital Archives</div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginBottom: 8 }}>
-          <span style={{ fontSize: 36 }}>📂</span>
+          <span style={{ fontSize: 22, color: WF.accent }}>{"\u25A1"}</span>
           <div>
             <h1 style={{ fontSize: 26, fontWeight: 700, color: FC.textPrimary, fontFamily: FONT }}>Access Digital Archives</h1>
             <p style={{ fontSize: 13, color: FC.textDim }}>Self-service</p>
@@ -239,7 +239,7 @@ function PhotographyForm({ onHome }) {
 
   if (submitted) return (
     <ConfirmPage
-      icon="📷"
+      icon={"\u25CE"}
       title="Photography Request Submitted!"
       subtitle={"Your request has been received.\nWe'll confirm availability and follow up shortly."}
       ticket={ticket}
@@ -267,7 +267,7 @@ function PhotographyForm({ onHome }) {
       <div style={{ marginBottom: 32, paddingTop: 16, textAlign: "center" }}>
         <div style={{ fontSize: 13, color: FC.textDim, marginBottom: 8, letterSpacing: "0.04em" }}>{"The Studio Hub / Photography & Photo Booth"}</div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginBottom: 8 }}>
-          <span style={{ fontSize: 36 }}>📷</span>
+          <span style={{ fontSize: 22, color: WF.accent }}>{"\u25CE"}</span>
           <div>
             <h1 style={{ fontSize: 26, fontWeight: 700, color: FC.textPrimary, fontFamily: FONT }}>{"Photography & Photo Booth Rental"}</h1>
             <p style={{ fontSize: 13, color: FC.textDim }}>Photo Booth Rental, Event, and Stock</p>
@@ -369,7 +369,7 @@ function HeadshotsForm({ onHome }) {
 
   if (submitted) return (
     <ConfirmPage
-      icon="📸"
+      icon={"\u25C9"}
       title={"You're Booked!"}
       subtitle={"Your session is confirmed and your info has been submitted.\nCheck your email for your calendar invite."}
       ticket={ticket}
@@ -396,7 +396,7 @@ function HeadshotsForm({ onHome }) {
           {"The Studio Hub / Employee Headshots"}
         </div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginBottom: 8 }}>
-          <span style={{ fontSize: 36 }}>📸</span>
+          <span style={{ fontSize: 22, color: WF.accent }}>{"\u25C9"}</span>
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 700, color: FC.textPrimary, fontFamily: FONT }}>Employee Headshots</h1>
             <p style={{ fontSize: 12, color: FC.textDim }}>By appointment</p>
@@ -488,21 +488,21 @@ function BehindTheLens({ onBack, onSelect }) {
   const services = [
     {
       id: "archives",
-      icon: "📂",
+      icon: "\u25A1",
       label: "Access Digital Archives",
       subtitle: "Self-service",
       desc: "Request access to past photos, video files, or archived project assets.",
     },
     {
       id: "photography",
-      icon: "📷",
+      icon: "\u25CE",
       label: "Photography & Photo Booth",
       subtitle: "Photo Booth Rental, Event, and Stock",
       desc: "Book event photography, photo booth rentals, or professional photo sessions.",
     },
     {
       id: "headshots",
-      icon: "📸",
+      icon: "\u25C9",
       label: "Employee Headshots",
       subtitle: "By appointment · Mon & Wed 9 AM – 1 PM",
       desc: "Get a professional headshot for your employee profile and communications.",
@@ -518,7 +518,7 @@ function BehindTheLens({ onBack, onSelect }) {
         </div>
 
         {/* Title */}
-        <h1 style={{ fontSize: 28, fontWeight: 700, color: FC.textPrimary, marginBottom: 6, fontFamily: FONT }}>
+        <h1 style={{ fontSize: 26, fontWeight: 300, color: FC.textPrimary, marginBottom: 6, fontFamily: FONT }}>
           Behind the Lens
         </h1>
         <p style={{ fontSize: 14, color: FC.textSecondary, marginBottom: 36, lineHeight: 1.7 }}>
@@ -530,7 +530,7 @@ function BehindTheLens({ onBack, onSelect }) {
           {services.map(s => (
             <GlassCard key={s.id} hover onClick={() => onSelect(s.id)} style={{ cursor: "pointer", padding: 0 }}>
               <div style={{ display: "flex", alignItems: "flex-start", gap: 16, padding: "20px 24px" }}>
-                <span style={{ fontSize: 32, flexShrink: 0, marginTop: 2 }}>{s.icon}</span>
+                <span style={{ fontSize: 20, flexShrink: 0, marginTop: 2, color: WF.accent }}>{s.icon}</span>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 16, fontWeight: 600, color: FC.textPrimary, marginBottom: 3 }}>{s.label}</div>
                   <div style={{ fontSize: 12, color: WF.accent, marginBottom: 6, fontWeight: 500 }}>{s.subtitle}</div>
@@ -565,7 +565,7 @@ function BehindTheCamera({ onBack }) {
         <div style={{ fontSize: 13, color: FC.textDim, marginBottom: 24, letterSpacing: "0.04em" }}>
           {"The Studio Hub / Behind the Camera"}
         </div>
-        <h1 style={{ fontSize: 28, fontWeight: 700, color: FC.textPrimary, marginBottom: 6, fontFamily: FONT }}>
+        <h1 style={{ fontSize: 26, fontWeight: 300, color: FC.textPrimary, marginBottom: 6, fontFamily: FONT }}>
           Behind the Camera
         </h1>
         <p style={{ fontSize: 14, color: FC.textSecondary, marginBottom: 36, lineHeight: 1.7 }}>
@@ -585,7 +585,7 @@ function BehindTheCamera({ onBack }) {
         }}>
           <TopShine />
           <div style={{ display: "flex", alignItems: "flex-start", gap: 16 }}>
-            <span style={{ fontSize: 32, flexShrink: 0, marginTop: 2 }}>🎥</span>
+            <span style={{ fontSize: 20, flexShrink: 0, marginTop: 2, color: FC.textDim }}>{"\u25B7"}</span>
             <div style={{ flex: 1 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 3 }}>
                 <div style={{ fontSize: 16, fontWeight: 600, color: FC.textPrimary }}>Videography</div>
@@ -632,7 +632,7 @@ export default function StudioHubPage() {
   const branches = [
     {
       id: "lens",
-      icon: "📷",
+      icon: "\u25CE",
       label: "Behind the Lens",
       subtitle: "Photography",
       desc: "Digital archives, photo booth rental, event photography, and employee headshots.",
@@ -640,7 +640,7 @@ export default function StudioHubPage() {
     },
     {
       id: "camera",
-      icon: "🎥",
+      icon: "\u25B7",
       label: "Behind the Camera",
       subtitle: "Video / AV",
       desc: "Videography, event video coverage, AV support, and highlight reels.",
@@ -654,8 +654,8 @@ export default function StudioHubPage() {
 
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 48 }}>
-          <div style={{ fontSize: 56, marginBottom: 16 }}>📷</div>
-          <h1 style={{ fontSize: 32, fontWeight: 700, color: FC.textPrimary, marginBottom: 8, fontFamily: FONT }}>
+          <div style={{ fontSize: 24, marginBottom: 16, color: WF.accent }}>{"\u25CE"}</div>
+          <h1 style={{ fontSize: 26, fontWeight: 300, color: FC.textPrimary, marginBottom: 8, fontFamily: FONT }}>
             The Studio Hub
           </h1>
           <p style={{ fontSize: 15, color: WF.accentLight, fontWeight: 500, marginBottom: 8 }}>
@@ -671,7 +671,7 @@ export default function StudioHubPage() {
           {branches.map(b => (
             <GlassCard key={b.id} hover onClick={() => setView(b.id)} style={{ cursor: "pointer", padding: 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 20, padding: "24px 28px" }}>
-                <span style={{ fontSize: 42, flexShrink: 0 }}>{b.icon}</span>
+                <span style={{ fontSize: 22, flexShrink: 0, color: WF.accent }}>{b.icon}</span>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 18, fontWeight: 700, color: FC.textPrimary, marginBottom: 4 }}>{b.label}</div>
                   <div style={{ fontSize: 12, color: WF.accent, fontWeight: 600, letterSpacing: "0.05em", marginBottom: 6 }}>{b.subtitle}</div>

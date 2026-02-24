@@ -13,9 +13,9 @@ import { GlassCard, TopShine, PortalBackground, PageNav, Footer, useNightMode, S
 
 /* --- CONSTANTS (inlined from old portal) --- */
 const ENTERPRISES = [
-  { id: "nhbp", label: "Nottawaseppi Huron\nBand of the Potawatomi", shortLabel: "NHBP", icon: "\uD83D\uDC22", desc: "Main tribal government" },
-  { id: "tribal-court", label: "NHBP Tribal Court", shortLabel: "Tribal Court", icon: "\u2696\uFE0F", desc: "Judicial branch" },
-  { id: "tribal-police", label: "NHBP Tribal Police", shortLabel: "Tribal Police", icon: "\uD83D\uDEE1\uFE0F", desc: "Law enforcement" },
+  { id: "nhbp", label: "Nottawaseppi Huron\nBand of the Potawatomi", shortLabel: "NHBP", icon: "\u25C9", desc: "Main tribal government" },
+  { id: "tribal-court", label: "NHBP Tribal Court", shortLabel: "Tribal Court", icon: "\u25A1", desc: "Judicial branch" },
+  { id: "tribal-police", label: "NHBP Tribal Police", shortLabel: "Tribal Police", icon: "\u25B3", desc: "Law enforcement" },
 ];
 
 const OFFICE_LOCATIONS = [
@@ -29,9 +29,9 @@ const OFFICE_LOCATIONS = [
 ];
 
 const STATIONERY_ITEMS = [
-  { id: "business-cards", label: "Business Cards", icon: "\uD83C\uDFB4", desc: "250 cards per order" },
-  { id: "name-plate", label: "Name Plate", icon: "\uD83E\uDEA7", desc: "Desk or door plate" },
-  { id: "notepad", label: "Personalized Notepad", icon: "\uD83D\uDDD2\uFE0F", desc: "50-sheet branded notepad" },
+  { id: "business-cards", label: "Business Cards", icon: "\u25A0", desc: "250 cards per order" },
+  { id: "name-plate", label: "Name Plate", icon: "\u25C7", desc: "Desk or door plate" },
+  { id: "notepad", label: "Personalized Notepad", icon: "\u25CB", desc: "50-sheet branded notepad" },
 ];
 
 const ORDER_REASONS = [
@@ -58,7 +58,7 @@ function BusinessCardSummary({ data, location, enterprise }) {
         padding: "20px 24px", textAlign: "left",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-          <span style={{ fontSize: 16 }}>{{ nhbp: "\uD83D\uDC22", "tribal-court": "\u2696\uFE0F", "tribal-police": "\uD83D\uDEE1\uFE0F" }[enterprise]}</span>
+          <span style={{ fontSize: 14, color: WF.accent }}>{{ nhbp: "\u25C9", "tribal-court": "\u25A1", "tribal-police": "\u25B3" }[enterprise]}</span>
           <span style={{ fontSize: 13, fontWeight: 600, color: FC.textSecondary, fontFamily: FONT }}>{ent?.shortLabel} Business Card</span>
         </div>
         {[
@@ -91,7 +91,7 @@ function NamePlateSummary({ data }) {
         padding: "20px 24px", textAlign: "left",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-          <span style={{ fontSize: 16 }}>{"\uD83E\uDEA7"}</span>
+          <span style={{ fontSize: 14, color: WF.accent }}>{"\u25C7"}</span>
           <span style={{ fontSize: 13, fontWeight: 600, color: FC.textSecondary, fontFamily: FONT }}>Name Plate</span>
         </div>
         {[
@@ -265,7 +265,7 @@ export default function StationeryKitPage() {
             {ENTERPRISES.map(e => (
               <GlassCard key={e.id} hover onClick={() => { update("enterprise", e.id); update("officeLocation", null); setTimeout(goNext, 400); }}
                 style={{ padding: "20px 22px", display: "flex", alignItems: "center", gap: 16, cursor: "pointer", border: form.enterprise === e.id ? `1px solid ${WF.accent}60` : undefined }}>
-                <span style={{ fontSize: 32 }}>{e.icon}</span>
+                <span style={{ fontSize: 18, color: WF.accent }}>{e.icon}</span>
                 <div>
                   <span style={{ fontSize: 15, fontWeight: 600, color: FC.textPrimary, display: "block", whiteSpace: "pre-line", lineHeight: 1.3, fontFamily: FONT }}>{e.label}</span>
                   <span style={{ fontSize: 12, color: FC.textDim, fontFamily: FONT }}>{e.desc}</span>
@@ -296,7 +296,7 @@ export default function StationeryKitPage() {
                   }}>
                     {sel && <span style={{ color: "#fff", fontSize: 14, fontWeight: 700 }}>{"✓"}</span>}
                   </div>
-                  <span style={{ fontSize: 28 }}>{item.icon}</span>
+                  <span style={{ fontSize: 18, color: WF.accent }}>{item.icon}</span>
                   <div>
                     <span style={{ fontSize: 15, fontWeight: 600, color: FC.textPrimary, display: "block", fontFamily: FONT }}>{item.label}</span>
                     <span style={{ fontSize: 12, color: FC.textDim, fontFamily: FONT }}>{item.desc}</span>

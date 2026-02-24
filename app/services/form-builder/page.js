@@ -38,7 +38,7 @@ const Glass = ({ children, active, onClick, style: s = {} }) => {
       style={{
         background: active
           ? `linear-gradient(168deg, ${WF.accent}22 0%, ${WF.accent}14 40%, ${WF.accent}0A 100%)`
-          : "linear-gradient(168deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.03) 100%)",
+          : "linear-gradient(168deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.03) 100%)",
         backdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12)) contrast(var(--glass-contrast,1.05))",
         WebkitBackdropFilter: "blur(var(--glass-blur,24px)) saturate(var(--glass-saturation,1.4)) brightness(var(--glass-brightness,1.12)) contrast(var(--glass-contrast,1.05))",
         border: `1px solid ${active ? WF.accent + "55" : h && onClick ? "rgba(255,255,255,0.22)" : "rgba(255,255,255,0.14)"}`,
