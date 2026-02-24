@@ -43,7 +43,7 @@ function PageWrap({ children }) {
     <div style={{ minHeight: "100vh", fontFamily: FONT, position: "relative", overflow: "hidden", display: "flex", flexDirection: "column", alignItems: "center" }}>
       <PortalBackground nightMode={nightMode} />
       <SettingsDropdown nightMode={nightMode} onToggleNight={toggleNight} />
-      <div style={{ position: "relative", zIndex: 2, width: "100%", maxWidth: 600, padding: "40px 24px 0", flex: 1 }}>
+      <div style={{ position: "relative", zIndex: 2, width: "100%", maxWidth: 600, padding: "40px 24px 100px", flex: 1 }}>
         {children}
       </div>
       <Footer />

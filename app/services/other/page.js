@@ -40,7 +40,7 @@ export default function OtherPage() {
       <div style={{ minHeight: "100vh", color: FC.textPrimary, fontFamily: FONT, position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" }}>
         <PortalBackground nightMode={nightMode} />
         <SettingsDropdown nightMode={nightMode} onToggleNight={toggleNight} />
-        <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "20px 24px 20px", zIndex: 1 }}>
+        <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "20px 24px 100px", zIndex: 1 }}>
           <div style={{ textAlign: "center", maxWidth: 480, width: "100%", paddingTop: 24 }}>
             <div style={{ fontSize: 28, marginBottom: 24, color: WF.accent }}>{"\u2726"}</div>
             <h2 style={{ fontSize: 26, fontWeight: 300, color: FC.textPrimary, fontFamily: FONT, marginBottom: 8 }}>{"Request Submitted"}</h2>
@@ -80,7 +80,7 @@ export default function OtherPage() {
     <div style={{ minHeight: "100vh", color: FC.textPrimary, fontFamily: FONT, position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" }}>
       <PortalBackground nightMode={nightMode} />
       <SettingsDropdown nightMode={nightMode} onToggleNight={toggleNight} />
-      <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "20px 24px 20px", zIndex: 1 }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "20px 24px 100px", zIndex: 1 }}>
         <div style={{ maxWidth: 480, width: "100%" }}>
           <div style={{ textAlign: "center", marginBottom: 28 }}>
             <div style={{ fontSize: 24, marginBottom: 12, color: WF.accent }}>{"\u2726"}</div>
