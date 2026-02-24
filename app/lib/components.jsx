@@ -244,7 +244,7 @@ export function PortalBackground({ nightMode }) {
       position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0,
       /* Pre-promote to own GPU layer to avoid recomposite flash */
       willChange: "transform",
-      contain: "strict",
+      contain: "layout paint",
       backfaceVisibility: "hidden",
       WebkitBackfaceVisibility: "hidden",
     }}>
