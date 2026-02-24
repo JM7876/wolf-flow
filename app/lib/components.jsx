@@ -1,4 +1,4 @@
-/* ═══════════════════════════════════════════════════════════
+//* ═══════════════════════════════════════════════════════════
    WOLF FLOW SOLUTIONS — Shared UI Components
    ─────────────────────────────────────────────────────────
    GlassCard, FormField, TripleToggle, SectionLabel, MiniTrack,
@@ -280,6 +280,44 @@ const GLASS_SLIDERS = [
 ];
 const setGlassVar = (cssVar, v, unit) => document.documentElement.style.setProperty(cssVar, v + unit);
 
+/* ═══ FONT + COLOR TOKENS for Style Panel ═══ */
+const FONT_OPTIONS = [
+  { label: "Montserrat Alt", value: "'Montserrat Alternates', sans-serif" },
+  { label: "DM Sans",        value: "'DM Sans', sans-serif" },
+  { label: "Josefin Sans",   value: "'Josefin Sans', sans-serif" },
+  { label: "Inter",          value: "'Inter', sans-serif" },
+  { label: "Space Grotesk",  value: "'Space Grotesk', sans-serif" },
+  { label: "Playfair",       value: "'Playfair Display', serif" },
+];
+
+const ACCENT_SWATCHES = [
+  { label: "Wolf Violet",  hex: "#9583E9", light: "#BD95EE", glow: "rgba(149,131,233,0.25)" },
+  { label: "Wolf Pink",    hex: "#DDACEF", light: "#F0CDF3", glow: "rgba(221,172,239,0.25)" },
+  { label: "Turquoise",    hex: "#14A9A2", light: "#1bc4bc", glow: "rgba(20,169,162,0.25)" },
+  { label: "Gold",         hex: "#C9A84C", light: "#e0bc5e", glow: "rgba(201,168,76,0.25)" },
+  { label: "Rose",         hex: "#e63946", light: "#ff6b6b", glow: "rgba(230,57,70,0.25)" },
+  { label: "Forest",       hex: "#40916c", light: "#52b788", glow: "rgba(64,145,108,0.25)" },
+  { label: "Coral",        hex: "#FDC3BE", light: "#fdd2d7", glow: "rgba(253,195,190,0.25)" },
+  { label: "Steel",        hex: "#6b8cba", light: "#89a8d0", glow: "rgba(107,140,186,0.25)" },
+];
+
+function applyAccent(swatch) {
+  const r = document.documentElement;
+  r.style.setProperty("--wf-accent", swatch.hex);
+  r.style.setProperty("--wf-accent-light", swatch.light);
+  r.style.setProperty("--wf-accent-glow", swatch.glow);
+  r.style.setProperty("--accent-primary", swatch.hex);
+  r.style.setProperty("--accent-violet", swatch.light);
+}
+
+function applyFont(fontValue) {
+  document.documentElement.style.setProperty("--wf-font", fontValue);
+  // Inject override style so inline fontFamily references also update
+  let tag = document.getElementById("wf-font-override");
+  if (!tag) { tag = document.createElement("style"); tag.id = "wf-font-override"; document.head.appendChild(tag); }
+  tag.textContent = `*, *::before, *::after { font-family: ${fontValue} !important; }`;
+}
+
 /* ═══ SETTINGS DROPDOWN — Night mode toggle + Glass Engine sliders ═══ */
 export function SettingsDropdown({ nightMode, onToggleNight }) {
   const [open, setOpen] = useState(false);
@@ -289,6 +327,8 @@ export function SettingsDropdown({ nightMode, onToggleNight }) {
     return init;
   });
   const [activePreset, setActivePreset] = useState(null);
+  const [activeAccent, setActiveAccent] = useState(0);
+  const [activeFont, setActiveFont] = useState(0);
   const ref = useRef(null);
 
   useEffect(() => {
@@ -297,6 +337,16 @@ export function SettingsDropdown({ nightMode, onToggleNight }) {
     document.addEventListener("mousedown", close);
     return () => document.removeEventListener("mousedown", close);
   }, [open]);
+
+  const handleAccent = (idx) => {
+    setActiveAccent(idx);
+    applyAccent(ACCENT_SWATCHES[idx]);
+  };
+
+  const handleFont = (idx) => {
+    setActiveFont(idx);
+    applyFont(FONT_OPTIONS[idx].value);
+  };
 
   const updateSlider = (key, val) => {
     const s = GLASS_SLIDERS.find(x => x.key === key);
@@ -397,6 +447,57 @@ export function SettingsDropdown({ nightMode, onToggleNight }) {
             </div>
           ))}
         </div>
+
+        <div style={{ height: 1, background: FC.border, margin: "18px 0" }} />
+
+        {/* ═══ ACCENT COLOR ═══ */}
+        <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(255,255,255,0.6)", marginBottom: 10 }}>{"Accent Color"}</div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 6, marginBottom: 4 }}>
+          {ACCENT_SWATCHES.map((sw, i) => (
+            <button key={i} onClick={() => handleAccent(i)} title={sw.label} style={{
+              height: 28, borderRadius: 8, cursor: "pointer",
+              background: sw.hex,
+              border: activeAccent === i ? "2px solid #fff" : "2px solid transparent",
+              boxShadow: activeAccent === i ? `0 0 12px ${sw.glow}, 0 0 4px ${sw.hex}` : "none",
+              transition: "all 0.2s ease",
+              position: "relative",
+            }}>
+              {activeAccent === i && <span style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#fff", textShadow: "0 1px 3px rgba(0,0,0,0.5)" }}>{"✓"}</span>}
+            </button>
+          ))}
+        </div>
+        <div style={{ fontSize: 9, color: "rgba(255,255,255,0.35)", fontFamily: FONT, marginBottom: 18, textAlign: "center" }}>
+          {ACCENT_SWATCHES[activeAccent].label}
+        </div>
+
+        <div style={{ height: 1, background: FC.border, marginBottom: 18 }} />
+
+        {/* ═══ FONT ═══ */}
+        <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(255,255,255,0.6)", marginBottom: 10 }}>{"Typeface"}</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          {FONT_OPTIONS.map((fo, i) => (
+            <button key={i} onClick={() => handleFont(i)} style={{
+              width: "100%", padding: "8px 12px", borderRadius: 8, cursor: "pointer", textAlign: "left",
+              background: activeFont === i ? "rgba(149,131,233,0.12)" : "rgba(255,255,255,0.03)",
+              border: `1px solid ${activeFont === i ? "rgba(149,131,233,0.45)" : "rgba(255,255,255,0.06)"}`,
+              color: activeFont === i ? "#BD95EE" : "rgba(255,255,255,0.55)",
+              fontSize: 12, fontFamily: fo.value,
+              fontWeight: activeFont === i ? 600 : 400,
+              transition: "all 0.18s ease",
+              display: "flex", justifyContent: "space-between", alignItems: "center",
+            }}
+              onMouseEnter={e => { if (activeFont !== i) { e.currentTarget.style.borderColor = "rgba(149,131,233,0.25)"; e.currentTarget.style.color = "rgba(255,255,255,0.85)"; } }}
+              onMouseLeave={e => { if (activeFont !== i) { e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"; e.currentTarget.style.color = "rgba(255,255,255,0.55)"; } }}
+            >
+              <span>{fo.label}</span>
+              {activeFont === i && <span style={{ fontSize: 10 }}>{"✓"}</span>}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ height: 1, background: FC.border, margin: "18px 0 4px" }} />
+        <div style={{ fontSize: 8, color: "rgba(255,255,255,0.2)", fontFamily: FONT, textAlign: "center", paddingBottom: 2 }}>{"Wolf Flow Style Engine © 2026"}</div>
+
       </div>
     </div>
   );
