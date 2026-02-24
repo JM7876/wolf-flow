@@ -204,11 +204,11 @@ export default function StationeryKitPage() {
           <div style={{
             width: 80, height: 80, borderRadius: "50%", marginBottom: 28,
             background: `linear-gradient(135deg, ${WF.accent}, ${WF.accentDark})`,
-            display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36, color: "#fff",
+            display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, color: "#fff",
             boxShadow: `0 0 50px ${WF.accentGlow}`,
-          }}>{"✓"}</div>
-          <h1 style={{ fontSize: 32, fontWeight: 300, margin: "0 0 8px", fontFamily: FONT }}>Stationeries Submitted</h1>
-          <p style={{ fontSize: 14, color: FC.textDim, margin: "0 0 24px", fontFamily: FONT }}>Your order is ready for printing verification</p>
+          }}>{"\u2714"}</div>
+          <h1 style={{ fontSize: 26, fontWeight: 300, margin: "0 0 8px", fontFamily: FONT }}>Stationeries Submitted</h1>
+          <p style={{ fontSize: 13, color: FC.textDim, margin: "0 0 24px", fontFamily: FONT }}>Your order is ready for printing verification</p>
           <GlassCard style={{ padding: "14px 32px", marginBottom: 24 }}>
             <span style={{ fontSize: 11, color: FC.textDim, textTransform: "uppercase", letterSpacing: "0.15em", display: "block", fontFamily: FONT }}>Request</span>
             <span style={{ fontSize: 24, fontWeight: 600, color: WF.accentLight, fontFamily: FONT }}>{ticketNumber}</span>

@@ -431,7 +431,7 @@ export default function VisualDesignPage() {
   );
 
   const Q = ({ children }) => (
-    <h2 style={{ fontSize: "clamp(22px, 3.5vw, 32px)", fontWeight: 300, lineHeight: 1.3, margin: "0 0 6px", letterSpacing: "-0.015em", color: FC.textPrimary, fontFamily: FONT }}>{children}</h2>
+    <h2 style={{ fontSize: "clamp(24px, 4vw, 36px)", fontWeight: 300, lineHeight: 1.25, margin: "0 0 8px", letterSpacing: "-0.015em", color: FC.textPrimary, fontFamily: FONT }}>{children}</h2>
   );
 
   const Hint = ({ children }) => (
@@ -1191,7 +1191,7 @@ export default function VisualDesignPage() {
             {form.priority === "urgent" && (
               <Glass style={{ padding: "14px 18px", maxWidth: 440, borderColor: WF.red + "25", animation: "fadeSlide 0.3s ease" }}>
                 <p style={{ fontSize: 12, color: WF.pink, lineHeight: 1.6, margin: 0, fontFamily: FONT }}>
-                  {"⚡ Urgent requests may require Director approval and are subject to current workload. We'll confirm feasibility within 4 hours."}
+                  {"Urgent requests may require Director approval and are subject to current workload. We\u2019ll confirm feasibility within 4 hours."}
                 </p>
               </Glass>
             )}

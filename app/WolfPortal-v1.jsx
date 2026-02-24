@@ -336,8 +336,8 @@ function ConfirmationPage({ submission, onHome, onTracker }) {
             <SectionLabel>{"What Happens Next"}</SectionLabel>
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
               {[
-                { icon: "🔍", text: "Our team will verify your submission", time: isRush ? "Within 1 hour" : "Within 1 business day" },
-                { icon: "👤", text: "A team member will be assigned to your project", time: "After verification" },
+                { icon: "\u25CE", text: "Our team will verify your submission", time: isRush ? "Within 1 hour" : "Within 1 business day" },
+                { icon: "\u25C7", text: "A team member will be assigned to your project", time: "After verification" },
                 { icon: "\u25A0", text: "You\u2019ll receive updates at your provided email", time: "Ongoing" },
               ].map((step, i) => (
                 <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "8px 10px", borderRadius: 8, background: FC.glass }}>
@@ -459,7 +459,7 @@ function CheckYourStats({ onBack, prefillId }) {
                 onMouseEnter={!searching ? e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; } : undefined}
                 onMouseLeave={!searching ? e => { e.currentTarget.style.borderColor = `${FC.gold}35`; e.currentTarget.style.boxShadow = GLASS.default.boxShadow; } : undefined}
               >
-                {searching ? "..." : "🔍 Track"}
+                {searching ? "..." : "Track"}
               </button>
             </div>
             <div style={{ fontSize: 10, fontFamily: FONT, color: FC.textDim, textAlign: "center", marginTop: 8 }}>
@@ -509,7 +509,7 @@ function CheckYourStats({ onBack, prefillId }) {
                       <div style={{ fontSize: 10, fontFamily: MONO, color: FC.textDim, marginBottom: 4 }}>{inputId}</div>
                       <div style={{ fontSize: 18, fontWeight: 700, fontFamily: FONT, color: FC.textPrimary, lineHeight: 1.3, marginBottom: 4 }}>{result.title}</div>
                       <div style={{ fontSize: 11, fontFamily: FONT, color: FC.textDim }}>
-                        {"🏢 "}{result.dept}{" \u00b7 "}{result.requester}
+                        {result.dept}{" \u00b7 "}{result.requester}
                       </div>
                     </div>
                     <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
@@ -548,7 +548,7 @@ function CheckYourStats({ onBack, prefillId }) {
                     </div>
                     <div>
                       <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
-                        <span style={{ fontSize: 16 }}>{STEP_ICONS[result.step] || "📥"}</span>
+                        <span style={{ fontSize: 16, color: isComplete ? FC.greenLight : WF.accent }}>{STEP_ICONS[result.step] || "\u25CB"}</span>
                         <span style={{ fontSize: 14, fontWeight: 600, fontFamily: FONT, color: isComplete ? FC.greenLight : WF.accent }}>
                           {WORKFLOW_STEPS[result.step] || "REQUEST"}
                         </span>
@@ -568,7 +568,7 @@ function CheckYourStats({ onBack, prefillId }) {
                 {[
               { id: "status", label: "Status", icon: "\u25A1" },
               { id: "activity", label: "Activity", icon: "\u25A3", count: result.activity?.length },
-                  { id: "details", label: "Details", icon: "🔖" },
+                  { id: "details", label: "Details", icon: "\u25C6" },
                 ].map(t => {
                   const isActive = activeTab === t.id;
                   return (
@@ -608,7 +608,7 @@ function CheckYourStats({ onBack, prefillId }) {
                     <SectionLabel>{"Timeline"}</SectionLabel>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
                       {[
-                        { label: "Submitted", value: result.created, icon: "📥" },
+                        { label: "Submitted", value: result.created, icon: "\u25CB" },
               { label: "Last Update", value: result.updated, icon: "\u27F3" },
               { label: "Due Date", value: result.due, icon: isComplete ? "\u2714" : "\u25C7", color: isComplete ? FC.greenLight : FC.textSecondary },
                       ].map((d, i) => (

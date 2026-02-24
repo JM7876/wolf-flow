@@ -44,7 +44,7 @@ export function GlassCard({ children, style: s = {}, hover = false, onClick }) {
         e.currentTarget.style.boxShadow = CLICK.hover.boxShadow;
       } : undefined}
       onMouseLeave={hover ? e => {
-        e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)";
+        e.currentTarget.style.borderColor = "rgba(255,255,255,0.14)";
         e.currentTarget.style.transform = "none";
         e.currentTarget.style.boxShadow = GLASS.default.boxShadow;
       } : undefined}
@@ -380,7 +380,7 @@ export function SettingsDropdown({ nightMode, onToggleNight }) {
         onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; e.currentTarget.style.transform = "scale(1.05)"; }}
         onMouseLeave={e => { if (!open) { e.currentTarget.style.borderColor = FC.border; e.currentTarget.style.boxShadow = "none"; } e.currentTarget.style.transform = "scale(1)"; }}
         title="Settings" aria-label="Open settings"
-      >{"⚙️"}</button>
+      >{"\u2699"}</button>
 
       {/* Dropdown panel */}
       <div style={{

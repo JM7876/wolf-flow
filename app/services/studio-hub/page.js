@@ -66,8 +66,8 @@ function ConfirmPage({ icon, title, subtitle, ticket, rows, note, onAnother, onH
     <PageWrap>
       <div style={{ textAlign: "center", padding: "48px 0 32px" }}>
         <div style={{ fontSize: 28, marginBottom: 20, color: WF.accent }}>{icon}</div>
-        <h1 style={{ fontSize: 28, fontWeight: 700, color: FC.textPrimary, marginBottom: 8, fontFamily: FONT }}>{title}</h1>
-        <p style={{ fontSize: 15, color: FC.textSecondary, lineHeight: 1.7, marginBottom: 28 }}>{subtitle}</p>
+        <h1 style={{ fontSize: 26, fontWeight: 300, color: FC.textPrimary, marginBottom: 8, fontFamily: FONT }}>{title}</h1>
+        <p style={{ fontSize: 14, color: FC.textSecondary, lineHeight: 1.7, marginBottom: 28 }}>{subtitle}</p>
 
         {/* Ticket */}
         <div style={{
@@ -166,7 +166,7 @@ function ArchivesForm({ onHome }) {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginBottom: 8 }}>
           <span style={{ fontSize: 22, color: WF.accent }}>{"\u25A1"}</span>
           <div>
-            <h1 style={{ fontSize: 26, fontWeight: 700, color: FC.textPrimary, fontFamily: FONT }}>Access Digital Archives</h1>
+            <h1 style={{ fontSize: 24, fontWeight: 300, color: FC.textPrimary, fontFamily: FONT }}>Access Digital Archives</h1>
             <p style={{ fontSize: 13, color: FC.textDim }}>Self-service</p>
           </div>
         </div>
@@ -269,7 +269,7 @@ function PhotographyForm({ onHome }) {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginBottom: 8 }}>
           <span style={{ fontSize: 22, color: WF.accent }}>{"\u25CE"}</span>
           <div>
-            <h1 style={{ fontSize: 26, fontWeight: 700, color: FC.textPrimary, fontFamily: FONT }}>{"Photography & Photo Booth Rental"}</h1>
+            <h1 style={{ fontSize: 24, fontWeight: 300, color: FC.textPrimary, fontFamily: FONT }}>{"Photography & Photo Booth Rental"}</h1>
             <p style={{ fontSize: 13, color: FC.textDim }}>Photo Booth Rental, Event, and Stock</p>
           </div>
         </div>
@@ -398,7 +398,7 @@ function HeadshotsForm({ onHome }) {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginBottom: 8 }}>
           <span style={{ fontSize: 22, color: WF.accent }}>{"\u25C9"}</span>
           <div>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: FC.textPrimary, fontFamily: FONT }}>Employee Headshots</h1>
+            <h1 style={{ fontSize: 24, fontWeight: 300, color: FC.textPrimary, fontFamily: FONT }}>Employee Headshots</h1>
             <p style={{ fontSize: 12, color: FC.textDim }}>By appointment</p>
           </div>
         </div>

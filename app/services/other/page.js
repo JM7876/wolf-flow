@@ -43,8 +43,8 @@ export default function OtherPage() {
         <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "20px 24px 20px", zIndex: 1 }}>
           <div style={{ textAlign: "center", maxWidth: 480, width: "100%", paddingTop: 24 }}>
             <div style={{ fontSize: 28, marginBottom: 24, color: WF.accent }}>{"\u2726"}</div>
-            <h2 style={{ fontSize: 28, fontWeight: 300, color: FC.textPrimary, fontFamily: FONT, marginBottom: 8 }}>{"Request Submitted"}</h2>
-            <p style={{ fontSize: 15, color: FC.textSecondary, marginBottom: 28, lineHeight: 1.7 }}>{"We've received your request and will follow up shortly."}</p>
+            <h2 style={{ fontSize: 26, fontWeight: 300, color: FC.textPrimary, fontFamily: FONT, marginBottom: 8 }}>{"Request Submitted"}</h2>
+            <p style={{ fontSize: 13, color: FC.textSecondary, marginBottom: 28, lineHeight: 1.7 }}>{"We\u2019ve received your request and will follow up shortly."}</p>
             <GlassCard style={{ textAlign: "left", maxWidth: 340, margin: "0 auto 24px", padding: "20px 18px" }}>
               {[
                 ["Ticket", ticketNumber, true],
