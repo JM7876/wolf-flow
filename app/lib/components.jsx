@@ -248,13 +248,17 @@ export function PageNav({ onBack, onHome, onNext, backLabel = "Back", nextLabel 
 
 /* ═══ NIGHT MODE HOOK — persists across page navigations via localStorage ═══ */
 const NIGHT_KEY = "wf-night-mode";
+
+/* Read synchronously so the very first render already knows the mode.
+   This eliminates the day→night flash that happened when useState(false)
+   was corrected a frame later by a useEffect. */
+function readNightPref() {
+  if (typeof window === "undefined") return false;
+  try { return localStorage.getItem(NIGHT_KEY) === "true"; } catch { return false; }
+}
+
 export function useNightMode() {
-  const [nightMode, setNightMode] = useState(false);
-  const [ready, setReady] = useState(false);
-  useEffect(() => {
-    try { setNightMode(localStorage.getItem(NIGHT_KEY) === "true"); } catch {}
-    setReady(true);
-  }, []);
+  const [nightMode, setNightMode] = useState(readNightPref);
   const toggle = () => {
     setNightMode(prev => {
       const next = !prev;
@@ -262,7 +266,7 @@ export function useNightMode() {
       return next;
     });
   };
-  return { nightMode, toggleNight: toggle, ready };
+  return { nightMode, toggleNight: toggle };
 }
 
 /* ═══ GLASS PRESETS & SLIDERS — used by SettingsDropdown ═══ */
@@ -331,11 +335,16 @@ export function SettingsDropdown({ nightMode, onToggleNight }) {
   const [activePreset, setActivePreset] = useState(null);
   const [activeAccent, setActiveAccent] = useState(0);
   const [activeFont, setActiveFont] = useState(0);
-  const ref = useRef(null);
+  const panelRef = useRef(null);
+  const gearRef = useRef(null);
 
   useEffect(() => {
     if (!open) return;
-    const close = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const close = (e) => {
+      if (panelRef.current && panelRef.current.contains(e.target)) return;
+      if (gearRef.current && gearRef.current.contains(e.target)) return;
+      setOpen(false);
+    };
     document.addEventListener("mousedown", close);
     return () => document.removeEventListener("mousedown", close);
   }, [open]);
@@ -367,9 +376,9 @@ export function SettingsDropdown({ nightMode, onToggleNight }) {
   };
 
   return (
-    <div ref={ref} style={{ position: "relative", zIndex: 300 }}>
+    <div style={{ position: "relative", zIndex: 300 }}>
       {/* Gear button */}
-      <button onClick={() => setOpen(o => !o)} style={{
+      <button ref={gearRef} onClick={() => setOpen(o => !o)} style={{
         position: "fixed", top: 18, right: 18, zIndex: 300,
         background: open ? "rgba(149,131,233,0.15)" : FC.glass,
         border: `1px solid ${open ? "rgba(149,131,233,0.4)" : FC.border}`, borderRadius: 12,
@@ -383,7 +392,7 @@ export function SettingsDropdown({ nightMode, onToggleNight }) {
       >{"⚙️"}</button>
 
       {/* Dropdown panel */}
-      <div style={{
+      <div ref={panelRef} style={{
         position: "fixed", top: 58, right: 16, zIndex: 300, width: 290, borderRadius: 20,
         padding: open ? 20 : 0, maxHeight: open ? "min(520px, calc(100vh - 80px))" : 0, overflowY: open ? "auto" : "hidden", overflowX: "hidden",
         background: "rgba(34,28,53,0.92)",
