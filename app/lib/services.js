@@ -61,6 +61,14 @@ export const SERVICES = [
     status: "live",
     formType: "custom",
   },
+     {
+    id: "press-box",
+    name: "The Press Box",
+    icon: "\u25A0",
+    description: "Articles, newsletters, celebratory posts, and internal feedback",
+    status: "live",
+    formType: "custom",
+  },
   {
     id: "other",
     name: "Other",
