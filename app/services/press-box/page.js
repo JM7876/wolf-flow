@@ -9,7 +9,7 @@
    Created and Authored by Johnathon Moulds © 2026
    ═══════════════════════════════════════════════════════════ */
 'use client';
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { WF, FC, FONT, MONO, CLICK, GLASS, glassPill, inputBase, DEPARTMENTS, WORKFLOW_STEPS, STEP_DESC } from '../../lib/tokens';
 import { GlassCard, SectionLabel, FormField, PageNav, PortalBackground, Footer, useNightMode, SettingsDropdown } from '../../lib/components';
@@ -77,6 +77,26 @@ export default function PressBox() {
   const [submitted, setSubmitted] = useState(null);
   const fileRef = useRef(null);
 
+     /* Auth: fetch logged-in user profile */
+  const [userId, setUserId] = useState(null);
+  const [profileLoaded, setProfileLoaded] = useState(false);
+  useEffect(() => {
+    async function loadProfile() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserId(user.id);
+        const { data: profile } = await supabase.from('profiles').select('full_name, email, department').eq('id', user.id).single();
+        if (profile) {
+          setRequesterName(profile.full_name || '');
+          setRequesterEmail(profile.email || '');
+          if (profile.department) setDepartment(profile.department);
+        }
+      }
+      setProfileLoaded(true);
+    }
+    loadProfile();
+  }, []);
+
   /* Form State */
   const [requestType, setRequestType] = useState('');
   const [department, setDepartment] = useState('');
@@ -129,10 +149,10 @@ export default function PressBox() {
       if (!error) uploaded.push({ name: file.name, path, size: file.size });
     }
     if (uploaded.length) md.attachments = uploaded;
-    const { data, error } = await supabase.from('requests').insert({ service_type: `press-box-${requestType}`, title, description, department, requester_name: requesterName, requester_email: requesterEmail, priority, due_date: dueDate || null, metadata: md, status: 'new', workflow_stage: 1 }).select().single();
+    const { data, error } = await supabase.from('requests').insert({ service_type: `press-box-${requestType}` user_id: userId,, title, description, department, requester_name: requesterName, requester_email: requesterEmail, priority, due_date: dueDate || null, metadata: md, status: 'new', workflow_stage: 1 }).select().single();
     setSubmitting(false);
     if (!error && data) { setSubmitted(data); } else { setSubmitted({ id: `WF-${Date.now()}`, ticket_id: `WF-PB-${Date.now()}`, title, service_type: `press-box-${requestType}`, department, requester_name: requesterName, requester_email: requesterEmail, priority, created_at: new Date().toISOString(), workflow_stage: 1, metadata: md }); }
-  }, [requestType, title, description, department, requesterName, requesterEmail, priority, dueDate, targetAudience, wordCount, mediaType, specialNotes, articleType, honoree, milestone, celebDate, responseContext, urgency, files]);
+  }, [userId, requestType, title, description, department, requesterName, requesterEmail, priority, dueDate, targetAudience, wordCount, mediaType, specialNotes, articleType, honoree, milestone, celebDate, responseContext, urgency, files]);
 
   /* === STEP 0: TYPE === */
   function renderTypeStep() {
