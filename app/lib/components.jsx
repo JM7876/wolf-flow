@@ -689,4 +689,156 @@ export function Footer() {
   );
 }
 
+/* ═══ METRIC WIDGET — Command Center dashboard metric ═══ */
+export function MetricWidget({ label, value, color }) {
+  return (
+    <div style={{
+      flex: 1,
+      minWidth: 120,
+      background: GLASS.default.background,
+      backdropFilter: `blur(var(--glass-blur,18px)) saturate(var(--glass-saturation,1.1))`,
+      WebkitBackdropFilter: `blur(var(--glass-blur,18px)) saturate(var(--glass-saturation,1.1))`,
+      border: `1px solid ${FC.border}`,
+      borderRadius: 16,
+      padding: '14px 16px',
+      boxShadow: GLASS.default.boxShadow,
+    }}>
+      <div style={{ fontSize: 9, fontWeight: 600, fontFamily: FONT, color: FC.textDim, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 6 }}>{label}</div>
+      <div style={{ fontSize: 22, fontWeight: 700, fontFamily: FONT, color: color || FC.textPrimary, lineHeight: 1 }}>{value}</div>
+    </div>
+  );
+}
+
+/* ═══ SMART CARD — Command Center request card ═══ */
+export function SmartCard({ request: r, onClick }) {
+  const WORKFLOW_STEPS_LOCAL = WORKFLOW_STEPS || ['NEW','REVIEW','PROGRESS','COMPLETE'];
+  const pc = r.priority_color || WF.accent;
+  const sc = {
+    text: r.status === 'Completed' ? FC.green : r.status === 'Rush' ? FC.redLight : FC.textSecondary,
+    bg: r.status === 'Completed' ? 'rgba(64,145,108,0.1)' : r.status === 'Rush' ? 'rgba(230,57,70,0.1)' : 'rgba(255,255,255,0.04)',
+    border: r.status === 'Completed' ? 'rgba(64,145,108,0.3)' : r.status === 'Rush' ? 'rgba(230,57,70,0.3)' : FC.border,
+  };
+  const stage = typeof r.stage === 'number' ? r.stage : 0;
+  const ts = r.created_at ? new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
+  const [h, setH] = useState(false);
+  return (
+    <div
+      onClick={() => onClick && onClick(r)}
+      onMouseEnter={() => setH(true)}
+      onMouseLeave={() => setH(false)}
+      style={{
+        ...GLASS.default,
+        padding: '18px 20px',
+        cursor: 'pointer',
+        borderColor: h ? `${WF.accent}55` : GLASS.default.border ? undefined : 'rgba(255,255,255,0.14)',
+        transform: h ? 'translateY(-2px)' : 'none',
+        boxShadow: h ? CLICK.hover.boxShadow : GLASS.default.boxShadow,
+        transition: `all ${CLICK.duration}`,
+        marginBottom: 12,
+      }}
+    >
+      {/* Top row: title + priority badge */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
+        <div style={{ fontSize: 14, fontWeight: 600, fontFamily: FONT, color: FC.textPrimary, flex: 1, marginRight: 12, lineHeight: 1.3 }}>{r.title || 'Untitled Request'}</div>
+        <span style={{ fontSize: 9, fontWeight: 600, fontFamily: FONT, color: pc, padding: '3px 10px', borderRadius: 20, background: `${pc}15`, border: `1px solid ${pc}30`, letterSpacing: '0.06em' }}>{r.priority || 'Normal'}</span>
+      </div>
+      {/* Service type + department */}
+      <div style={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
+        <span style={{ fontSize: 10, fontFamily: FONT, color: WF.accentLight, background: `${WF.accent}18`, padding: '2px 8px', borderRadius: 8, fontWeight: 500 }}>{r.service_type || 'General'}</span>
+        <span style={{ fontSize: 10, fontFamily: FONT, color: FC.textDim }}>{r.department}</span>
+      </div>
+      {/* Workflow mini track */}
+      <div style={{ marginBottom: 10 }}>
+        <MiniTrack step={stage} />
+        <div style={{ fontSize: 9, fontFamily: FONT, color: FC.textDim, marginTop: 4 }}>{WORKFLOW_STEPS_LOCAL[stage] || 'REQUEST'}: {STEP_DESC[stage - 1] || ''}</div>
+      </div>
+      {/* Bottom row: assignee + date + status */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ width: 26, height: 26, borderRadius: '50%', background: `linear-gradient(135deg, ${WF.accent}40, ${WF.pink}40)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ fontSize: 10, fontFamily: FONT, color: FC.textSecondary }}>{r.assignee_name ? r.assignee_name.charAt(0).toUpperCase() : '?'}</span>
+          </div>
+          <span style={{ fontSize: 10, fontFamily: FONT, color: FC.textSecondary }}>{r.assignee_name || 'Unassigned'}</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: 10, fontFamily: FONT, color: FC.textDim }}>{ts}</span>
+          <span style={{ fontSize: 9, fontWeight: 600, fontFamily: FONT, color: sc.text, padding: '2px 8px', borderRadius: 12, background: sc.bg, border: `1px solid ${sc.border}`, letterSpacing: '0.04em' }}>{r.status || 'New'}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══ DETAIL PANEL — Command Center slide-out request detail ═══ */
+export function DetailPanel({ request, onClose, onUpdate }) {
+  const [stage, setStage] = useState(request?.stage || 0);
+  const [assignee, setAssignee] = useState(request?.assignee_name || '');
+  const [status, setStatus] = useState(request?.status || 'New');
+  const [saving, setSaving] = useState(false);
+  const FILTER_OPTIONS = ['All','New','In Progress','Completed','Rush'];
+
+  const rows = [];
+  if (request?.service_type) rows.push(['Service', request.service_type]);
+  if (request?.department) rows.push(['Department', request.department]);
+  if (request?.priority) rows.push(['Priority', request.priority]);
+  if (request?.media_type) rows.push(['Media', request.media_type]);
+  if (request?.headline) rows.push(['Headline', request.headline]);
+  if (request?.run_date) rows.push(['Run Date', request.run_date]);
+  if (request?.run_time) rows.push(['Run Time', request.run_time]);
+  if (request?.responseContext) rows.push(['Context', request.responseContext]);
+  if (request?.specialNotes) rows.push(['Notes', request.specialNotes]);
+  if (request?.attachments?.length) rows.push(['Files', request.attachments.map(a => a.name).join(', ')]);
+  if (request?.description) rows.push(['Description', request.description]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      );
+      await supabase.from('requests').update({ stage, assignee_name: assignee, status }).eq('id', request.id);
+      if (onUpdate) onUpdate();
+    } catch (e) { console.error(e); }
+    setSaving(false);
+  };
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 200, display: 'flex', justifyContent: 'flex-end' }}>
+      <div onClick={onClose} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }} />
+      <div style={{ position: 'relative', width: '100%', maxWidth: 480, height: '100%', overflowY: 'auto', background: 'rgba(34,28,53,0.95)', backdropFilter: 'blur(32px)', borderLeft: '1px solid rgba(149,131,233,0.15)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+          <div style={{ fontSize: 16, fontWeight: 700, color: FC.textPrimary }}>Request Details</div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: FC.textDim, cursor: 'pointer', fontSize: 18, fontFamily: FONT }}>X</button>
+        </div>
+        <MiniTrack step={stage} showLabels />
+        <div style={{ marginTop: 20 }}>
+          {rows.map(([k, v], i) => (
+            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: `1px solid ${FC.border}` }}>
+              <span style={{ fontSize: 11, fontFamily: FONT, color: FC.textDim, fontWeight: 500 }}>{k}</span>
+              <span style={{ fontSize: 11, fontFamily: FONT, color: FC.textPrimary, textAlign: 'right', maxWidth: '60%', wordBreak: 'break-word' }}>{v}</span>
+            </div>
+          ))}
+        </div>
+        {/* Editable fields */}
+        <div style={{ marginTop: 24 }}>
+          <div style={{ fontSize: 10, fontWeight: 600, fontFamily: FONT, color: FC.textDim, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 10 }}>Manage</div>
+          <label style={{ fontSize: 11, fontFamily: FONT, color: FC.textSecondary, display: 'block', marginBottom: 4 }}>Workflow Stage</label>
+          <select value={stage} onChange={e => setStage(Number(e.target.value))} style={{ width: '100%', padding: '8px 12px', borderRadius: 10, background: FC.glass, border: `1px solid ${FC.border}`, color: FC.textPrimary, fontFamily: FONT, fontSize: 11 }}>
+            {WORKFLOW_STEPS.map((s, i) => <option key={i} value={i + 1} style={{ background: FC.dark }}>{i + 1}. {s}</option>)}
+          </select>
+          <label style={{ fontSize: 11, fontFamily: FONT, color: FC.textSecondary, display: 'block', marginBottom: 4 }}>Assignee</label>
+          <input value={assignee} onChange={e => setAssignee(e.target.value)} placeholder="Assign team member" style={{ width: '100%', padding: '8px 12px', borderRadius: 10, background: FC.glass, border: `1px solid ${FC.border}`, color: FC.textPrimary, fontFamily: FONT, fontSize: 11 }} />
+          <label style={{ fontSize: 11, fontFamily: FONT, color: FC.textSecondary, display: 'block', marginBottom: 4 }}>Status</label>
+          <select value={status} onChange={e => setStatus(e.target.value)} style={{ width: '100%', padding: '8px 12px', borderRadius: 10, background: FC.glass, border: `1px solid ${FC.border}`, color: FC.textPrimary, fontFamily: FONT, fontSize: 11 }}>
+            {FILTER_OPTIONS.filter(f => f !== 'All').map(s => <option key={s} value={s} style={{ background: FC.dark }}>{s}</option>)}
+          </select>
+          <button onClick={handleSave} disabled={saving} style={{ ...glassPill, width: '100%', textAlign: 'center', padding: '12px 20px', background: `linear-gradient(135deg, ${WF.accent}55, ${WF.accent}38)`, border: `1px solid ${WF.accent}50`, color: '#fff', fontWeight: 600, fontFamily: FONT, fontSize: 12, cursor: saving ? 'wait' : 'pointer', marginTop: 12 }}>{saving ? 'Saving...' : 'Save Changes'}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Created and Authored by Johnathon Moulds © 2026 — Wolf Flow Solutions | All Rights Reserved
