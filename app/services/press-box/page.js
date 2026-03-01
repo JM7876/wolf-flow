@@ -149,7 +149,7 @@ export default function PressBox() {
       if (!error) uploaded.push({ name: file.name, path, size: file.size });
     }
     if (uploaded.length) md.attachments = uploaded;
-    const { data, error } = await supabase.from('requests').insert({ service_type: `press-box-${requestType}` user_id: userId,, title, description, department, requester_name: requesterName, requester_email: requesterEmail, priority, due_date: dueDate || null, metadata: md, status: 'new', workflow_stage: 1 }).select().single();
+    const { data, error } = await supabase.from('requests').insert({ service_type: `press-box-${requestType}`, user_id: userId, title, description, department, requester_name: requesterName, requester_email: requesterEmail, priority, due_date: dueDate || null, metadata: md, status: 'new', workflow_stage: 1 }).select().single();
     setSubmitting(false);
     if (!error && data) { setSubmitted(data); } else { setSubmitted({ id: `WF-${Date.now()}`, ticket_id: `WF-PB-${Date.now()}`, title, service_type: `press-box-${requestType}`, department, requester_name: requesterName, requester_email: requesterEmail, priority, created_at: new Date().toISOString(), workflow_stage: 1, metadata: md }); }
   }, [userId, requestType, title, description, department, requesterName, requesterEmail, priority, dueDate, targetAudience, wordCount, mediaType, specialNotes, articleType, honoree, milestone, celebDate, responseContext, urgency, files]);
