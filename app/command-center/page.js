@@ -237,6 +237,7 @@ export default function CommandCenter() {
   /* Auth denied screen */
   if (authState === 'denied') {
     return (
+            <>
       <PortalBackground nightMode={nightMode} />
       <div style={{ position: 'relative', zIndex: 1, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: FONT }}>
         <GlassCard style={{ padding: '40px', textAlign: 'center', maxWidth: 400 }}>
@@ -245,17 +246,20 @@ export default function CommandCenter() {
           <button onClick={() => router.push('/')} style={{ ...glassPill, padding: '12px 28px', border: `1px solid ${WF.accent}40`, color: WF.accentLight, fontSize: 12 }}>Back to Portal</button>
         </GlassCard>
       </div>
-    );
+      </>    
+);
   }
 
   /* Loading screen */
   if (authState === 'loading') {
     return (
+            <>
       <PortalBackground nightMode={nightMode} />
       <div style={{ position: 'relative', zIndex: 1, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: FONT }}>
         <div style={{ fontSize: 14, color: FC.textDim }}>Authenticating...</div>
       </div>
-    );
+      </>    
+);
   }
 
   return (
