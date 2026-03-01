@@ -297,7 +297,7 @@ export default function CommandCenter() {
             <div style={{ fontSize: 11, color: FC.textDim }}>{filter !== 'All' ? `No ${filter} requests` : search ? 'Try a different search term' : 'Requests submitted through the portal will appear here'}</div>
           </GlassCard>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340, 1fr))', gap: 0 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,  1fr))', gap: 0 }}>
             {filtered.map(r => <SmartCard key={r.id} request={r} onClick={setSelected} />)}
           </div>
         )}
