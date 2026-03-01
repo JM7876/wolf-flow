@@ -8,9 +8,9 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { WF, FC, FONT, MONO, CLICK, GLASS, glassPill, WORKFLOW_STEPS, STEP_DESC, DEPARTMENTS } from '../../lib/tokens';
-import { GlassCard, MiniTrack, PortalBackground, Footer, useNightMode, SettingsDropdown } from '../../lib/components';
-import { supabase } from '../../lib/supabase';
+import { WF, FC, FONT, MONO, CLICK, GLASS, glassPill, WORKFLOW_STEPS, STEP_DESC, DEPARTMENTS } from '../lib/tokens';
+import { GlassCard, MiniTrack, PortalBackground, Footer, useNightMode, SettingsDropdown } from '../lib/components';
+import { supabase } from '../lib/supabase';
 
 /* === STATUS + PRIORITY COLORS === */
 const STATUS_COLORS = {
