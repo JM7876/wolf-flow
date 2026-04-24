@@ -11,6 +11,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { WF, FC, FONT, CLICK, inputBase } from "../../lib/tokens";
 import { PortalBackground, Footer, PageNav, useNightMode, SettingsDropdown } from "../../lib/components";
+import { supabase } from "../../lib/supabase";
 
 // ═══════════════════════════════════════════════════════════
 //  VISUAL DESIGNS FORM — DATA
@@ -280,8 +281,34 @@ export default function VisualDesignPage() {
   const [ticket, setTicket] = useState("");
   const [previewGradient, setPreviewGradient] = useState(null);
   const [isNavigatingAway, setIsNavigatingAway] = useState(false);
+  const [userId, setUserId] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
   const inputRef = useRef(null);
   const totalSteps = 9;
+
+  /* Auth: load logged-in user profile — mirrors Press Box */
+  useEffect(() => {
+    async function loadProfile() {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        setUserId(user.id);
+        const { data: profile } = await supabase.from("profiles").select("full_name, email, department").eq("id", user.id).single();
+        if (profile) {
+          setForm(f => ({
+            ...f,
+            contactName: f.contactName || profile.full_name || "",
+            contactEmail: f.contactEmail || profile.email || "",
+            gsrName: f.gsrName || profile.full_name || "",
+            gsrEmail: f.gsrEmail || profile.email || "",
+            gsrDepartment: f.gsrDepartment || profile.department || "",
+          }));
+        }
+      } catch (_e) { /* no-op — user may not be signed in */ }
+    }
+    loadProfile();
+  }, []);
 
   useEffect(() => {
     const h = (e) => setMousePos({ x: (e.clientX / window.innerWidth) * 100, y: (e.clientY / window.innerHeight) * 100 });
@@ -295,13 +322,141 @@ export default function VisualDesignPage() {
 
   const set = (key, val) => setForm(f => ({ ...f, [key]: val }));
 
+  /* Build the row we insert into public.requests. Full wizard state lives in metadata. */
+  const buildRequestRow = () => {
+    const selectedStyle = STYLES.find(s => s.id === form.styleDir);
+    const selectedModifier = PALETTE_MODIFIERS.find(m => m.id === form.paletteModifier);
+    const activePalette = getActivePalette();
+    const isGSR = form.pieceType === "special-request";
+
+    const pieceTypeLabel = PIECE_TYPES.find(p => p.id === form.pieceType)?.label || form.pieceType;
+    const formatLabel = FORMAT_OPTIONS.find(f => f.id === form.format)?.label || form.format;
+    const purposeLabel = PURPOSES.find(p => p.id === form.purpose)?.label || form.purpose;
+    const priorityLabel = VD_PRIORITIES.find(p => p.id === form.priority)?.label || form.priority;
+
+    let sizeLabel = null;
+    if (form.pieceType === "printed-media") {
+      if (form.multiPage) {
+        const mpLabel = [{id:"booklet",l:"Booklet"},{id:"pamphlet",l:"Pamphlet"},{id:"book",l:"Book"},{id:"program",l:"Program"},{id:"newsletter",l:"Newsletter"},{id:"catalog",l:"Catalog"},{id:"other-mp",l:"Other"}].find(t=>t.id===form.multiPageType)?.l || "Multi-Page";
+        sizeLabel = `Multi-Page (${mpLabel}${form.pageCount ? `, ${form.pageCount} pages` : ""})`;
+      } else if (form.specialRequest) {
+        sizeLabel = `Special Request — ${form.specialRequestNote || "follow-up needed"}`;
+      } else if (form.size === "custom") {
+        sizeLabel = form.customSize || "Custom";
+      } else {
+        sizeLabel = PRINTED_MEDIA_SIZES.flatMap(c => c.sizes).find(s => s.id === form.size)?.label || form.size;
+      }
+    } else if (form.size === "custom") {
+      sizeLabel = form.customSize || "Custom";
+    } else {
+      sizeLabel = getSizes().find(s => s.id === form.size)?.label || form.size;
+    }
+
+    const title = isGSR
+      ? (form.gsrDescription.trim().slice(0, 80) || "General Special Request")
+      : `${pieceTypeLabel}${sizeLabel ? ` — ${sizeLabel}` : ""}`;
+
+    const description = isGSR
+      ? form.gsrDescription
+      : [
+          form.headline && `Headline: ${form.headline}`,
+          form.bodyText && `Body: ${form.bodyText}`,
+          form.notes && `Notes: ${form.notes}`,
+        ].filter(Boolean).join("\n\n");
+
+    const metadata = {
+      wizardVersion: "visual-design-v1",
+      pieceType: form.pieceType,
+      pieceTypeLabel,
+      format: form.format,
+      formatLabel,
+      size: form.size,
+      sizeLabel,
+      customSize: form.customSize || null,
+      multiPage: form.multiPage,
+      pageCount: form.pageCount || null,
+      multiPageType: form.multiPageType || null,
+      specialRequest: form.specialRequest,
+      specialRequestNote: form.specialRequestNote || null,
+      purpose: form.purpose,
+      purposeLabel,
+      styleDir: form.styleDir,
+      styleLabel: selectedStyle?.label || null,
+      fontLabel: selectedStyle?.fontLabel || null,
+      designerChoice: form.designerChoice,
+      paletteModifier: form.paletteModifier,
+      paletteModifierLabel: selectedModifier?.label || null,
+      customPalette: form.customPalette || null,
+      paletteColors: activePalette || null,
+      headline: form.headline || null,
+      bodyText: form.bodyText || null,
+      needVerbiage: form.needVerbiage,
+      verbiageKeywords: form.verbiageKeywords || [],
+      event: {
+        date: form.eventDate || null,
+        time: form.eventTime || null,
+        location: form.eventLocation || null,
+      },
+      contact: {
+        title: form.contactTitle || null,
+        name: form.contactName || null,
+        phone: form.contactPhone || null,
+        email: form.contactEmail || null,
+      },
+      inspiration: form.inspiration || null,
+      notes: form.notes || null,
+      priorityLabel,
+      deadline: form.deadline || null,
+      needPrinting: form.needPrinting,
+      gsr: isGSR ? {
+        description: form.gsrDescription,
+        name: form.gsrName,
+        department: form.gsrDepartment || null,
+        email: form.gsrEmail,
+        deadline: form.gsrDeadline || null,
+      } : null,
+    };
+
+    return {
+      service_type: isGSR ? "visual-design-special-request" : `visual-design-${form.pieceType || "general"}`,
+      user_id: userId,
+      title,
+      description: description || null,
+      department: isGSR ? (form.gsrDepartment || null) : null,
+      requester_name: isGSR ? form.gsrName : (form.contactName || null),
+      requester_email: isGSR ? form.gsrEmail : (form.contactEmail || null),
+      priority: priorityLabel || "Standard",
+      due_date: (isGSR ? form.gsrDeadline : form.deadline) || null,
+      metadata,
+      status: "new",
+      workflow_stage: 1,
+    };
+  };
+
+  const handleSubmit = async () => {
+    if (submitting) return;
+    setSubmitting(true);
+    setSubmitError(null);
+    const row = buildRequestRow();
+    const { data, error } = await supabase.from("requests").insert(row).select().single();
+    setSubmitting(false);
+    if (error || !data) {
+      console.error("[visual-design] submit failed, falling back to local ticket:", error);
+      setSubmitError(error?.message || "Submission failed — please try again.");
+      setTicket(`WF-${Math.floor(Math.random() * 9000) + 1000}`);
+      setSubmitted(true);
+      return;
+    }
+    setTicket(data.ticket_id || data.id || `WF-${Math.floor(Math.random() * 9000) + 1000}`);
+    setSubmitted(true);
+  };
+
   const goNext = () => {
     if (anim) return;
     setAnim(true);
     setTimeout(() => {
-      if (step < totalSteps - 1) setStep(s => s + 1);
-      else { setTicket(`WF-${Math.floor(Math.random() * 9000) + 1000}`); setSubmitted(true); }
-      setAnim(false);
+      if (step < totalSteps - 1) { setStep(s => s + 1); setAnim(false); }
+      else { setAnim(false); handleSubmit(); }
     }, 280);
   };
 
@@ -459,7 +614,13 @@ export default function VisualDesignPage() {
         <SettingsDropdown nightMode={nightMode} onToggleNight={toggleNight} />
         <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px 100px", textAlign: "center", zIndex: 5, position: "relative" }}>
           <div style={{ width: 76, height: 76, borderRadius: "50%", background: `linear-gradient(135deg, ${WF.accent}, ${WF.accentDark})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 34, color: "#fff", marginBottom: 24, boxShadow: `0 0 50px ${WF.accentGlow}` }}>{"✓"}</div>
-          <h1 style={{ fontSize: 30, fontWeight: 300, margin: "0 0 16px", fontFamily: FONT }}>{"Request submitted!"}</h1>
+          <h1 style={{ fontSize: 30, fontWeight: 300, margin: "0 0 16px", fontFamily: FONT }}>{submitError ? "Request saved locally" : "Request submitted!"}</h1>
+          {submitError && (
+            <Glass style={{ padding: "10px 18px", marginBottom: 14, maxWidth: 440, border: `1px solid ${WF.red}40`, background: `${WF.red}10` }}>
+              <span style={{ fontSize: 11, color: WF.red, display: "block", fontFamily: FONT, fontWeight: 600, marginBottom: 2 }}>{"Could not reach the server"}</span>
+              <span style={{ fontSize: 11, color: FC.textDim, fontFamily: FONT }}>{"Your ticket was kept on this device. Please let the Communications team know so they can capture your request manually."}</span>
+            </Glass>
+          )}
           <Glass style={{ padding: "12px 28px", marginBottom: 20 }}>
             <span style={{ fontSize: 10, color: FC.textDim, textTransform: "uppercase", letterSpacing: "0.15em", display: "block" }}>{form.pieceType === "special-request" ? "Special Request" : "Visual Design Request"}</span>
             <span style={{ fontSize: 22, fontWeight: 600, color: WF.accentLight, fontFamily: "monospace" }}>{ticket}</span>
@@ -484,9 +645,8 @@ export default function VisualDesignPage() {
                   <p style={{ fontSize: 12, color: FC.textSecondary, lineHeight: 1.6, margin: "6px 0 0" }}>{form.gsrDescription}</p>
                 </div>
               </>
-            ) : (
-              <>
-                {[
+            ) : (() => {
+                const rows = [
                   ["Type", PIECE_TYPES.find(p => p.id === form.pieceType)?.label],
                   ["Format", FORMAT_OPTIONS.find(f => f.id === form.format)?.label],
                   ["Size", form.pieceType === "printed-media" ? (
@@ -499,22 +659,25 @@ export default function VisualDesignPage() {
                   ["Style", form.designerChoice ? "Designer's Choice" : selectedStyle?.label],
                   ["Fonts", form.designerChoice ? "Designer's discretion" : selectedStyle?.fontLabel],
                   ["Colors", form.designerChoice ? "Designer's discretion" : PALETTE_MODIFIERS.find(m => m.id === form.paletteModifier)?.label],
-                  ["Priority", VD_PRIORITIES.find(p => p.id === form.priority)?.label],
-                ].map(([k, v], i) => (
-                  <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0", borderBottom: i < 7 ? "1px solid rgba(255,255,255,0.04)" : "none" }}>
-                    <span style={{ fontSize: 12, color: FC.textDim }}>{k}</span>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                ];
+                if (form.needVerbiage && form.verbiageKeywords.length > 0) {
+                  rows.push(["Keywords", form.verbiageKeywords.join(", ")]);
+                }
+                rows.push(["Priority", VD_PRIORITIES.find(p => p.id === form.priority)?.label]);
+                return rows.map(([k, v], i) => (
+                  <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "8px 0", borderBottom: i < rows.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none", gap: 12 }}>
+                    <span style={{ fontSize: 12, color: FC.textDim, flexShrink: 0 }}>{k}</span>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, maxWidth: "70%", justifyContent: "flex-end", flexWrap: "wrap" }}>
                       {k === "Colors" && activePalette && (
                         <div style={{ display: "flex", gap: 0, borderRadius: 4, overflow: "hidden" }}>
                           {activePalette.slice(0, 5).map((c, j) => <div key={j} style={{ width: 12, height: 10, background: c }} />)}
                         </div>
                       )}
-                      <span style={{ fontSize: 13, fontWeight: 600, color: k === "Priority" ? VD_PRIORITIES.find(p => p.id === form.priority)?.color : FC.textSecondary }}>{v}</span>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: k === "Priority" ? VD_PRIORITIES.find(p => p.id === form.priority)?.color : FC.textSecondary, textAlign: "right", wordBreak: "break-word" }}>{v}</span>
                     </div>
                   </div>
-                ))}
-              </>
-            )}
+                ));
+              })()}
           </Glass>
           <p style={{ fontSize: 13, color: FC.textDim, marginTop: 20, lineHeight: 1.6, maxWidth: 360, fontFamily: FONT }}>
             {"The Communications team will review your request and follow up within 24 hours."}
@@ -725,9 +888,9 @@ export default function VisualDesignPage() {
                   <input type="date" value={form.gsrDeadline} onChange={e => set("gsrDeadline", e.target.value)} style={{ ...localInput, colorScheme: "dark", fontSize: 16 }} />
                 </div>
                 {form.gsrDescription.trim() && form.gsrName.trim() && form.gsrEmail.trim() && form.gsrDeadline && (
-                  <button type="button" onClick={() => { setAnim(true); setTimeout(() => { setTicket(`WF-${Math.floor(Math.random() * 9000) + 1000}`); setSubmitted(true); setAnim(false); }, 280); }}
-                    style={{ width: "100%", padding: "16px 24px", borderRadius: 14, cursor: "pointer", background: `linear-gradient(135deg, ${WF.accent}, ${WF.accentLight})`, border: "none", fontFamily: FONT, fontSize: 15, fontWeight: 700, color: FC.dark, letterSpacing: "0.03em", boxShadow: `0 4px 20px ${WF.accentGlow}`, animation: "fadeSlide 0.3s ease" }}>
-                    {"Submit Special Request \u2B50"}
+                  <button type="button" disabled={submitting} onClick={() => { setAnim(true); setTimeout(() => { setAnim(false); handleSubmit(); }, 280); }}
+                    style={{ width: "100%", padding: "16px 24px", borderRadius: 14, cursor: submitting ? "wait" : "pointer", background: `linear-gradient(135deg, ${WF.accent}, ${WF.accentLight})`, border: "none", fontFamily: FONT, fontSize: 15, fontWeight: 700, color: FC.dark, letterSpacing: "0.03em", boxShadow: `0 4px 20px ${WF.accentGlow}`, animation: "fadeSlide 0.3s ease", opacity: submitting ? 0.7 : 1 }}>
+                    {submitting ? "Submitting\u2026" : "Submit Special Request \u2B50"}
                   </button>
                 )}
               </div>
@@ -1296,6 +1459,14 @@ export default function VisualDesignPage() {
                     {form.needVerbiage ? `Verbiage requested (${form.verbiageKeywords.length} keywords)` : ""}
                   </div>
                 )}
+                {form.needVerbiage && form.verbiageKeywords.length > 0 && (
+                  <div style={{ fontSize: 12, color: FC.textSecondary, marginBottom: 4, fontFamily: FONT, display: "flex", gap: 6, flexWrap: "wrap", alignItems: "baseline" }}>
+                    <span style={{ color: FC.textDim }}>{"Keywords:"}</span>
+                    {form.verbiageKeywords.map(kw => (
+                      <span key={kw} style={{ fontSize: 11, padding: "2px 8px", borderRadius: 10, background: `${WF.accent}14`, border: `1px solid ${WF.accent}30`, color: WF.accentLight }}>{kw}</span>
+                    ))}
+                  </div>
+                )}
                 {(form.eventDate || form.eventTime || form.eventLocation) && (
                   <div style={{ fontSize: 12, color: FC.textSecondary, marginBottom: 4, fontFamily: FONT }}>
                     <span style={{ color: FC.textDim }}>{"Event: "}</span>
@@ -1336,7 +1507,7 @@ export default function VisualDesignPage() {
           onHome={() => { setIsNavigatingAway(true); setPreviewGradient(null); router.push("/?page=services"); }}
           onNext={canAdvance() ? goNext : undefined}
           backLabel="Back"
-          nextLabel={step === totalSteps - 1 ? "Submit" : "Next"}
+          nextLabel={step === totalSteps - 1 ? (submitting ? "Submitting\u2026" : "Submit") : "Next"}
           showDisabledNext={!canAdvance()}
           currentStep={step}
           totalSteps={totalSteps}

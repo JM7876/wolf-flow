@@ -1,8 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { WF, FC, FONT, GLASS, glassPill, CLICK, inputBase, DEPARTMENTS } from "../../lib/tokens";
 import { GlassCard, PortalBackground, PageNav, SectionLabel, Footer, useNightMode, SettingsDropdown } from "../../lib/components";
+import { supabase } from "../../lib/supabase";
 
 /* ═══════════════════════════════════════════════════════════
    OTHER / GENERAL REQUEST — Catch-all for miscellaneous needs
@@ -23,13 +24,72 @@ export default function OtherPage() {
     firstName: "", lastName: "", email: "", phone: "",
     department: "", title: "", description: "", priority: "standard",
   });
+  const [userId, setUserId] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
   const u = (k, v) => setForm(p => ({ ...p, [k]: v }));
   const inputStyle = { ...inputBase, width: "100%", boxSizing: "border-box" };
   const selectStyle = { ...inputStyle, appearance: "none", cursor: "pointer" };
   const textareaStyle = { ...inputStyle, resize: "vertical", lineHeight: 1.6, minHeight: 100 };
 
-  const handleSubmit = () => {
-    setTicketNumber(`WF-GR-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9000) + 1000)}`);
+  useEffect(() => {
+    async function loadProfile() {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        setUserId(user.id);
+        const { data: profile } = await supabase.from("profiles").select("full_name, email, department").eq("id", user.id).single();
+        if (profile) {
+          const [first, ...rest] = (profile.full_name || "").split(" ");
+          setForm(f => ({
+            ...f,
+            firstName: f.firstName || first || "",
+            lastName: f.lastName || rest.join(" ") || "",
+            email: f.email || profile.email || "",
+            department: f.department || profile.department || "",
+          }));
+        }
+      } catch (_e) { /* unauthenticated — fine */ }
+    }
+    loadProfile();
+  }, []);
+
+  const handleSubmit = async () => {
+    if (submitting) return;
+    setSubmitting(true);
+    setSubmitError(null);
+    const priorityLabel = PRIORITY_OPTS.find(p => p.id === form.priority)?.label || "Standard";
+    const row = {
+      service_type: "other-general-request",
+      user_id: userId,
+      title: form.title || form.description.slice(0, 80) || "General Request",
+      description: form.description,
+      department: form.department || null,
+      requester_name: `${form.firstName} ${form.lastName}`.trim() || null,
+      requester_email: form.email || null,
+      priority: priorityLabel,
+      due_date: null,
+      metadata: {
+        wizardVersion: "other-v1",
+        firstName: form.firstName,
+        lastName: form.lastName,
+        phone: form.phone || null,
+        subject: form.title || null,
+        priorityId: form.priority,
+      },
+      status: "new",
+      workflow_stage: 1,
+    };
+    const { data, error } = await supabase.from("requests").insert(row).select().single();
+    setSubmitting(false);
+    if (error || !data) {
+      console.error("[other] submit failed, falling back to local ticket:", error);
+      setSubmitError(error?.message || "Submission failed — please try again.");
+      setTicketNumber(`WF-GR-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9000) + 1000)}`);
+      setSubmitted(true);
+      return;
+    }
+    setTicketNumber(data.ticket_id || data.id || `WF-GR-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9000) + 1000)}`);
     setSubmitted(true);
   };
 
@@ -43,8 +103,8 @@ export default function OtherPage() {
         <div style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "20px 24px 100px", zIndex: 1 }}>
           <div style={{ textAlign: "center", maxWidth: 480, width: "100%", paddingTop: 24 }}>
             <div style={{ fontSize: 28, marginBottom: 24, color: WF.accent }}>{"\u2726"}</div>
-            <h2 style={{ fontSize: 26, fontWeight: 300, color: FC.textPrimary, fontFamily: FONT, marginBottom: 8 }}>{"Request Submitted"}</h2>
-            <p style={{ fontSize: 13, color: FC.textSecondary, marginBottom: 28, lineHeight: 1.7 }}>{"We\u2019ve received your request and will follow up shortly."}</p>
+            <h2 style={{ fontSize: 26, fontWeight: 300, color: FC.textPrimary, fontFamily: FONT, marginBottom: 8 }}>{submitError ? "Request saved locally" : "Request Submitted"}</h2>
+            <p style={{ fontSize: 13, color: FC.textSecondary, marginBottom: 28, lineHeight: 1.7 }}>{submitError ? "We couldn\u2019t reach the server. Your ticket was kept on this device \u2014 please let the Communications team know so they can capture your request." : "We\u2019ve received your request and will follow up shortly."}</p>
             <GlassCard style={{ textAlign: "left", maxWidth: 340, margin: "0 auto 24px", padding: "20px 18px" }}>
               {[
                 ["Ticket", ticketNumber, true],
@@ -122,17 +182,17 @@ export default function OtherPage() {
                 ))}
               </div>
             </div>
-            <button onClick={handleSubmit} disabled={!canSubmit} style={{
+            <button onClick={handleSubmit} disabled={!canSubmit || submitting} style={{
               ...glassPill, width: "100%", padding: "16px",
-              background: canSubmit ? `linear-gradient(135deg, ${WF.accent}28, ${WF.accent}14)` : "rgba(255,255,255,0.04)",
-              border: `1px solid ${canSubmit ? WF.accent + "50" : "rgba(255,255,255,0.06)"}`,
-              color: canSubmit ? WF.accentLight : FC.textDim,
-              opacity: canSubmit ? 1 : 0.5, cursor: canSubmit ? "pointer" : "not-allowed",
-              boxShadow: canSubmit ? `0 4px 16px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.12)` : "none",
+              background: canSubmit && !submitting ? `linear-gradient(135deg, ${WF.accent}28, ${WF.accent}14)` : "rgba(255,255,255,0.04)",
+              border: `1px solid ${canSubmit && !submitting ? WF.accent + "50" : "rgba(255,255,255,0.06)"}`,
+              color: canSubmit && !submitting ? WF.accentLight : FC.textDim,
+              opacity: canSubmit && !submitting ? 1 : 0.5, cursor: !canSubmit ? "not-allowed" : submitting ? "wait" : "pointer",
+              boxShadow: canSubmit && !submitting ? `0 4px 16px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.12)` : "none",
             }}
-              onMouseEnter={canSubmit ? e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; } : undefined}
-              onMouseLeave={canSubmit ? e => { e.currentTarget.style.borderColor = `${WF.accent}50`; e.currentTarget.style.boxShadow = `0 4px 16px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.12)`; } : undefined}
-            >{"Submit Request"}</button>
+              onMouseEnter={canSubmit && !submitting ? e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; } : undefined}
+              onMouseLeave={canSubmit && !submitting ? e => { e.currentTarget.style.borderColor = `${WF.accent}50`; e.currentTarget.style.boxShadow = `0 4px 16px ${WF.accentGlow}, inset 0 1px 0 rgba(255,255,255,0.12)`; } : undefined}
+            >{submitting ? "Submitting\u2026" : "Submit Request"}</button>
           </GlassCard>
         </div>
       </div>
