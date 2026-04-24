@@ -284,6 +284,10 @@ export default function VisualDesignPage() {
   const [userId, setUserId] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+  const [inspirationFiles, setInspirationFiles] = useState([]);
+  const [uploadError, setUploadError] = useState("");
+  const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef(null);
   const inputRef = useRef(null);
   const totalSteps = 9;
 
@@ -322,6 +326,42 @@ export default function VisualDesignPage() {
 
   const set = (key, val) => setForm(f => ({ ...f, [key]: val }));
 
+  /* Inspiration-file helpers (step 7) */
+  const MAX_FILE_MB = 10;
+  const MAX_FILES = 8;
+  const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/gif", "image/webp", "application/pdf"];
+  const addFiles = (incoming) => {
+    setUploadError("");
+    const arr = Array.from(incoming || []);
+    if (!arr.length) return;
+    const rejects = [];
+    const accepted = [];
+    for (const f of arr) {
+      if (!ALLOWED_TYPES.includes(f.type) && !/\.(png|jpe?g|gif|webp|pdf)$/i.test(f.name)) {
+        rejects.push(`${f.name} (unsupported type)`);
+        continue;
+      }
+      if (f.size > MAX_FILE_MB * 1024 * 1024) {
+        rejects.push(`${f.name} (over ${MAX_FILE_MB}MB)`);
+        continue;
+      }
+      accepted.push(f);
+    }
+    setInspirationFiles(prev => {
+      const combined = [...prev];
+      for (const f of accepted) {
+        if (combined.length >= MAX_FILES) {
+          rejects.push(`${f.name} (max ${MAX_FILES} files)`);
+          break;
+        }
+        if (!combined.some(existing => existing.name === f.name && existing.size === f.size)) combined.push(f);
+      }
+      return combined;
+    });
+    if (rejects.length) setUploadError(`Skipped: ${rejects.join(", ")}`);
+  };
+  const removeFile = (idx) => setInspirationFiles(prev => prev.filter((_, i) => i !== idx));
+
   /* Build the row we insert into public.requests. Full wizard state lives in metadata. */
   const buildRequestRow = () => {
     const selectedStyle = STYLES.find(s => s.id === form.styleDir);
@@ -354,7 +394,7 @@ export default function VisualDesignPage() {
 
     const title = isGSR
       ? (form.gsrDescription.trim().slice(0, 80) || "General Special Request")
-      : `${pieceTypeLabel}${sizeLabel ? ` — ${sizeLabel}` : ""}`;
+      : (`${pieceTypeLabel || "Visual Design"}${sizeLabel ? ` — ${sizeLabel}` : ""}`.trim() || "Visual Design Request");
 
     const description = isGSR
       ? form.gsrDescription
@@ -363,6 +403,11 @@ export default function VisualDesignPage() {
           form.bodyText && `Body: ${form.bodyText}`,
           form.notes && `Notes: ${form.notes}`,
         ].filter(Boolean).join("\n\n");
+
+    // DB requires these NOT NULL. Fall back to sensible placeholders so a
+    // submission never fails just because contact fields are optional in the wizard.
+    const resolvedRequesterName = (isGSR ? form.gsrName : form.contactName) || "Anonymous requester";
+    const resolvedRequesterEmail = (isGSR ? form.gsrEmail : form.contactEmail) || "no-reply@wolfflow.solutions";
 
     const metadata = {
       wizardVersion: "visual-design-v1",
@@ -423,8 +468,8 @@ export default function VisualDesignPage() {
       title,
       description: description || null,
       department: isGSR ? (form.gsrDepartment || null) : null,
-      requester_name: isGSR ? form.gsrName : (form.contactName || null),
-      requester_email: isGSR ? form.gsrEmail : (form.contactEmail || null),
+      requester_name: resolvedRequesterName,
+      requester_email: resolvedRequesterEmail,
       priority: priorityLabel || "Standard",
       due_date: (isGSR ? form.gsrDeadline : form.deadline) || null,
       metadata,
@@ -439,15 +484,34 @@ export default function VisualDesignPage() {
     setSubmitError(null);
     const row = buildRequestRow();
     const { data, error } = await supabase.from("requests").insert(row).select().single();
-    setSubmitting(false);
     if (error || !data) {
       console.error("[visual-design] submit failed, falling back to local ticket:", error);
       setSubmitError(error?.message || "Submission failed — please try again.");
       setTicket(`WF-${Math.floor(Math.random() * 9000) + 1000}`);
+      setSubmitting(false);
       setSubmitted(true);
       return;
     }
-    setTicket(data.ticket_id || data.id || `WF-${Math.floor(Math.random() * 9000) + 1000}`);
+
+    // Upload any inspiration files (step 7) under request-files/<request-id>/filename
+    const attachments = [];
+    if (inspirationFiles.length > 0) {
+      for (const file of inspirationFiles) {
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const path = `${data.id}/${Date.now()}-${safeName}`;
+        const { error: upErr } = await supabase.storage.from("request-files").upload(path, file, { contentType: file.type || undefined, upsert: false });
+        if (upErr) { console.error("[visual-design] upload failed:", file.name, upErr); continue; }
+        attachments.push({ name: file.name, path, size: file.size, type: file.type || null });
+      }
+      if (attachments.length > 0) {
+        const newMeta = { ...(data.metadata || row.metadata || {}), attachments };
+        await supabase.from("requests").update({ metadata: newMeta }).eq("id", data.id);
+      }
+    }
+
+    setSubmitting(false);
+    setTicket(data.tracking_code || data.id || `WF-${Math.floor(Math.random() * 9000) + 1000}`);
+    setInspirationFiles([]);
     setSubmitted(true);
   };
 
@@ -1340,12 +1404,43 @@ export default function VisualDesignPage() {
             <StepLabel n={7} />
             <Q>{"Any inspiration or references?"}</Q>
             <Hint>{"Screenshots, links, examples \u2014 anything that helps us understand your vision"}</Hint>
-            <Glass style={{ padding: "32px 24px", textAlign: "center", borderStyle: "dashed", maxWidth: 480, marginBottom: 16 }}>
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept="image/png,image/jpeg,image/jpg,image/gif,image/webp,application/pdf"
+              onChange={(e) => { addFiles(e.target.files); e.target.value = ""; }}
+              style={{ display: "none" }}
+            />
+            <Glass
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+              onDragLeave={() => setDragOver(false)}
+              onDrop={(e) => { e.preventDefault(); setDragOver(false); addFiles(e.dataTransfer.files); }}
+              style={{ padding: "32px 24px", textAlign: "center", borderStyle: "dashed", maxWidth: 480, marginBottom: 16, cursor: "pointer", background: dragOver ? `${WF.accent}10` : undefined, borderColor: dragOver ? `${WF.accent}55` : undefined, transition: `all ${CLICK.duration}` }}
+            >
               <span style={{ fontSize: 20, display: "block", marginBottom: 8, color: WF.accent }}>{"\u25B3"}</span>
-              <span style={{ fontSize: 13, color: FC.textDim, fontFamily: FONT }}>{"Drop images or screenshots here"}</span>
+              <span style={{ fontSize: 13, color: FC.textDim, fontFamily: FONT }}>{dragOver ? "Drop to add" : "Click or drop images/PDFs here"}</span>
               <br />
-              <span style={{ fontSize: 11, color: FC.textDim, fontFamily: FONT }}>{"PNG, JPG, PDF up to 10MB each"}</span>
+              <span style={{ fontSize: 11, color: FC.textDim, fontFamily: FONT }}>{"PNG, JPG, GIF, WEBP, PDF \u00B7 up to 10MB each \u00B7 max 8 files"}</span>
             </Glass>
+            {uploadError && (
+              <div style={{ maxWidth: 480, marginBottom: 12, padding: "8px 12px", borderRadius: 8, background: `${WF.red}10`, border: `1px solid ${WF.red}30`, fontSize: 11, color: WF.pink, fontFamily: FONT }}>{uploadError}</div>
+            )}
+            {inspirationFiles.length > 0 && (
+              <div style={{ maxWidth: 480, marginBottom: 16, display: "flex", flexDirection: "column", gap: 8 }}>
+                {inspirationFiles.map((f, i) => (
+                  <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 12px", borderRadius: 10, background: "rgba(255,255,255,0.04)", border: `1px solid ${FC.border}`, fontFamily: FONT }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, overflow: "hidden" }}>
+                      <span style={{ fontSize: 14, color: WF.accent, flexShrink: 0 }}>{f.type?.startsWith("image/") ? "\u25A1" : "\u25C7"}</span>
+                      <span style={{ fontSize: 12, color: FC.textSecondary, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{f.name}</span>
+                      <span style={{ fontSize: 10, color: FC.textDim, flexShrink: 0 }}>{(f.size / 1024 / 1024).toFixed(2)} MB</span>
+                    </div>
+                    <button type="button" onClick={(e) => { e.stopPropagation(); removeFile(i); }} style={{ background: "transparent", border: "none", color: FC.textDim, fontSize: 16, cursor: "pointer", padding: "0 4px", fontFamily: FONT }} aria-label={`Remove ${f.name}`}>{"\u00D7"}</button>
+                  </div>
+                ))}
+              </div>
+            )}
             <textarea ref={inputRef} placeholder="Or describe what you're envisioning... paste links, mention designs you've seen, anything."
               value={form.notes} onChange={e => set("notes", e.target.value)}
               style={{ width: "100%", maxWidth: 480, minHeight: 100, resize: "vertical", background: "rgba(255,255,255,0.02)", backdropFilter: "blur(12px)", border: `1px solid ${FC.border}`, borderRadius: 12, color: FC.textPrimary, fontSize: 14, fontFamily: FONT, padding: "16px", outline: "none", lineHeight: 1.6, caretColor: WF.accent, boxSizing: "border-box", transition: `border-color ${CLICK.duration}` }} />

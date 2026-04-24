@@ -59,14 +59,17 @@ export default function OtherPage() {
     setSubmitting(true);
     setSubmitError(null);
     const priorityLabel = PRIORITY_OPTS.find(p => p.id === form.priority)?.label || "Standard";
+    const resolvedName = `${form.firstName} ${form.lastName}`.trim() || "Anonymous requester";
+    const resolvedEmail = form.email || "no-reply@wolfflow.solutions";
+    const resolvedTitle = form.title || form.description.slice(0, 80) || "General Request";
     const row = {
       service_type: "other-general-request",
       user_id: userId,
-      title: form.title || form.description.slice(0, 80) || "General Request",
+      title: resolvedTitle,
       description: form.description,
       department: form.department || null,
-      requester_name: `${form.firstName} ${form.lastName}`.trim() || null,
-      requester_email: form.email || null,
+      requester_name: resolvedName,
+      requester_email: resolvedEmail,
       priority: priorityLabel,
       due_date: null,
       metadata: {
@@ -89,7 +92,7 @@ export default function OtherPage() {
       setSubmitted(true);
       return;
     }
-    setTicketNumber(data.ticket_id || data.id || `WF-GR-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9000) + 1000)}`);
+    setTicketNumber(data.tracking_code || data.id || `WF-GR-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9000) + 1000)}`);
     setSubmitted(true);
   };
 
