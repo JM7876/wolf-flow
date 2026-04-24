@@ -288,10 +288,12 @@ export default function CommunityOutreachPage() {
     const frequencyLabel = FREQUENCY_OPTIONS.find(f => f.id === form.frequency)?.label || null;
 
     const title = isAlert
-      ? (form.subject || "Instant Alert").slice(0, 80)
+      ? ((form.subject || "Instant Alert").slice(0, 80) || "Instant Alert")
       : ((form.description || "").slice(0, 80) || "Community Outreach Post");
 
     const description = isAlert ? form.message : form.description;
+    const resolvedName = `${form.firstName} ${form.lastName}`.trim() || "Anonymous requester";
+    const resolvedEmail = form.email || "no-reply@wolfflow.solutions";
 
     const metadata = {
       wizardVersion: "community-outreach-v1",
@@ -330,8 +332,8 @@ export default function CommunityOutreachPage() {
       title,
       description: description || null,
       department: form.department || null,
-      requester_name: `${form.firstName} ${form.lastName}`.trim() || null,
-      requester_email: form.email || null,
+      requester_name: resolvedName,
+      requester_email: resolvedEmail,
       priority: isAlert ? (urgencyLabel || "Standard") : "Standard",
       due_date: isAlert ? (form.effectiveDate || null) : (form.scheduleDate || null),
       metadata,
@@ -349,7 +351,7 @@ export default function CommunityOutreachPage() {
       setSubmitted(true);
       return;
     }
-    setTicketNumber(data.ticket_id || data.id || ticketFallback);
+    setTicketNumber(data.tracking_code || data.id || ticketFallback);
     setSubmitted(true);
   };
 

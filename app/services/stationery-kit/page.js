@@ -199,14 +199,17 @@ export default function StationeryKitPage() {
     const reasonLabel = ORDER_REASONS.find(r => r.id === form.reason)?.label || form.reason;
     const officeLoc = OFFICE_LOCATIONS.find(l => l.id === form.officeLocation);
     const itemLabels = form.items.map(id => STATIONERY_ITEMS.find(it => it.id === id)?.label || id);
+    const resolvedName = `${form.firstName} ${form.lastName}`.trim() || "Anonymous requester";
+    const resolvedEmail = form.email || "no-reply@wolfflow.solutions";
+    const resolvedTitle = `${itemLabels.join(", ") || "Stationery"} — ${resolvedName}`.trim();
     const row = {
       service_type: "stationery-kit",
       user_id: userId,
-      title: `${itemLabels.join(", ") || "Stationery"} — ${form.firstName} ${form.lastName}`.trim(),
+      title: resolvedTitle,
       description: form.notes || null,
       department: form.department || null,
-      requester_name: `${form.firstName} ${form.lastName}`.trim() || null,
-      requester_email: form.email || null,
+      requester_name: resolvedName,
+      requester_email: resolvedEmail,
       priority: "Standard",
       due_date: null,
       metadata: {
@@ -247,7 +250,7 @@ export default function StationeryKitPage() {
       setSubmitted(true);
       return;
     }
-    setTicketNumber(data.ticket_id || data.id || `WF-SK-${String(Math.floor(Math.random() * 9000) + 1000)}`);
+    setTicketNumber(data.tracking_code || data.id || `WF-SK-${String(Math.floor(Math.random() * 9000) + 1000)}`);
     setSubmitted(true);
   };
 
