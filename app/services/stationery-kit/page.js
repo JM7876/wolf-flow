@@ -10,6 +10,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { WF, FC, FONT, CLICK, GLASS, inputBase } from "../../lib/tokens";
 import { GlassCard, TopShine, PortalBackground, PageNav, Footer, useNightMode, SettingsDropdown } from "../../lib/components";
+import { supabase } from "../../lib/supabase";
 
 /* --- CONSTANTS (inlined from old portal) --- */
 const ENTERPRISES = [
@@ -131,10 +132,35 @@ export default function StationeryKitPage() {
     cellPhone: "", officePhone: "", fax: "", email: "",
     officeLocation: null, quantity: "250", notes: "",
   });
+  const [userId, setUserId] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   const totalSteps = 6;
 
   useEffect(() => { if (inputRef.current) setTimeout(() => inputRef.current?.focus(), 400); }, [step]);
+
+  useEffect(() => {
+    async function loadProfile() {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        setUserId(user.id);
+        const { data: profile } = await supabase.from("profiles").select("full_name, email, department").eq("id", user.id).single();
+        if (profile) {
+          const [first, ...rest] = (profile.full_name || "").split(" ");
+          setForm(f => ({
+            ...f,
+            firstName: f.firstName || first || "",
+            lastName: f.lastName || rest.join(" ") || "",
+            email: f.email || profile.email || "",
+            department: f.department || profile.department || "",
+          }));
+        }
+      } catch (_e) { /* unauthenticated — fine */ }
+    }
+    loadProfile();
+  }, []);
 
   const update = (field, value) => setForm(f => ({ ...f, [field]: value }));
 
@@ -165,8 +191,63 @@ export default function StationeryKitPage() {
     }, 280);
   };
 
-  const handleSubmit = () => {
-    setTicketNumber(`WF-SK-${String(Math.floor(Math.random() * 9000) + 1000)}`);
+  const handleSubmit = async () => {
+    if (submitting) return;
+    setSubmitting(true);
+    setSubmitError(null);
+    const enterpriseLabel = ENTERPRISES.find(e => e.id === form.enterprise)?.shortLabel || form.enterprise;
+    const reasonLabel = ORDER_REASONS.find(r => r.id === form.reason)?.label || form.reason;
+    const officeLoc = OFFICE_LOCATIONS.find(l => l.id === form.officeLocation);
+    const itemLabels = form.items.map(id => STATIONERY_ITEMS.find(it => it.id === id)?.label || id);
+    const row = {
+      service_type: "stationery-kit",
+      user_id: userId,
+      title: `${itemLabels.join(", ") || "Stationery"} — ${form.firstName} ${form.lastName}`.trim(),
+      description: form.notes || null,
+      department: form.department || null,
+      requester_name: `${form.firstName} ${form.lastName}`.trim() || null,
+      requester_email: form.email || null,
+      priority: "Standard",
+      due_date: null,
+      metadata: {
+        wizardVersion: "stationery-kit-v1",
+        enterprise: form.enterprise,
+        enterpriseLabel,
+        items: form.items,
+        itemLabels,
+        reason: form.reason,
+        reasonLabel,
+        employee: {
+          firstName: form.firstName,
+          lastName: form.lastName,
+          title: form.title,
+          department: form.department || null,
+        },
+        contact: {
+          cellPhone: form.cellPhone || null,
+          officePhone: form.officePhone || null,
+          fax: form.fax || null,
+          email: form.email,
+        },
+        officeLocation: form.officeLocation,
+        officeLocationLabel: officeLoc?.label || null,
+        officeAddress: officeLoc ? `${officeLoc.address}, ${officeLoc.city}, ${officeLoc.state} ${officeLoc.zip}`.trim() : null,
+        quantity: form.quantity,
+        notes: form.notes || null,
+      },
+      status: "new",
+      workflow_stage: 1,
+    };
+    const { data, error } = await supabase.from("requests").insert(row).select().single();
+    setSubmitting(false);
+    if (error || !data) {
+      console.error("[stationery-kit] submit failed, falling back to local ticket:", error);
+      setSubmitError(error?.message || "Submission failed — please try again.");
+      setTicketNumber(`WF-SK-${String(Math.floor(Math.random() * 9000) + 1000)}`);
+      setSubmitted(true);
+      return;
+    }
+    setTicketNumber(data.ticket_id || data.id || `WF-SK-${String(Math.floor(Math.random() * 9000) + 1000)}`);
     setSubmitted(true);
   };
 
@@ -207,8 +288,8 @@ export default function StationeryKitPage() {
             display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, color: "#fff",
             boxShadow: `0 0 50px ${WF.accentGlow}`,
           }}>{"\u2714"}</div>
-          <h1 style={{ fontSize: 26, fontWeight: 300, margin: "0 0 8px", fontFamily: FONT }}>Stationeries Submitted</h1>
-          <p style={{ fontSize: 13, color: FC.textDim, margin: "0 0 24px", fontFamily: FONT }}>Your order is ready for printing verification</p>
+          <h1 style={{ fontSize: 26, fontWeight: 300, margin: "0 0 8px", fontFamily: FONT }}>{submitError ? "Order Saved Locally" : "Stationeries Submitted"}</h1>
+          <p style={{ fontSize: 13, color: FC.textDim, margin: "0 0 24px", fontFamily: FONT }}>{submitError ? "Couldn\u2019t reach the server. Please share this ticket with the team." : "Your order is ready for printing verification"}</p>
           <GlassCard style={{ padding: "14px 32px", marginBottom: 24 }}>
             <span style={{ fontSize: 11, color: FC.textDim, textTransform: "uppercase", letterSpacing: "0.15em", display: "block", fontFamily: FONT }}>Request</span>
             <span style={{ fontSize: 24, fontWeight: 600, color: WF.accentLight, fontFamily: FONT }}>{ticketNumber}</span>
@@ -456,7 +537,7 @@ export default function StationeryKitPage() {
           onHome={() => router.push("/?page=services")}
           onNext={canAdvance() ? goNext : undefined}
           backLabel="Back"
-          nextLabel={step === totalSteps - 1 ? "Submit Order" : "Next"}
+          nextLabel={step === totalSteps - 1 ? (submitting ? "Submitting\u2026" : "Submit Order") : "Next"}
           showDisabledNext={!canAdvance()}
         />
         <Footer />

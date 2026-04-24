@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { WF, FC, FONT, CLICK, GLASS, glassPill, inputBase, DEPARTMENTS } from "../../lib/tokens";
 import { GlassCard, TopShine, SectionLabel, PageNav, PortalBackground, Footer, useNightMode, SettingsDropdown } from "../../lib/components";
+import { supabase } from "../../lib/supabase";
 
 /* ═══════════════════════════════════════════════════════════
    COMMUNITY OUTREACH — Social Media & Instant Alerts (Merged)
@@ -163,6 +164,8 @@ export default function CommunityOutreachPage() {
   const [submissionDate, setSubmissionDate] = useState(null);
   const [uploadedFiles, setUploadedFiles]   = useState([]);
   const [isSubmitting, setIsSubmitting]     = useState(false);
+  const [userId, setUserId]                 = useState(null);
+  const [submitError, setSubmitError]       = useState(null);
   const inputRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -208,6 +211,28 @@ export default function CommunityOutreachPage() {
     if (inputRef.current) setTimeout(() => inputRef.current?.focus(), 350);
   }, [step]);
 
+  useEffect(() => {
+    async function loadProfile() {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        setUserId(user.id);
+        const { data: profile } = await supabase.from("profiles").select("full_name, email, department").eq("id", user.id).single();
+        if (profile) {
+          const [first, ...rest] = (profile.full_name || "").split(" ");
+          setForm(f => ({
+            ...f,
+            firstName: f.firstName || first || "",
+            lastName: f.lastName || rest.join(" ") || "",
+            email: f.email || profile.email || "",
+            department: f.department || profile.department || "",
+          }));
+        }
+      } catch (_e) { /* unauthenticated — fine */ }
+    }
+    loadProfile();
+  }, []);
+
   /* ─── Navigation ─────────────────────────────────────────── */
 
   const goTo = useCallback((n) => {
@@ -245,15 +270,86 @@ export default function CommunityOutreachPage() {
   /* ─── Submit ─────────────────────────────────────────────── */
 
   const handleSubmit = async () => {
+    if (isSubmitting) return;
     setIsSubmitting(true);
-    const ticket = generateTicketNumber(form.department, form.firstName, form.lastName);
-    const date   = new Date().toLocaleString("en-US", {
+    setSubmitError(null);
+    const ticketFallback = generateTicketNumber(form.department || "xxxx", form.firstName, form.lastName);
+    const date = new Date().toLocaleString("en-US", {
       weekday: "short", year: "numeric", month: "short",
       day: "numeric", hour: "numeric", minute: "2-digit", hour12: true,
     });
-    setTicketNumber(ticket);
+
+    const isAlert = path === "alert";
+    const selectedPlatforms = Object.entries(form.platforms || {}).filter(([, v]) => v).map(([k]) => k);
+    const selectedContentPlatforms = Object.entries(form.contentPlatforms || {}).filter(([, v]) => v).map(([k]) => k);
+    const selectedChannels = Object.entries(form.channels || {}).filter(([k, v]) => v && k !== "all").map(([k]) => k);
+    const urgencyLabel = URGENCY_LEVELS.find(u => u.id === form.urgency)?.label || null;
+    const scheduleLabel = SCHEDULE_OPTIONS.find(s => s.id === form.schedule)?.label || null;
+    const frequencyLabel = FREQUENCY_OPTIONS.find(f => f.id === form.frequency)?.label || null;
+
+    const title = isAlert
+      ? (form.subject || "Instant Alert").slice(0, 80)
+      : ((form.description || "").slice(0, 80) || "Community Outreach Post");
+
+    const description = isAlert ? form.message : form.description;
+
+    const metadata = {
+      wizardVersion: "community-outreach-v1",
+      path,
+      firstName: form.firstName,
+      lastName: form.lastName,
+      phone: form.phone || null,
+      ...(isAlert ? {
+        subject: form.subject,
+        message: form.message,
+        urgency: form.urgency,
+        urgencyLabel,
+        channels: selectedChannels,
+        audience: form.audience || null,
+        effectiveDate: form.effectiveDate || null,
+        effectiveTime: form.effectiveTime || null,
+        approvedBy: form.approvedBy || null,
+      } : {
+        platforms: selectedPlatforms,
+        contentPlatforms: selectedContentPlatforms,
+        schedule: form.schedule,
+        scheduleLabel,
+        scheduleDate: form.scheduleDate || null,
+        frequency: form.frequency || null,
+        frequencyLabel,
+        campaignEndDate: form.campaignEndDate || null,
+        description: form.description,
+        notes: form.notes || null,
+        attachments: uploadedFiles.map(f => ({ name: f.name, size: f.size, type: f.type })),
+      }),
+    };
+
+    const row = {
+      service_type: isAlert ? "community-outreach-alert" : "community-outreach-post",
+      user_id: userId,
+      title,
+      description: description || null,
+      department: form.department || null,
+      requester_name: `${form.firstName} ${form.lastName}`.trim() || null,
+      requester_email: form.email || null,
+      priority: isAlert ? (urgencyLabel || "Standard") : "Standard",
+      due_date: isAlert ? (form.effectiveDate || null) : (form.scheduleDate || null),
+      metadata,
+      status: "new",
+      workflow_stage: 1,
+    };
+
+    const { data, error } = await supabase.from("requests").insert(row).select().single();
     setSubmissionDate(date);
     setIsSubmitting(false);
+    if (error || !data) {
+      console.error("[community-outreach] submit failed, falling back to local ticket:", error);
+      setSubmitError(error?.message || "Submission failed — please try again.");
+      setTicketNumber(ticketFallback);
+      setSubmitted(true);
+      return;
+    }
+    setTicketNumber(data.ticket_id || data.id || ticketFallback);
     setSubmitted(true);
   };
 
