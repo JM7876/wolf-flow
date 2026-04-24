@@ -245,7 +245,7 @@ export default function StationeryKitPage() {
     setSubmitting(false);
     if (error || !data) {
       console.error("[stationery-kit] submit failed, falling back to local ticket:", error);
-      setSubmitError(error?.message || "Submission failed — please try again.");
+      setSubmitError(error ? { message: error.message, code: error.code, details: error.details, hint: error.hint } : { message: "Submission failed \u2014 please try again." });
       setTicketNumber(`WF-SK-${String(Math.floor(Math.random() * 9000) + 1000)}`);
       setSubmitted(true);
       return;

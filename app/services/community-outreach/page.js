@@ -346,7 +346,7 @@ export default function CommunityOutreachPage() {
     setIsSubmitting(false);
     if (error || !data) {
       console.error("[community-outreach] submit failed, falling back to local ticket:", error);
-      setSubmitError(error?.message || "Submission failed — please try again.");
+      setSubmitError(error ? { message: error.message, code: error.code, details: error.details, hint: error.hint } : { message: "Submission failed \u2014 please try again." });
       setTicketNumber(ticketFallback);
       setSubmitted(true);
       return;

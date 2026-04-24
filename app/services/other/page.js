@@ -87,7 +87,7 @@ export default function OtherPage() {
     setSubmitting(false);
     if (error || !data) {
       console.error("[other] submit failed, falling back to local ticket:", error);
-      setSubmitError(error?.message || "Submission failed — please try again.");
+      setSubmitError(error ? { message: error.message, code: error.code, details: error.details, hint: error.hint } : { message: "Submission failed \u2014 please try again." });
       setTicketNumber(`WF-GR-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9000) + 1000)}`);
       setSubmitted(true);
       return;

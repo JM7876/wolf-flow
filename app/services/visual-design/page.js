@@ -486,7 +486,7 @@ export default function VisualDesignPage() {
     const { data, error } = await supabase.from("requests").insert(row).select().single();
     if (error || !data) {
       console.error("[visual-design] submit failed, falling back to local ticket:", error);
-      setSubmitError(error?.message || "Submission failed — please try again.");
+      setSubmitError(error ? { message: error.message, code: error.code, details: error.details, hint: error.hint } : { message: "Submission failed \u2014 please try again." });
       setTicket(`WF-${Math.floor(Math.random() * 9000) + 1000}`);
       setSubmitting(false);
       setSubmitted(true);
@@ -680,9 +680,17 @@ export default function VisualDesignPage() {
           <div style={{ width: 76, height: 76, borderRadius: "50%", background: `linear-gradient(135deg, ${WF.accent}, ${WF.accentDark})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 34, color: "#fff", marginBottom: 24, boxShadow: `0 0 50px ${WF.accentGlow}` }}>{"✓"}</div>
           <h1 style={{ fontSize: 30, fontWeight: 300, margin: "0 0 16px", fontFamily: FONT }}>{submitError ? "Request saved locally" : "Request submitted!"}</h1>
           {submitError && (
-            <Glass style={{ padding: "10px 18px", marginBottom: 14, maxWidth: 440, border: `1px solid ${WF.red}40`, background: `${WF.red}10` }}>
-              <span style={{ fontSize: 11, color: WF.red, display: "block", fontFamily: FONT, fontWeight: 600, marginBottom: 2 }}>{"Could not reach the server"}</span>
-              <span style={{ fontSize: 11, color: FC.textDim, fontFamily: FONT }}>{"Your ticket was kept on this device. Please let the Communications team know so they can capture your request manually."}</span>
+            <Glass style={{ padding: "12px 18px", marginBottom: 14, maxWidth: 480, border: `1px solid ${WF.red}40`, background: `${WF.red}10`, textAlign: "left" }}>
+              <span style={{ fontSize: 11, color: WF.red, display: "block", fontFamily: FONT, fontWeight: 600, marginBottom: 4 }}>{"Could not reach the server"}</span>
+              <span style={{ fontSize: 11, color: FC.textDim, fontFamily: FONT, display: "block", marginBottom: 8 }}>{"Your ticket was kept on this device. Please let the Communications team know so they can capture your request manually."}</span>
+              {submitError.message && (
+                <div style={{ marginTop: 6, padding: "6px 8px", borderRadius: 6, background: "rgba(0,0,0,0.25)", fontFamily: "monospace", fontSize: 10, color: FC.textSecondary, wordBreak: "break-word" }}>
+                  {submitError.code ? <div><span style={{ color: FC.textDim }}>{"code: "}</span>{submitError.code}</div> : null}
+                  <div><span style={{ color: FC.textDim }}>{"message: "}</span>{submitError.message}</div>
+                  {submitError.details ? <div><span style={{ color: FC.textDim }}>{"details: "}</span>{submitError.details}</div> : null}
+                  {submitError.hint ? <div><span style={{ color: FC.textDim }}>{"hint: "}</span>{submitError.hint}</div> : null}
+                </div>
+              )}
             </Glass>
           )}
           <Glass style={{ padding: "12px 28px", marginBottom: 20 }}>
@@ -710,7 +718,8 @@ export default function VisualDesignPage() {
                 </div>
               </>
             ) : (() => {
-                const rows = [
+                // Rows rendered as key/value side-by-side (short scalar values).
+                const scalarRows = [
                   ["Type", PIECE_TYPES.find(p => p.id === form.pieceType)?.label],
                   ["Format", FORMAT_OPTIONS.find(f => f.id === form.format)?.label],
                   ["Size", form.pieceType === "printed-media" ? (
@@ -723,24 +732,51 @@ export default function VisualDesignPage() {
                   ["Style", form.designerChoice ? "Designer's Choice" : selectedStyle?.label],
                   ["Fonts", form.designerChoice ? "Designer's discretion" : selectedStyle?.fontLabel],
                   ["Colors", form.designerChoice ? "Designer's discretion" : PALETTE_MODIFIERS.find(m => m.id === form.paletteModifier)?.label],
+                  ["Priority", VD_PRIORITIES.find(p => p.id === form.priority)?.label],
                 ];
-                if (form.needVerbiage && form.verbiageKeywords.length > 0) {
-                  rows.push(["Keywords", form.verbiageKeywords.join(", ")]);
-                }
-                rows.push(["Priority", VD_PRIORITIES.find(p => p.id === form.priority)?.label]);
-                return rows.map(([k, v], i) => (
-                  <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "8px 0", borderBottom: i < rows.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none", gap: 12 }}>
-                    <span style={{ fontSize: 12, color: FC.textDim, flexShrink: 0 }}>{k}</span>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, maxWidth: "70%", justifyContent: "flex-end", flexWrap: "wrap" }}>
-                      {k === "Colors" && activePalette && (
-                        <div style={{ display: "flex", gap: 0, borderRadius: 4, overflow: "hidden" }}>
-                          {activePalette.slice(0, 5).map((c, j) => <div key={j} style={{ width: 12, height: 10, background: c }} />)}
+                // Rows rendered stacked (long text/chips on their own line below the label).
+                const stackedRows = [];
+                if (form.headline) stackedRows.push(["Headline", form.headline, "text"]);
+                if (form.bodyText) stackedRows.push(["Body Copy", form.bodyText, "text"]);
+                if (form.needVerbiage && form.verbiageKeywords.length > 0) stackedRows.push(["Keywords", form.verbiageKeywords, "chips"]);
+                const eventBits = [form.eventDate, form.eventTime, form.eventLocation].filter(Boolean);
+                if (eventBits.length > 0) stackedRows.push(["Event", eventBits.join(" \u00B7 "), "text"]);
+                const contactBits = [form.contactTitle, form.contactName, form.contactPhone, form.contactEmail].filter(Boolean);
+                if (contactBits.length > 0) stackedRows.push(["Contact", contactBits.join(" \u00B7 "), "text"]);
+                if (form.notes) stackedRows.push(["Notes", form.notes, "text"]);
+                if (inspirationFiles.length > 0) stackedRows.push(["Attachments", inspirationFiles.map(f => f.name).join(", "), "text"]);
+
+                return (
+                  <>
+                    {scalarRows.map(([k, v], i) => (
+                      <div key={`s-${i}`} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0", borderBottom: "1px solid rgba(255,255,255,0.04)", gap: 12 }}>
+                        <span style={{ fontSize: 12, color: FC.textDim, flexShrink: 0 }}>{k}</span>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, maxWidth: "70%", justifyContent: "flex-end", flexWrap: "wrap" }}>
+                          {k === "Colors" && activePalette && (
+                            <div style={{ display: "flex", gap: 0, borderRadius: 4, overflow: "hidden" }}>
+                              {activePalette.slice(0, 5).map((c, j) => <div key={j} style={{ width: 12, height: 10, background: c }} />)}
+                            </div>
+                          )}
+                          <span style={{ fontSize: 13, fontWeight: 600, color: k === "Priority" ? VD_PRIORITIES.find(p => p.id === form.priority)?.color : FC.textSecondary, textAlign: "right", wordBreak: "break-word" }}>{v}</span>
                         </div>
-                      )}
-                      <span style={{ fontSize: 13, fontWeight: 600, color: k === "Priority" ? VD_PRIORITIES.find(p => p.id === form.priority)?.color : FC.textSecondary, textAlign: "right", wordBreak: "break-word" }}>{v}</span>
-                    </div>
-                  </div>
-                ));
+                      </div>
+                    ))}
+                    {stackedRows.map(([k, v, kind], i) => (
+                      <div key={`st-${i}`} style={{ padding: "10px 0", borderBottom: i < stackedRows.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none" }}>
+                        <span style={{ fontSize: 10, color: FC.textDim, textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 600, display: "block", marginBottom: 6 }}>{k}</span>
+                        {kind === "chips" ? (
+                          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, justifyContent: "center" }}>
+                            {v.map((kw) => (
+                              <span key={kw} style={{ fontSize: 11, padding: "3px 10px", borderRadius: 12, background: `${WF.accent}14`, border: `1px solid ${WF.accent}30`, color: WF.accentLight, fontFamily: FONT }}>{kw}</span>
+                            ))}
+                          </div>
+                        ) : (
+                          <p style={{ fontSize: 12, color: FC.textSecondary, lineHeight: 1.55, margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-word", textAlign: "center" }}>{v}</p>
+                        )}
+                      </div>
+                    ))}
+                  </>
+                );
               })()}
           </Glass>
           <p style={{ fontSize: 13, color: FC.textDim, marginTop: 20, lineHeight: 1.6, maxWidth: 360, fontFamily: FONT }}>
@@ -1311,7 +1347,7 @@ export default function VisualDesignPage() {
                   <span style={{ fontSize: 10, color: FC.textDim, fontFamily: FONT }}>{"Write your own body text"}</span>
                   <span style={{ fontSize: 10, fontFamily: "monospace", color: wordCount > 600 ? WF.red : wordCount > 500 ? "#e0a630" : FC.textDim, transition: "color 0.3s" }}>{wordCount}{" / 600 words"}</span>
                 </div>
-                <textarea placeholder="Enter your body text \u2014 include all the details you want on the piece." value={form.bodyText} onChange={e => { const words = e.target.value.trim().split(/\s+/); if (e.target.value.trim() === "" || words.length <= 650) set("bodyText", e.target.value); }}
+                <textarea placeholder={"Enter your body text \u2014 include all the details you want on the piece."} value={form.bodyText} onChange={e => { const words = e.target.value.trim().split(/\s+/); if (e.target.value.trim() === "" || words.length <= 650) set("bodyText", e.target.value); }}
                   style={{ ...localInput, minHeight: 140, resize: "vertical", lineHeight: 1.7, borderRadius: 12, fontSize: 18 }} />
                 {wordCount > 600 && <p style={{ fontSize: 10, color: WF.red, margin: "6px 0 0", opacity: 0.8, fontFamily: FONT }}>{"Over the 600 word limit \u2014 please trim your copy"}</p>}
                 <p style={{ fontSize: 10, color: FC.textDim, margin: "10px 0 0", lineHeight: 1.5, fontStyle: "italic", textAlign: "center", fontFamily: FONT }}>{"Both can be used \u2014 for us in Communications, the more we know the better the quality."}</p>
