@@ -9,17 +9,88 @@
    Created and Authored by Johnathon Moulds © 2026
    ═══════════════════════════════════════════════════════════ */
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { WF, FC, FONT, GLASS, CLICK, glassPill, inputBase } from "../../lib/tokens";
 import { GlassCard, FormField, SectionLabel, PageNav, PortalBackground, Footer, useNightMode, SettingsDropdown } from "../../lib/components";
 import { DEPARTMENTS } from "../../lib/tokens";
+import { supabase } from "../../lib/supabase";
 
 /* ─────────────────────────────────────────────
    SHARED: TICKET GENERATOR
 ───────────────────────────────────────────── */
 const genTicket = (prefix) =>
   `${prefix}-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9000) + 1000)}`;
+
+/* ─────────────────────────────────────────────
+   SHARED: SUPABASE SUBMIT HELPER
+   Inserts a row into public.requests using the same shape the rest
+   of the portal uses. Returns { ok, ticket, error } where on success
+   `ticket` is the server-generated tracking_code (or row uuid as
+   fallback) and on failure `ticket` is a client-generated WF code so
+   the UI still has something to show, and `error` carries the
+   structured Supabase error for the diagnostic banner.
+───────────────────────────────────────────── */
+async function submitToSupabase({ serviceType, title, description, department, requesterName, requesterEmail, priority, dueDate, metadata, ticketPrefix, userId }) {
+  const safeName = requesterName?.trim() || "Anonymous requester";
+  const safeEmail = requesterEmail?.trim() || "no-reply@wolfflow.solutions";
+  const safeTitle = title?.trim() || `${ticketPrefix} request`;
+
+  const row = {
+    service_type: serviceType,
+    user_id: userId || null,
+    title: safeTitle,
+    description: description || null,
+    department: department || null,
+    requester_name: safeName,
+    requester_email: safeEmail,
+    priority: priority || "Standard",
+    due_date: dueDate || null,
+    metadata: metadata || {},
+    status: "new",
+    workflow_stage: 1,
+  };
+
+  const { data, error } = await supabase.from("requests").insert(row).select().single();
+  if (error || !data) {
+    console.error(`[studio-hub:${ticketPrefix}] submit failed, falling back to local ticket:`, error);
+    return {
+      ok: false,
+      ticket: genTicket(ticketPrefix),
+      error: error ? { message: error.message, code: error.code, details: error.details, hint: error.hint } : { message: "Submission failed \u2014 please try again." },
+    };
+  }
+  return {
+    ok: true,
+    ticket: data.tracking_code || data.id || genTicket(ticketPrefix),
+    error: null,
+  };
+}
+
+async function loadProfileInto(setForm) {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+    const { data: profile } = await supabase.from("profiles").select("full_name, email, department").eq("id", user.id).single();
+    if (profile) {
+      const [first, ...rest] = (profile.full_name || "").split(" ");
+      setForm(f => ({
+        ...f,
+        firstName: f.firstName || first || "",
+        lastName: f.lastName || rest.join(" ") || "",
+        email: f.email || profile.email || "",
+        requesterName: f.requesterName || profile.full_name || "",
+        requesterEmail: f.requesterEmail || profile.email || "",
+        employeeName: f.employeeName || profile.full_name || "",
+        requestedBy: f.requestedBy || profile.full_name || "",
+        department: f.department || profile.department || "",
+      }));
+    }
+    return user.id;
+  } catch (_e) {
+    return null;
+  }
+}
 
 /* ─────────────────────────────────────────────
    SHARED: TOP SHINE (already in GlassCard but used inline too)
@@ -61,13 +132,36 @@ function Field(props) {
 /* ─────────────────────────────────────────────
    SHARED: CONFIRMATION PAGE
 ───────────────────────────────────────────── */
-function ConfirmPage({ icon, title, subtitle, ticket, rows, note, onAnother, onHome }) {
+function ConfirmPage({ icon, title, subtitle, ticket, rows, note, onAnother, onHome, submitError }) {
+  const displayTitle = submitError ? "Request saved locally" : title;
+  const displaySubtitle = submitError
+    ? "We couldn\u2019t reach the server. Your ticket was kept on this device \u2014 please let the Communications team know so they can capture your request manually."
+    : subtitle;
   return (
     <PageWrap>
       <div style={{ textAlign: "center", padding: "48px 0 32px" }}>
         <div style={{ fontSize: 28, marginBottom: 20, color: WF.accent }}>{icon}</div>
-        <h1 style={{ fontSize: 26, fontWeight: 300, color: FC.textPrimary, marginBottom: 8, fontFamily: FONT }}>{title}</h1>
-        <p style={{ fontSize: 14, color: FC.textSecondary, lineHeight: 1.7, marginBottom: 28 }}>{subtitle}</p>
+        <h1 style={{ fontSize: 26, fontWeight: 300, color: FC.textPrimary, marginBottom: 8, fontFamily: FONT }}>{displayTitle}</h1>
+        <p style={{ fontSize: 14, color: FC.textSecondary, lineHeight: 1.7, marginBottom: 28 }}>{displaySubtitle}</p>
+
+        {submitError && (
+          <div style={{
+            display: "inline-block", textAlign: "left", marginBottom: 24,
+            padding: "12px 16px", borderRadius: 10,
+            background: `${WF.red}10`, border: `1px solid ${WF.red}40`,
+            maxWidth: 480,
+          }}>
+            <div style={{ fontSize: 11, color: WF.red, fontWeight: 600, marginBottom: 6, fontFamily: FONT }}>{"Could not reach the server"}</div>
+            {submitError.message && (
+              <div style={{ padding: "6px 8px", borderRadius: 6, background: "rgba(0,0,0,0.25)", fontFamily: "monospace", fontSize: 10, color: FC.textSecondary, wordBreak: "break-word" }}>
+                {submitError.code ? <div><span style={{ color: FC.textDim }}>{"code: "}</span>{submitError.code}</div> : null}
+                <div><span style={{ color: FC.textDim }}>{"message: "}</span>{submitError.message}</div>
+                {submitError.details ? <div><span style={{ color: FC.textDim }}>{"details: "}</span>{submitError.details}</div> : null}
+                {submitError.hint ? <div><span style={{ color: FC.textDim }}>{"hint: "}</span>{submitError.hint}</div> : null}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Ticket */}
         <div style={{
@@ -126,12 +220,44 @@ function ArchivesForm({ onHome }) {
   const [form, setForm] = useState(empty);
   const [submitted, setSubmitted] = useState(false);
   const [ticket, setTicket] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => { loadProfileInto(setForm).then(id => id && setUserId(id)); }, []);
 
   const u = (f, v) => setForm(p => ({ ...p, [f]: v }));
   const valid = form.employeeName && form.department && form.description && form.dueDate && form.requestedBy && form.email;
 
-  const submit = () => {
-    setTicket(genTicket("ARC"));
+  const submit = async () => {
+    if (submitting) return;
+    setSubmitting(true);
+    setSubmitError(null);
+    const res = await submitToSupabase({
+      serviceType: "studio-hub-archives",
+      title: `Archives: ${form.description.slice(0, 60) || form.employeeName}`,
+      description: form.description,
+      department: form.department,
+      requesterName: form.requestedBy || form.employeeName,
+      requesterEmail: form.email,
+      priority: "Standard",
+      dueDate: form.dueDate || null,
+      ticketPrefix: "ARC",
+      userId,
+      metadata: {
+        wizardVersion: "studio-hub-archives-v1",
+        employeeName: form.employeeName,
+        department: form.department,
+        description: form.description,
+        dueDate: form.dueDate,
+        requestedBy: form.requestedBy,
+        email: form.email,
+        notes: form.notes || null,
+      },
+    });
+    setTicket(res.ticket);
+    if (!res.ok) setSubmitError(res.error);
+    setSubmitting(false);
     setSubmitted(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -142,6 +268,7 @@ function ArchivesForm({ onHome }) {
       title="Request Received!"
       subtitle={"Your digital archive request has been logged.\nThe team will locate and prepare your files."}
       ticket={ticket}
+      submitError={submitError}
       rows={[
         ["Employee", form.employeeName],
         ["Department", form.department],
@@ -153,7 +280,7 @@ function ArchivesForm({ onHome }) {
         ["Submitted", new Date().toLocaleString()],
       ].filter(Boolean)}
       note="A team member will follow up with you via email once your files are ready."
-      onAnother={() => { setForm(empty); setSubmitted(false); }}
+      onAnother={() => { setForm(empty); setSubmitted(false); setSubmitError(null); }}
       onHome={onHome}
     />
   );
@@ -201,18 +328,18 @@ function ArchivesForm({ onHome }) {
           onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; }}
           onMouseLeave={e => { e.currentTarget.style.borderColor = `${WF.accent}40`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accentGlow}`; }}
         >Back</button>
-        <button onClick={submit} disabled={!valid} style={{
+        <button onClick={submit} disabled={!valid || submitting} style={{
           ...glassPill, padding: "13px 32px", fontSize: 14, fontWeight: 600,
-          background: valid ? `linear-gradient(135deg, ${WF.accent}22, ${WF.pink}12)` : "rgba(255,255,255,0.04)",
-          borderColor: valid ? `${WF.accent}50` : "rgba(255,255,255,0.06)",
-          color: valid ? WF.accentLight : FC.textDim,
-          boxShadow: valid ? `0 4px 24px ${WF.accentGlow}` : "none",
-          cursor: valid ? "pointer" : "not-allowed",
+          background: valid && !submitting ? `linear-gradient(135deg, ${WF.accent}22, ${WF.pink}12)` : "rgba(255,255,255,0.04)",
+          borderColor: valid && !submitting ? `${WF.accent}50` : "rgba(255,255,255,0.06)",
+          color: valid && !submitting ? WF.accentLight : FC.textDim,
+          boxShadow: valid && !submitting ? `0 4px 24px ${WF.accentGlow}` : "none",
+          cursor: !valid ? "not-allowed" : submitting ? "wait" : "pointer",
         }}
-          onMouseEnter={valid ? e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; } : undefined}
-          onMouseLeave={valid ? e => { e.currentTarget.style.borderColor = `${WF.accent}50`; e.currentTarget.style.boxShadow = `0 4px 24px ${WF.accentGlow}`; } : undefined}
+          onMouseEnter={valid && !submitting ? e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; } : undefined}
+          onMouseLeave={valid && !submitting ? e => { e.currentTarget.style.borderColor = `${WF.accent}50`; e.currentTarget.style.boxShadow = `0 4px 24px ${WF.accentGlow}`; } : undefined}
         >
-          Submit Request
+          {submitting ? "Submitting\u2026" : "Submit Request"}
         </button>
       </div>
     </PageWrap>
@@ -227,12 +354,46 @@ function PhotographyForm({ onHome }) {
   const [form, setForm] = useState(empty);
   const [submitted, setSubmitted] = useState(false);
   const [ticket, setTicket] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => { loadProfileInto(setForm).then(id => id && setUserId(id)); }, []);
 
   const u = (f, v) => setForm(p => ({ ...p, [f]: v }));
   const valid = form.title && form.department && form.eventDate && form.eventTime && form.location && form.description && form.priority && form.requesterName && form.requesterEmail;
 
-  const submit = () => {
-    setTicket(genTicket("PHO"));
+  const submit = async () => {
+    if (submitting) return;
+    setSubmitting(true);
+    setSubmitError(null);
+    const res = await submitToSupabase({
+      serviceType: "studio-hub-photography",
+      title: `Photography: ${form.title}`,
+      description: form.description,
+      department: form.department,
+      requesterName: form.requesterName,
+      requesterEmail: form.requesterEmail,
+      priority: form.priority || "Standard",
+      dueDate: form.eventDate || null,
+      ticketPrefix: "PHO",
+      userId,
+      metadata: {
+        wizardVersion: "studio-hub-photography-v1",
+        eventTitle: form.title,
+        department: form.department,
+        eventDate: form.eventDate,
+        eventTime: form.eventTime,
+        location: form.location,
+        description: form.description,
+        priority: form.priority,
+        requesterName: form.requesterName,
+        requesterEmail: form.requesterEmail,
+      },
+    });
+    setTicket(res.ticket);
+    if (!res.ok) setSubmitError(res.error);
+    setSubmitting(false);
     setSubmitted(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -243,6 +404,7 @@ function PhotographyForm({ onHome }) {
       title="Photography Request Submitted!"
       subtitle={"Your request has been received.\nWe'll confirm availability and follow up shortly."}
       ticket={ticket}
+      submitError={submitError}
       rows={[
         ["Event / Session", form.title],
         ["Department", form.department],
@@ -256,7 +418,7 @@ function PhotographyForm({ onHome }) {
         ["Submitted", new Date().toLocaleString()],
       ]}
       note="Rush requests are reviewed within 24 hours. Standard requests within 3 business days."
-      onAnother={() => { setForm(empty); setSubmitted(false); }}
+      onAnother={() => { setForm(empty); setSubmitted(false); setSubmitError(null); }}
       onHome={onHome}
     />
   );
@@ -324,18 +486,18 @@ function PhotographyForm({ onHome }) {
           onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; }}
           onMouseLeave={e => { e.currentTarget.style.borderColor = `${WF.accent}40`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accentGlow}`; }}
         >Back</button>
-        <button onClick={submit} disabled={!valid} style={{
+        <button onClick={submit} disabled={!valid || submitting} style={{
           ...glassPill, padding: "13px 32px", fontSize: 14, fontWeight: 600,
-          background: valid ? `linear-gradient(135deg, ${WF.accent}22, ${WF.pink}12)` : "rgba(255,255,255,0.04)",
-          borderColor: valid ? `${WF.accent}50` : "rgba(255,255,255,0.06)",
-          color: valid ? WF.accentLight : FC.textDim,
-          boxShadow: valid ? `0 4px 24px ${WF.accentGlow}` : "none",
-          cursor: valid ? "pointer" : "not-allowed",
+          background: valid && !submitting ? `linear-gradient(135deg, ${WF.accent}22, ${WF.pink}12)` : "rgba(255,255,255,0.04)",
+          borderColor: valid && !submitting ? `${WF.accent}50` : "rgba(255,255,255,0.06)",
+          color: valid && !submitting ? WF.accentLight : FC.textDim,
+          boxShadow: valid && !submitting ? `0 4px 24px ${WF.accentGlow}` : "none",
+          cursor: !valid ? "not-allowed" : submitting ? "wait" : "pointer",
         }}
-          onMouseEnter={valid ? e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; } : undefined}
-          onMouseLeave={valid ? e => { e.currentTarget.style.borderColor = `${WF.accent}50`; e.currentTarget.style.boxShadow = `0 4px 24px ${WF.accentGlow}`; } : undefined}
+          onMouseEnter={valid && !submitting ? e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; } : undefined}
+          onMouseLeave={valid && !submitting ? e => { e.currentTarget.style.borderColor = `${WF.accent}50`; e.currentTarget.style.boxShadow = `0 4px 24px ${WF.accentGlow}`; } : undefined}
         >
-          Submit Request
+          {submitting ? "Submitting\u2026" : "Submit Request"}
         </button>
       </div>
     </PageWrap>
@@ -357,12 +519,44 @@ function HeadshotsForm({ onHome }) {
   const [form, setForm] = useState(empty);
   const [submitted, setSubmitted] = useState(false);
   const [ticket, setTicket] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => { loadProfileInto(setForm).then(id => id && setUserId(id)); }, []);
 
   const u = (f, v) => setForm(p => ({ ...p, [f]: v }));
   const valid = form.sessionType && form.firstName && form.lastName && form.department && form.email;
 
-  const submit = () => {
-    setTicket(genTicket("HS"));
+  const submit = async () => {
+    if (submitting) return;
+    setSubmitting(true);
+    setSubmitError(null);
+    const fullName = `${form.firstName} ${form.lastName}`.trim();
+    const res = await submitToSupabase({
+      serviceType: "studio-hub-headshots",
+      title: `Headshots: ${fullName} (${form.sessionType})`,
+      description: form.notes || `${form.sessionType} headshot session for ${fullName}`,
+      department: form.department,
+      requesterName: fullName,
+      requesterEmail: form.email,
+      priority: "Standard",
+      ticketPrefix: "HS",
+      userId,
+      metadata: {
+        wizardVersion: "studio-hub-headshots-v1",
+        sessionType: form.sessionType,
+        firstName: form.firstName,
+        lastName: form.lastName,
+        title: form.title || null,
+        department: form.department,
+        email: form.email,
+        notes: form.notes || null,
+      },
+    });
+    setTicket(res.ticket);
+    if (!res.ok) setSubmitError(res.error);
+    setSubmitting(false);
     setSubmitted(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -373,6 +567,7 @@ function HeadshotsForm({ onHome }) {
       title={"You're Booked!"}
       subtitle={"Your session is confirmed and your info has been submitted.\nCheck your email for your calendar invite."}
       ticket={ticket}
+      submitError={submitError}
       rows={[
         ["Session Type", form.sessionType],
         ["Employee", `${form.firstName} ${form.lastName}`],
@@ -383,7 +578,7 @@ function HeadshotsForm({ onHome }) {
         ["Submitted", new Date().toLocaleString()],
       ].filter(Boolean)}
       note="A confirmation email has been sent from Microsoft Bookings with your session details."
-      onAnother={() => { setForm(empty); setSubmitted(false); }}
+      onAnother={() => { setForm(empty); setSubmitted(false); setSubmitError(null); }}
       onHome={onHome}
     />
   );
@@ -463,18 +658,18 @@ function HeadshotsForm({ onHome }) {
           onMouseEnter={e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; }}
           onMouseLeave={e => { e.currentTarget.style.borderColor = `${WF.accent}40`; e.currentTarget.style.boxShadow = `0 4px 20px ${WF.accentGlow}`; }}
         >Back</button>
-        <button onClick={submit} disabled={!valid} style={{
+        <button onClick={submit} disabled={!valid || submitting} style={{
           ...glassPill, padding: "13px 32px", fontSize: 14, fontWeight: 600,
-          background: valid ? `linear-gradient(135deg, ${WF.accent}22, ${WF.pink}12)` : "rgba(255,255,255,0.04)",
-          borderColor: valid ? `${WF.accent}50` : "rgba(255,255,255,0.06)",
-          color: valid ? WF.accentLight : FC.textDim,
-          boxShadow: valid ? `0 4px 24px ${WF.accentGlow}` : "none",
-          cursor: valid ? "pointer" : "not-allowed",
+          background: valid && !submitting ? `linear-gradient(135deg, ${WF.accent}22, ${WF.pink}12)` : "rgba(255,255,255,0.04)",
+          borderColor: valid && !submitting ? `${WF.accent}50` : "rgba(255,255,255,0.06)",
+          color: valid && !submitting ? WF.accentLight : FC.textDim,
+          boxShadow: valid && !submitting ? `0 4px 24px ${WF.accentGlow}` : "none",
+          cursor: !valid ? "not-allowed" : submitting ? "wait" : "pointer",
         }}
-          onMouseEnter={valid ? e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; } : undefined}
-          onMouseLeave={valid ? e => { e.currentTarget.style.borderColor = `${WF.accent}50`; e.currentTarget.style.boxShadow = `0 4px 24px ${WF.accentGlow}`; } : undefined}
+          onMouseEnter={valid && !submitting ? e => { e.currentTarget.style.borderColor = CLICK.hover.borderColor; e.currentTarget.style.boxShadow = CLICK.hover.boxShadow; } : undefined}
+          onMouseLeave={valid && !submitting ? e => { e.currentTarget.style.borderColor = `${WF.accent}50`; e.currentTarget.style.boxShadow = `0 4px 24px ${WF.accentGlow}`; } : undefined}
         >
-          Submit Request
+          {submitting ? "Submitting\u2026" : "Submit Request"}
         </button>
       </div>
     </PageWrap>
