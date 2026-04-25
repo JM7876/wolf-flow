@@ -1037,7 +1037,7 @@ export default function DIYFormBuilder() {
         <Glass style={{ padding: "12px 14px" }}>
           <SectionLabel>{"Form URL (preview)"}</SectionLabel>
           <div style={{ fontSize: 12, fontFamily: FONT, color: WF.accentLight, marginTop: 4 }}>
-            {"wolfflow.solutions/forms/"}{generateFormSlug(formTitle) || "..."}
+            {"wolfflow.solutions/forms/"}{(formTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")) || "..."}
           </div>
         </Glass>
       </GlassCard>
