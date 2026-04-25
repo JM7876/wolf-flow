@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { WF, FC, FONT, MONO, CLICK, GLASS, glassPill, inputBase } from "../../lib/tokens";
 import { GlassCard, SectionLabel, FormField, PageNav, PortalBackground, Footer, useNightMode, SettingsDropdown } from "../../lib/components";
 import { generateQR } from "../../lib/qr-encoder";
+import { supabase } from "../../lib/supabase";
 
 /* ═══ CONSTANTS ═══ */
 const BUILDER_STEPS = { TITLE: 0, DESCRIPTION: 1, QUESTIONS: 2, NOTIFICATIONS: 3, REVIEW: 4 };
@@ -548,9 +549,51 @@ export default function DIYFormBuilder() {
   const [savedForms, setSavedForms] = useState([]);
   const [showTypeSelector, setShowTypeSelector] = useState(false);
   const [publishedForm, setPublishedForm] = useState(null);
+  const [publishing, setPublishing] = useState(false);
+  const [publishError, setPublishError] = useState(null);
+  const [loadingMyForms, setLoadingMyForms] = useState(false);
 
   const focusIn = (e) => { e.target.style.borderColor = `${WF.accent}60`; };
   const focusOut = (e) => { e.target.style.borderColor = FC.border; };
+
+  /* Fetch existing forms when opening the My Forms view. */
+  useEffect(() => {
+    if (view !== "my-forms") return;
+    let cancelled = false;
+    setLoadingMyForms(true);
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from("diy_forms")
+          .select("id, title, schema, public_slug, is_published, created_at")
+          .order("created_at", { ascending: false })
+          .limit(100);
+        if (cancelled) return;
+        if (error) {
+          console.error("[form-builder] list forms failed:", error);
+          setSavedForms([]);
+        } else {
+          const origin = typeof window !== "undefined" ? window.location.origin : "";
+          setSavedForms((data || []).map(f => ({
+            id: f.id,
+            title: f.title,
+            description: f.schema?.description || "",
+            questions: f.schema?.questions || [],
+            notifications: f.schema?.notifications || { emailOnSubmit: false, emailTo: "" },
+            createdAt: f.created_at,
+            slug: f.public_slug,
+            url: `${origin}/forms/${f.public_slug}`,
+            submissions: 0,
+          })));
+        }
+      } catch (e) {
+        console.error("[form-builder] list forms threw:", e);
+      } finally {
+        if (!cancelled) setLoadingMyForms(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [view]);
 
   /* ── Handlers ── */
   const handleNext = useCallback(() => setStep((prev) => Math.min(prev + 1, BUILDER_STEPS.REVIEW)), []);
@@ -566,17 +609,64 @@ export default function DIYFormBuilder() {
   const handleMoveUp = useCallback((index) => { if (index === 0) return; setQuestions((prev) => { const next = [...prev]; [next[index - 1], next[index]] = [next[index], next[index - 1]]; return next; }); }, []);
   const handleMoveDown = useCallback((index) => { setQuestions((prev) => { if (index >= prev.length - 1) return prev; const next = [...prev]; [next[index], next[index + 1]] = [next[index + 1], next[index]]; return next; }); }, []);
 
-  const generateFormSlug = (title) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const handlePublish = useCallback(async () => {
+    if (publishing) return;
+    setPublishing(true);
+    setPublishError(null);
 
-  const handlePublish = useCallback(() => {
-    const formId = `WF-FORM-${Date.now()}`;
-    const slug = generateFormSlug(formTitle);
-    const formUrl = `https://wolfflow.solutions/forms/${slug}`;
-    const form = { id: formId, title: formTitle, description: formDescription, questions, notifications, createdAt: new Date().toISOString(), submissions: 0, slug, url: formUrl };
-    setSavedForms((prev) => [form, ...prev]);
-    setPublishedForm(form);
+    // Everything the form needs at render time lives in schema (jsonb).
+    const schema = {
+      title: formTitle.trim(),
+      description: formDescription.trim() || null,
+      questions,
+      notifications,
+      version: 1,
+    };
+
+    // NOTE: diy_forms.title is NOT NULL; diy_forms.owner_id is also NOT NULL today.
+    // For prototype we submit with whatever user is signed in; if none, we still try
+    // to insert and let the RLS migration we're about to ship accept user_id = null.
+    const row = {
+      title: formTitle.trim() || "Untitled form",
+      schema,
+      is_published: true,
+    };
+
+    // Try to get logged-in user id (prototype has dev-bypass so this is often null)
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user?.id) row.owner_id = user.id;
+    } catch (_) { /* unauthenticated — fine for prototype */ }
+
+    const { data, error } = await supabase
+      .from("diy_forms")
+      .insert(row)
+      .select("id, title, schema, public_slug, is_published, created_at")
+      .single();
+
+    setPublishing(false);
+    if (error || !data) {
+      console.error("[form-builder] publish failed:", error);
+      setPublishError(error ? { message: error.message, code: error.code, details: error.details, hint: error.hint } : { message: "Publish failed \u2014 please try again." });
+      return;
+    }
+
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
+    const saved = {
+      id: data.id,
+      title: data.title,
+      description: data.schema?.description || "",
+      questions: data.schema?.questions || [],
+      notifications: data.schema?.notifications || notifications,
+      createdAt: data.created_at,
+      slug: data.public_slug,
+      url: `${origin}/forms/${data.public_slug}`,
+      submissions: 0,
+    };
+    setSavedForms((prev) => [saved, ...prev]);
+    setPublishedForm(saved);
     setView("published");
-  }, [formTitle, formDescription, questions, notifications]);
+  }, [formTitle, formDescription, questions, notifications, publishing]);
 
   const handleNewForm = useCallback(() => {
     setFormTitle(""); setFormDescription(""); setQuestions([]);
@@ -894,6 +984,21 @@ export default function DIYFormBuilder() {
         </h3>
         <p style={{ fontSize: 12, fontFamily: FONT, color: FC.textDim, marginBottom: 20 }}>{"Review your form before publishing"}</p>
 
+        {publishError && (
+          <div style={{
+            padding: "12px 14px", borderRadius: 10, marginBottom: 14,
+            background: "rgba(255,70,90,0.08)", border: "1px solid rgba(255,70,90,0.30)",
+          }}>
+            <div style={{ fontSize: 11, color: "#ff7a8a", fontWeight: 600, marginBottom: 6, fontFamily: FONT }}>{"Publish failed"}</div>
+            <div style={{ padding: "6px 8px", borderRadius: 6, background: "rgba(0,0,0,0.25)", fontFamily: MONO, fontSize: 10, color: FC.textSecondary, wordBreak: "break-word" }}>
+              {publishError.code ? <div><span style={{ color: FC.textDim }}>{"code: "}</span>{publishError.code}</div> : null}
+              <div><span style={{ color: FC.textDim }}>{"message: "}</span>{publishError.message}</div>
+              {publishError.details ? <div><span style={{ color: FC.textDim }}>{"details: "}</span>{publishError.details}</div> : null}
+              {publishError.hint ? <div><span style={{ color: FC.textDim }}>{"hint: "}</span>{publishError.hint}</div> : null}
+            </div>
+          </div>
+        )}
+
         <Glass style={{ padding: 16, marginBottom: 12 }}>
           <SectionLabel>{"Form Title"}</SectionLabel>
           <div style={{ fontSize: 17, fontWeight: 600, fontFamily: FONT, color: FC.textPrimary, marginTop: 4 }}>{formTitle || "(Untitled Form)"}</div>
@@ -1002,7 +1107,7 @@ export default function DIYFormBuilder() {
           onNext={view === "builder" && getBuilderCanProceed()
             ? (step === BUILDER_STEPS.REVIEW ? handlePublish : handleNext)
             : undefined}
-          nextLabel={view === "builder" ? (step === BUILDER_STEPS.REVIEW ? "Publish Form" : "Continue") : undefined}
+          nextLabel={view === "builder" ? (step === BUILDER_STEPS.REVIEW ? (publishing ? "Publishing\u2026" : "Publish Form") : "Continue") : undefined}
           showDisabledNext={view === "builder" && !getBuilderCanProceed()}
         />
         <Footer />
