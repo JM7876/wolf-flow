@@ -10,48 +10,168 @@ export const metadata = {
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#0A0A0A] text-white">
+    <main
+      style={{
+        position: "relative",
+        minHeight: "100vh",
+        overflow: "hidden",
+        background: "#0A0A0A",
+        color: "#FFFFFF",
+        fontFamily:
+          "'Montserrat Alternates', -apple-system, BlinkMacSystemFont, sans-serif",
+      }}
+    >
       {/* faint W watermark, bottom-right */}
-      <div className="pointer-events-none absolute -bottom-10 right-0 select-none text-[42vw] font-black leading-none tracking-tighter text-white/[0.03]">
+      <div
+        aria-hidden="true"
+        style={{
+          pointerEvents: "none",
+          position: "absolute",
+          bottom: "-10vw",
+          right: 0,
+          userSelect: "none",
+          fontSize: "42vw",
+          fontWeight: 900,
+          lineHeight: 1,
+          letterSpacing: "-0.05em",
+          color: "rgba(255,255,255,0.03)",
+        }}
+      >
         W
       </div>
 
       {/* header */}
-      <header className="flex items-center justify-between px-6 py-7 md:px-16">
-        <div className="flex items-center gap-3">
-          <span className="grid h-9 w-9 place-items-center border border-white/30 text-sm font-black">
+      <header
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "clamp(1.5rem, 4vw, 1.75rem) clamp(1.5rem, 6vw, 4rem)",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <span
+            style={{
+              display: "grid",
+              placeItems: "center",
+              height: "2.25rem",
+              width: "2.25rem",
+              border: "1px solid rgba(255,255,255,0.3)",
+              fontSize: "0.875rem",
+              fontWeight: 900,
+            }}
+          >
             W
           </span>
-          <span className="text-xs font-medium tracking-[0.25em] text-white/80 md:text-sm">
+          <span
+            style={{
+              fontSize: "clamp(0.75rem, 1.4vw, 0.875rem)",
+              fontWeight: 500,
+              letterSpacing: "0.25em",
+              color: "rgba(255,255,255,0.8)",
+            }}
+          >
             WOLF FLOW LLC
           </span>
         </div>
-        <div className="flex items-center gap-2 text-[10px] tracking-[0.25em] text-white/50 md:text-xs">
-          <span className="h-1.5 w-1.5 rounded-full bg-white/60" />
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            fontSize: "clamp(0.625rem, 1.2vw, 0.75rem)",
+            letterSpacing: "0.25em",
+            color: "rgba(255,255,255,0.5)",
+          }}
+        >
+          <span
+            style={{
+              height: "0.375rem",
+              width: "0.375rem",
+              borderRadius: "9999px",
+              background: "rgba(255,255,255,0.6)",
+            }}
+          />
           PORTAL CLOSED — UPGRADING
         </div>
       </header>
 
       {/* hero */}
-      <section className="px-6 pt-10 md:px-16 md:pt-16">
-        <p className="mb-5 text-xs tracking-[0.3em] text-white/40 md:text-sm">
+      <section
+        style={{
+          padding:
+            "clamp(2.5rem, 6vw, 4rem) clamp(1.5rem, 6vw, 4rem) 0",
+        }}
+      >
+        <p
+          style={{
+            marginBottom: "1.25rem",
+            fontSize: "clamp(0.75rem, 1.4vw, 0.875rem)",
+            letterSpacing: "0.3em",
+            color: "rgba(255,255,255,0.4)",
+          }}
+        >
           TEMPORARILY UNAVAILABLE
         </p>
 
-        <h1 className="font-black leading-[0.82] tracking-tighter">
-          <span className="block text-[22vw] md:text-[11rem]">Back</span>
-          <span className="mt-1 inline-block bg-white px-3 text-[22vw] text-[#0A0A0A] md:text-[11rem]">
+        <h1
+          style={{
+            margin: 0,
+            fontWeight: 900,
+            lineHeight: 0.82,
+            letterSpacing: "-0.05em",
+          }}
+        >
+          <span
+            style={{
+              display: "block",
+              fontSize: "clamp(5rem, 22vw, 11rem)",
+            }}
+          >
+            Back
+          </span>
+          <span
+            style={{
+              marginTop: "0.25rem",
+              display: "inline-block",
+              background: "#FFFFFF",
+              padding: "0 0.75rem",
+              color: "#0A0A0A",
+              fontSize: "clamp(5rem, 22vw, 11rem)",
+            }}
+          >
             Soon.
           </span>
         </h1>
 
-        <div className="mt-10 h-px w-24 bg-white/30" />
+        <div
+          style={{
+            marginTop: "2.5rem",
+            height: "1px",
+            width: "6rem",
+            background: "rgba(255,255,255,0.3)",
+          }}
+        />
       </section>
 
       {/* footer */}
-      <footer className="absolute inset-x-0 bottom-0 flex items-center justify-between px-6 py-7 text-[10px] tracking-[0.2em] text-white/30 md:px-16 md:text-xs">
+      <footer
+        style={{
+          position: "absolute",
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "clamp(1.5rem, 4vw, 1.75rem) clamp(1.5rem, 6vw, 4rem)",
+          fontSize: "clamp(0.625rem, 1.2vw, 0.75rem)",
+          letterSpacing: "0.2em",
+          color: "rgba(255,255,255,0.3)",
+        }}
+      >
         <span>© 2026 Wolf Flow LLC · Athens, Michigan</span>
-        <span className="hidden md:inline">UPGRADES IN PROGRESS</span>
+        <span>UPGRADES IN PROGRESS</span>
       </footer>
     </main>
   );
